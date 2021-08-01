@@ -3,7 +3,7 @@ import { Card } from './Card';
 //import { CardInfo, cardNames } from '../CardInfo';
 
 function compareCards(a, b) {
-    return a.value - b.value;
+    return b.value - a.value;
 }
 
 export class PlayerHand extends Component {
