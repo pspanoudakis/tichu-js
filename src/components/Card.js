@@ -3,16 +3,17 @@ import React, {Component} from 'react';
 export class Card extends Component {
 
     getStyle = (isSelected) => {
+        let style = {
+            width: '62px',
+            height: '100px'
+        }        
         if (isSelected) {
-            return {
-                opacity: '1'
-            };
+            style.opacity = '1';
         }
         else {
-            return {
-                opacity: '0.6'
-            };
+            style.opacity = '0.6'
         }
+        return style;
     }
 
     clickDetected = (e) => {

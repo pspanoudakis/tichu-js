@@ -37,6 +37,6 @@ export class CardInfo {
                 break;
         }
         this.isSelected = false;
-        this.key = this.alt;
+        this.key = this.alt + (color === null ? '' : color);
     };
 };

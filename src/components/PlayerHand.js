@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Card } from './Card';
-import { CardInfo, cardNames } from '../CardInfo';
+//import { CardInfo, cardNames } from '../CardInfo';
 
 function compareCards(a, b) {
     return a.value - b.value;
@@ -8,50 +8,43 @@ function compareCards(a, b) {
 
 export class PlayerHand extends Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            cards: [],
-            needUpdate: false
-        }
-    }
-
     add = () => {
-        let cardObjects = [];
-        cardObjects.push(new CardInfo(cardNames.MAJONG));
-        cardObjects.push(new CardInfo(cardNames.DRAGON));
-        cardObjects.push(new CardInfo(cardNames.DOGS));
-        cardObjects.push(new CardInfo(cardNames.PHENOIX));
-        this.setState({
-            cards: cardObjects,
-            selected: []
-        })
+        this.props.add(this.props.id);
     }
 
     cardClicked = (key) => {
-        let target = this.state.cards.find(card => card.key === key);
+        let target = this.props.cards.find(card => card.key === key);
         target.isSelected = !target.isSelected;
         this.setState({});
+    }
+
+    updateTableCards = () => {
+        this.props.updateTableCards(this.props.id);
     }
 
     renderedCards = () => {
         let selected = [];
         let nonSelected = [];
-        this.state.cards.forEach( card => {
+        this.props.cards.forEach( card => {
             (card.isSelected ? selected : nonSelected).push(card);
         } );
         return (
             <div>
-                Non selected
-                {nonSelected.sort(compareCards).map( card => 
-                <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                selected={card.isSelected} clickCallback={this.cardClicked}/> )}
-                <br/>
-                Selected
-                {selected.sort(compareCards).map( card => 
-                <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                selected={card.isSelected} clickCallback={this.cardClicked}/> )}
+                <div style={{display: 'flex'}}>
+                    Non selected
+                    {nonSelected.sort(compareCards).map( card => 
+                    <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                    selected={card.isSelected} clickCallback={this.cardClicked}/> )}
+                    <br/>
+                </div>
+                <div style={{display: 'flex'}}>
+                    Selected
+                    {selected.sort(compareCards).map( card => 
+                    <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                    selected={card.isSelected} clickCallback={this.cardClicked}/> )}
+                </div>
             </div>
+            
         )
     }
 
@@ -59,7 +52,7 @@ export class PlayerHand extends Component {
         return (
             <div>
                 {this.renderedCards()}
-                <button onClick={this.add}></button>
+                <button onClick={this.add}/>
             </div>
         )
     }
