@@ -22,8 +22,9 @@ export class Card extends Component {
     render() {
         const isSelected = this.props.selected;
         return (
-            <div onClick={this.clickDetected} style={this.getStyle(isSelected)}>
-                <img src={this.props.cardImg} alt={this.props.alt}></img>
+            <div>
+                <img src={this.props.cardImg} alt={this.props.alt}
+                onClick={this.clickDetected} style={this.getStyle(isSelected)}/>
             </div>            
         )
     }
