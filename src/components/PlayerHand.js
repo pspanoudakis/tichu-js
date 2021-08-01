@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import { Card } from './Card';
-import majong from '../res/majong.png'
-import phenoix from '../res/phenoix.png'
-import dogs from '../res/dogs.png'
-import dragon from '../res/dragon.png'
+import { CardInfo, cardNames } from '../CardInfo';
+
+function compareCards(a, b) {
+    return a.value - b.value;
+}
 
 export class PlayerHand extends Component {
 
@@ -11,24 +12,16 @@ export class PlayerHand extends Component {
         super(props);
         this.state = {
             cards: [],
-            selected: []
+            needUpdate: false
         }
     }
 
     add = () => {
         let cardObjects = [];
-        cardObjects.push({
-            cardImg: majong,
-            alt: "Majong",
-            isSelected: false,
-            key: '0'
-        })
-        cardObjects.push({
-            cardImg: phenoix,
-            alt: "Phenoix",
-            isSelected: false,
-            key: '1'
-        })
+        cardObjects.push(new CardInfo(cardNames.MAJONG));
+        cardObjects.push(new CardInfo(cardNames.DRAGON));
+        cardObjects.push(new CardInfo(cardNames.DOGS));
+        cardObjects.push(new CardInfo(cardNames.PHENOIX));
         this.setState({
             cards: cardObjects,
             selected: []
@@ -36,54 +29,28 @@ export class PlayerHand extends Component {
     }
 
     cardClicked = (key) => {
-        console.log(key);
-        let newNonSelected = [];
-        let newSelected = [];
-        let found = false;
-        for (let index = 0; index < this.state.cards.length; index++) {
-            if (this.state.cards[index].key === key)
-            {
-                this.state.cards[index].isSelected = true;
-                newSelected.push(this.state.cards[index])
-                this.state.selected.forEach(card => newSelected.push(card));
-                found = true;
-            }
-            else
-            {
-                newNonSelected.push(this.state.cards[index]);
-            }
-        }
-        if (!found) {
-            for (let index = 0; index < this.state.selected.length; index++) {
-                if (this.state.selected[index].key === key)
-                {
-                    this.state.selected[index].isSelected = false;
-                    newNonSelected.push(this.state.selected[index])
-                }
-                else
-                {
-                    newSelected.push(this.state.selected[index]);
-                }
-            }
-        }
-        this.setState({
-            cards: newNonSelected,
-            selected: newSelected
-        })
+        let target = this.state.cards.find(card => card.key === key);
+        target.isSelected = !target.isSelected;
+        this.setState({});
     }
 
     renderedCards = () => {
+        let selected = [];
+        let nonSelected = [];
+        this.state.cards.forEach( card => {
+            (card.isSelected ? selected : nonSelected).push(card);
+        } );
         return (
             <div>
                 Non selected
-                {this.state.cards.map(card => <Card 
-                key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                selected={card.isSelected} clickCallback={this.cardClicked}/>)}
+                {nonSelected.sort(compareCards).map( card => 
+                <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                selected={card.isSelected} clickCallback={this.cardClicked}/> )}
                 <br/>
                 Selected
-                {this.state.selected.map(card => <Card 
-                key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                selected={card.isSelected} clickCallback={this.cardClicked}/>)}
+                {selected.sort(compareCards).map( card => 
+                <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                selected={card.isSelected} clickCallback={this.cardClicked}/> )}
             </div>
         )
     }
