@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import { Card } from './Card';
 import majong from '../res/majong.png'
 import phenoix from '../res/phenoix.png'
+import dogs from '../res/dogs.png'
+import dragon from '../res/dragon.png'
 
 export class PlayerHand extends Component {
 
