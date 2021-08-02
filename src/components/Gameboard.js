@@ -97,11 +97,10 @@ export class Gameboard extends Component {
         }
         let components = [];
         for (const [playerKey, cards] of Object.entries(this.state.playerHands)) {
+            styles[playerKey].height = '100%';
             components.push(
-            <div style={styles[playerKey]}>
                 <PlayerHand key={playerKey} id={playerKey} cards={cards}
-                updateTableCards={this.updateTableCards} add={this.add}/>
-            </div>
+                updateTableCards={this.updateTableCards} add={this.add} style={styles[playerKey]}/>
             );
         }
         return components;
@@ -112,8 +111,10 @@ export class Gameboard extends Component {
             width: '100%',
             height: '100%',
             display: 'grid',
-            gridTemplateRows: '33% 34% 33%',
-            gridTemplateColumns: '33% 34% 33%'
+            gridTemplateRows: '28% 28% 28%',
+            gridTemplateColumns: '32% 32% 32%',
+            gridColumnGap: '1%',
+            gridRowGap: '1%'
         }
         const tableStyle = {
             gridRowStart: '2',

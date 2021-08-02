@@ -3,16 +3,14 @@ import React, {Component} from 'react';
 export class Card extends Component {
 
     getStyle = (isSelected) => {
-        let style = {
-            width: '62px',
-            height: '100px'
-        }        
+        let style = {};
         if (isSelected) {
             style.opacity = '1';
         }
         else {
             style.opacity = '0.6'
         }
+        Object.assign(style, this.props.style);
         return style;
     }
 

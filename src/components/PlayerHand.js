@@ -33,17 +33,22 @@ export class PlayerHand extends Component {
     }
 
     renderedCards = () => {
-        let style = {
+        const style = {
             display: 'grid',
             gridTemplateRows: '50% 50%',
             gridTemplateColumns: '100%',
             border: '1px solid white',
             width: '100%',
-            height: '100%'
+            height: '90%'
         }
         const cardboxStyle = {
             display: 'flex',
+            height: '100%',
             border: '1px solid white',
+        }
+        const cardStyle = {
+            width: '100%',
+            height: '80%',
         }
 
         let selected = [];
@@ -57,14 +62,14 @@ export class PlayerHand extends Component {
                     Non selected
                     {nonSelected.sort(compareCards).map( card => 
                     <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                    selected={card.isSelected} clickCallback={this.cardClicked}/> )}
+                    selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
                     <br/>
                 </div>
                 <div style={cardboxStyle}>
                     Selected
                     {selected.sort(compareCards).map( card => 
                     <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                    selected={card.isSelected} clickCallback={this.cardClicked}/> )}
+                    selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
                 </div>
             </div>
             
@@ -73,14 +78,11 @@ export class PlayerHand extends Component {
 
     render() {
         return (
-            <div>
+            <div style={this.props.style}>
                 {this.renderedCards()}
-
                 {this.hasSelectedCards() ?
-                <button onClick={this.updateTableCards}>Play Cards</button> :
-                <span/>}
-
-                <button onClick={this.add}/>
+                <button onClick={this.updateTableCards}>Play Cards</button> : 'No cards selected'}
+                <button onClick={this.add}>Add</button>
             </div>
         )
     }
