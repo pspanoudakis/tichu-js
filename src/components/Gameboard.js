@@ -42,7 +42,7 @@ export class Gameboard extends Component {
         this.setState({
             playerHands: playerHands,
             table: {
-                previousCards: this.state.table.currentCards,
+                previousCards: this.state.table.previousCards.concat(this.state.table.currentCards),
                 currentCards: selectedCards
             }
         })
@@ -69,20 +69,68 @@ export class Gameboard extends Component {
     }
 
     playerComponents = () => {
+        let styles = {
+            player1: {
+                gridRowStart: '1',
+                gridRowEnd: '2',
+                gridColumnStart: '2',
+                gridColumnEnd: '3'
+            },
+            player2: {
+                gridRowStart: '2',
+                gridRowEnd: '3',
+                gridColumnStart: '1',
+                gridColumnEnd: '2'
+            },
+            player3: {
+                gridRowStart: '2',
+                gridRowEnd: '3',
+                gridColumnStart: '3',
+                gridColumnEnd: '4'
+            },
+            player4: {
+                gridRowStart: '3',
+                gridRowEnd: '4',
+                gridColumnStart: '2',
+                gridColumnEnd: '3'
+            }
+        }
         let components = [];
         for (const [playerKey, cards] of Object.entries(this.state.playerHands)) {
             components.push(
-            <PlayerHand key={playerKey} id={playerKey} cards={cards}
-            updateTableCards={this.updateTableCards} add={this.add}/>);
+            <div style={styles[playerKey]}>
+                <PlayerHand key={playerKey} id={playerKey} cards={cards}
+                updateTableCards={this.updateTableCards} add={this.add}/>
+            </div>
+            );
         }
         return components;
     }
 
     render() {
+        const style = {
+            width: '100%',
+            height: '100%',
+            display: 'grid',
+            gridTemplateRows: '33% 34% 33%',
+            gridTemplateColumns: '33% 34% 33%'
+        }
+        const tableStyle = {
+            gridRowStart: '2',
+            gridRowEnd: '3',
+            gridColumnStart: '2',
+            gridColumnEnd: '3'
+        }
+        const components = this.playerComponents();
         return (
-            <div>
-                {this.playerComponents()}
-                <TableCards currentCards={this.state.table.currentCards}/>
+            <div style={style}>
+                {components[0]}
+                {components[1]}
+                <div style={tableStyle}>
+                <TableCards currentCards={this.state.table.currentCards} previousCards={this.state.table.previousCards}/>
+                </div>
+                {components[2]}
+                {components[3]}                
             </div>
         );
     }
