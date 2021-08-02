@@ -8,10 +8,6 @@ function compareCards(a, b) {
 
 export class PlayerHand extends Component {
 
-    add = () => {
-        this.props.add(this.props.id);
-    }
-
     hasSelectedCards = () => {
         for (const card of this.props.cards) {
             if (card.isSelected)
@@ -82,7 +78,6 @@ export class PlayerHand extends Component {
                 {this.renderedCards()}
                 {this.hasSelectedCards() ?
                 <button onClick={this.updateTableCards}>Play Cards</button> : 'No cards selected'}
-                <button onClick={this.add}>Add</button>
             </div>
         )
     }

@@ -11,94 +11,94 @@ export const cardColors = {
 export const normalCards = {
     // Use cardImages
     2: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 2
     },
     3: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 3
     },
     4: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 4
     },
     5: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 5
     },
     6: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 6
     },
     7: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 7
     },
     8: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 8
     },
     9: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 9
     },
     10: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 10
     },
     J: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 11
     },
     Q: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 12
     },
     K: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 13
     },
     A: {
-        black: '',
-        red: '',
-        blue: '',
-        green: '',
+        black: cardImages.blue_A,
+        red: cardImages.blue_A,
+        blue: cardImages.blue_A,
+        green: cardImages.blue_A,
         value: 14
     }    
 }

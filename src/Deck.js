@@ -1,4 +1,4 @@
-import { cardColors, CardInfo, normalCards, specialCards } from "./CardInfo";
+import { cardColors, CardInfo, specialCards } from "./CardInfo";
 
 /**
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -29,22 +29,30 @@ export class Deck {
         this.cards.push(new CardInfo(specialCards.MAJONG));
         this.cards.push(new CardInfo(specialCards.DRAGON));
         for (let i = 2; i <= 10; i++) {
-            for (const [_, color] of Object.entries(cardColors)) {
+            for (const [, color] of Object.entries(cardColors)) {
                 this.cards.push(new CardInfo(i.toString(), color))
             }            
         }
-        for (const [_, color] of Object.entries(cardColors)) {
+        let letters = ['J', 'Q', 'K' , 'A'];
+        for (const letter of letters) {
+            for (const [, color] of Object.entries(cardColors)) {
+                this.cards.push(new CardInfo(letter, color))
+            }
+        }
+        /*
+        for (const [, color] of Object.entries(cardColors)) {
             this.cards.push(new CardInfo('J', color))
         }
-        for (const [_, color] of Object.entries(cardColors)) {
+        for (const [, color] of Object.entries(cardColors)) {
             this.cards.push(new CardInfo('Q', color))
         }
-        for (const [_, color] of Object.entries(cardColors)) {
+        for (const [, color] of Object.entries(cardColors)) {
             this.cards.push(new CardInfo('K', color))
         }
-        for (const [_, color] of Object.entries(cardColors)) {
+        for (const [, color] of Object.entries(cardColors)) {
             this.cards.push(new CardInfo('A', color))
         }
+        */
         shuffle(this.cards);
     }
 }

@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-//import { Card } from './Card';
-import { CardInfo, specialCards } from '../CardInfo';
 import { PlayerHand } from './PlayerHand';
 import { TableCards } from './TableCards';
 import { Deck } from '../Deck';
@@ -50,22 +48,20 @@ export class Gameboard extends Component {
         })
     }
 
-    // TODO: temporary
-    add = (playerKey) => {
+    handCards = () => {
         let playerHands = {};
-        for (const [key, cards] of Object.entries(this.state.playerHands)) {
-            if (playerKey !== key) {
-                playerHands[key] = cards;
-            }
-            else {
-                playerHands[playerKey] = [];
-            }
+        let playerKeys = [];
+        for (const [key] of Object.entries(this.state.playerHands)) {
+            playerKeys.push(key);
+            playerHands[key] = [];
         }
-        //playerHands[playerKey].push(this.state.deck.cards.pop());
-        playerHands[playerKey].push(new CardInfo(specialCards.MAJONG));
-        playerHands[playerKey].push(new CardInfo(specialCards.DRAGON));
-        playerHands[playerKey].push(new CardInfo(specialCards.DOGS));
-        playerHands[playerKey].push(new CardInfo(specialCards.PHOENIX));
+
+        let i = 0, card;
+        while ((card = this.state.deck.cards.pop()) !== undefined) {
+            playerHands[playerKeys[i++]].push(card)
+            i %= playerKeys.length;
+        }
+
         this.setState({
             playerHands: playerHands
         });
@@ -103,7 +99,7 @@ export class Gameboard extends Component {
             styles[playerKey].height = '100%';
             components.push(
                 <PlayerHand key={playerKey} id={playerKey} cards={cards}
-                updateTableCards={this.updateTableCards} add={this.add} style={styles[playerKey]}/>
+                updateTableCards={this.updateTableCards} style={styles[playerKey]}/>
             );
         }
         return components;
@@ -134,7 +130,8 @@ export class Gameboard extends Component {
                 <TableCards currentCards={this.state.table.currentCards} previousCards={this.state.table.previousCards}/>
                 </div>
                 {components[2]}
-                {components[3]}                
+                {components[3]}
+                <button onClick={this.handCards}>Hand Cards</button>                
             </div>
         );
     }
