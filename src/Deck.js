@@ -1,5 +1,8 @@
 import { cardColors, CardInfo, normalCards, specialCards } from "./CardInfo";
 
+/**
+ * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+ */
 function shuffle(array) {
     var currentIndex = array.length,  randomIndex;
   
