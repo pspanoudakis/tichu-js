@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 //import { Card } from './Card';
-import { CardInfo, cardNames } from '../CardInfo';
+import { CardInfo, specialCards } from '../CardInfo';
 import { PlayerHand } from './PlayerHand';
-import { TableCards } from './TableCards'
+import { TableCards } from './TableCards';
+import { Deck } from '../Deck';
 
 export class Gameboard extends Component {
 
     state = {
+        deck: new Deck(),
         playerHands: {
             player1: [],
             player2: [],
@@ -59,10 +61,11 @@ export class Gameboard extends Component {
                 playerHands[playerKey] = [];
             }
         }
-        playerHands[playerKey].push(new CardInfo(cardNames.MAJONG));
-        playerHands[playerKey].push(new CardInfo(cardNames.DRAGON));
-        playerHands[playerKey].push(new CardInfo(cardNames.DOGS));
-        playerHands[playerKey].push(new CardInfo(cardNames.PHENOIX));
+        //playerHands[playerKey].push(this.state.deck.cards.pop());
+        playerHands[playerKey].push(new CardInfo(specialCards.MAJONG));
+        playerHands[playerKey].push(new CardInfo(specialCards.DRAGON));
+        playerHands[playerKey].push(new CardInfo(specialCards.DOGS));
+        playerHands[playerKey].push(new CardInfo(specialCards.PHOENIX));
         this.setState({
             playerHands: playerHands
         });
