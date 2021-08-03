@@ -110,7 +110,7 @@ export class Gameboard extends Component {
             width: '100%',
             height: '100%',
             display: 'grid',
-            gridTemplateRows: '28% 28% 28%',
+            gridTemplateRows: '33% 33% 33%',
             gridTemplateColumns: '32% 32% 32%',
             gridColumnGap: '1%',
             gridRowGap: '1%'

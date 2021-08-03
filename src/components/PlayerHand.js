@@ -29,7 +29,7 @@ export class PlayerHand extends Component {
     }
 
     renderedCards = () => {
-        const style = {
+        const playerBox = {
             display: 'grid',
             gridTemplateRows: '50% 50%',
             gridTemplateColumns: '100%',
@@ -37,14 +37,19 @@ export class PlayerHand extends Component {
             width: '100%',
             height: '90%'
         }
-        const cardboxStyle = {
+        const playerCardList = {
             display: 'flex',
             height: '100%',
             border: '1px solid white',
         }
         const cardStyle = {
             width: '100%',
-            height: '80%',
+            height: '66%',
+        }
+        const cardBox = {
+            display: 'grid',
+            gridTemplateRows: '25% 75%',
+            width: '100%'
         }
 
         let selected = [];
@@ -53,19 +58,23 @@ export class PlayerHand extends Component {
             (card.isSelected ? selected : nonSelected).push(card);
         } );
         return (
-            <div style={style}>
-                <div style={cardboxStyle}>
-                    Non selected
-                    {nonSelected.sort(compareCards).map( card => 
-                    <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                    selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
-                    <br/>
+            <div style={playerBox}>
+                <div style={cardBox}>
+                    Hand
+                    <div style={playerCardList}>
+                        {nonSelected.sort(compareCards).map( card => 
+                        <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                        selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
+                        <br/>
+                    </div>
                 </div>
-                <div style={cardboxStyle}>
+                <div style={cardBox}>
                     Selected
-                    {selected.sort(compareCards).map( card => 
-                    <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                    selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
+                    <div style={playerCardList}>
+                        {selected.sort(compareCards).map( card => 
+                        <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                        selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
+                    </div>
                 </div>
             </div>
             
