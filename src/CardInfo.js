@@ -82,21 +82,21 @@ export const normalCards = {
     },
     Q: {
         black: cardImages.blue_A,
-        red: cardImages.blue_A,
+        red: cardImages.red_Q,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 12
     },
     K: {
         black: cardImages.blue_A,
-        red: cardImages.blue_A,
+        red: cardImages.red_K,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 13
     },
     A: {
         black: cardImages.blue_A,
-        red: cardImages.blue_A,
+        red: cardImages.red_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 14
