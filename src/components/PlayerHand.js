@@ -8,14 +8,12 @@ function compareCards(a, b) {
 
 export class PlayerHand extends Component {
 
+    voidButton = (event) => {
+        event.preventDefault();
+    }
+
     hasSelectedCards = () => {
-        for (const card of this.props.cards) {
-            if (card.isSelected)
-            {
-                return true;
-            }
-        }
-        return false;
+        return this.props.cards.find(card => card.isSelected ===true) !== undefined;
     }
 
     cardClicked = (key) => {
@@ -24,8 +22,20 @@ export class PlayerHand extends Component {
         this.setState({});
     }
 
-    updateTableCards = () => {
-        this.props.updateTableCards(this.props.id);
+    playCards = () => {
+        /*
+        if (!this.hasSelectedCards()) {
+            window.alert('No cards selected');
+        }
+        else {
+            this.props.updateTableCards(this.props.id);
+        }
+        */
+        this.props.updateTableCards(this.props.id);       
+    }
+
+    passTurn = () => {
+        this.props.passTurn(this.props.id);
     }
 
     renderedCards = () => {
@@ -82,11 +92,23 @@ export class PlayerHand extends Component {
     }
 
     render() {
+        let playCardsButton = '';
+        let passButton = '';
+        if (this.props.hasTurn) {
+            if (this.hasSelectedCards()) {
+                playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
+            }
+            else {
+                playCardsButton = <button onClick={this.voidButton} style={{opacity: '0.5'}}>Play Cards</button>;
+            }
+            if (this.props.canPass) {
+                passButton = <button onClick={this.passTurn}>Pass</button>
+            }
+        }
         return (
             <div style={this.props.style}>
                 {this.renderedCards()}
-                {this.hasSelectedCards() ?
-                <button onClick={this.updateTableCards}>Play Cards</button> : 'No cards selected'}
+                {playCardsButton}{passButton}
             </div>
         )
     }
