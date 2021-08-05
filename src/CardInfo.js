@@ -91,14 +91,14 @@ export const normalCards = {
         black: cardImages.blue_A,
         red: cardImages.red_K,
         blue: cardImages.blue_A,
-        green: cardImages.blue_A,
+        green: cardImages.green_K,
         value: 13
     },
     A: {
         black: cardImages.blue_A,
         red: cardImages.red_A,
         blue: cardImages.blue_A,
-        green: cardImages.blue_A,
+        green: cardImages.green_A,
         value: 14
     }    
 }
@@ -111,7 +111,7 @@ export const specialCards = {
 };
 
 export class CardInfo {
-    constructor(name, color = null) {
+    constructor(name, color = '') {
         switch (name) {
             case specialCards.DOGS:
                 this.cardImg = cardImages.dogs;
@@ -141,6 +141,6 @@ export class CardInfo {
                 break;
         }
         this.isSelected = false;
-        this.key = this.alt + (color === null ? '' : color);
+        this.key = this.alt;
     };
 };
