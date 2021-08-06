@@ -16,19 +16,26 @@ export class TableCards extends Component {
             display: 'flex',
             border: '1px solid white',
             width: '100%',
-            height: '100%'
-        }
-        const cardStyle = {
-            width: '100%',
-            height: '28%'
+            height: '100%',
+            position: 'relative'
         }
         return (
             <div style={tableBox}>
                 Table
                 <div style={tableCardList}>
-                    {this.props.currentCards.map( card => 
-                    <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                    selected={true} clickCallback={this.void} style={cardStyle}/> )}
+                    {this.props.currentCards.map( (card, index) => {
+                        const cardStyle = {
+                            zindex: index.toString(),
+                            position: 'absolute',
+                            top: '0%',
+                            left: (index * 6.5).toString() + '%',
+                            width: '11%',
+                            height: '42%'
+                        }
+                        return <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                        selected={true} clickCallback={this.void} style={cardStyle}/>;
+                    } 
+                     )}
                     {/*
                     <hr/>
                     Rest

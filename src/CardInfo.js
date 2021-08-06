@@ -115,22 +115,22 @@ export class CardInfo {
         switch (name) {
             case specialCards.DOGS:
                 this.cardImg = cardImages.dogs;
-                this.alt = "Dogs";
+                this.alt = specialCards.DOGS;
                 this.value = 0;
                 break;
             case specialCards.PHOENIX:
                 this.cardImg = cardImages.phoenix;
-                this.alt = "Phoenix";
+                this.alt = specialCards.PHOENIX;
                 this.value = 0.5;
                 break;
             case specialCards.MAJONG:
                 this.cardImg = cardImages.majong;
-                this.alt = "Majong";
+                this.alt = specialCards.MAJONG;
                 this.value = 1;
                 break;
             case specialCards.DRAGON:
                 this.cardImg = cardImages.dragon;
-                this.alt = "Dragon";
+                this.alt = specialCards.DRAGON;
                 this.value = 20;
                 break;
             default:
@@ -140,6 +140,8 @@ export class CardInfo {
                 this.value = normalCards[name].value;
                 break;
         }
+        // maybe?
+        // this.name = name (to find general name for Majong Requests)
         this.isSelected = false;
         this.key = this.alt;
     };

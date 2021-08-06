@@ -23,6 +23,8 @@ import black_Q from './res/black_Q.png'
 import black_K from './res/black_K.png'
 import black_A from './res/black_A.png'
 
+import card_background from './res/background.png'
+
 export const cardImages = {
     majong,
     phoenix,
@@ -43,5 +45,7 @@ export const cardImages = {
     black_J,
     black_Q,
     black_K,
-    black_A
+    black_A,
 }
+
+export const cardBackground = card_background;

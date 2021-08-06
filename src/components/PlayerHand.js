@@ -29,6 +29,12 @@ export class PlayerHand extends Component {
     }
 
     renderedCards = () => {
+
+        let selected = [];
+        let nonSelected = [];
+        this.props.cards.forEach( card => {
+            (card.isSelected ? selected : nonSelected).push(card);
+        } );
         const playerBox = {
             display: 'grid',
             gridTemplateRows: '50% 50%',
@@ -41,39 +47,48 @@ export class PlayerHand extends Component {
             display: 'flex',
             height: '100%',
             border: '1px solid white',
-        }
-        const cardStyle = {
-            width: '100%',
-            height: '66%',
+            position: 'relative'
         }
         const cardBox = {
             display: 'grid',
             gridTemplateRows: '25% 75%',
             width: '100%'
         }
-
-        let selected = [];
-        let nonSelected = [];
-        this.props.cards.forEach( card => {
-            (card.isSelected ? selected : nonSelected).push(card);
-        } );
         return (
             <div style={playerBox}>
                 <div style={cardBox}>
                     Hand
                     <div style={playerCardList}>
-                        {nonSelected.sort(compareCards).map( card => 
-                        <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                        selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
+                        {nonSelected.sort(compareCards).map( (card, index) => {
+                            const cardStyle = {
+                                zindex: index.toString(),
+                                position: 'absolute',
+                                top: '0%',
+                                left: (index * 6.5).toString() + '%',
+                                width: '11.5%',
+                                height: '100%'
+                            }
+                            return <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                            selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/>;
+                        })}
                         <br/>
                     </div>
                 </div>
                 <div style={cardBox}>
                     Selected
                     <div style={playerCardList}>
-                        {selected.sort(compareCards).map( card => 
-                        <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                        selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/> )}
+                        {selected.sort(compareCards).map( (card, index) => {
+                            const cardStyle = {
+                                zindex: index.toString(),
+                                position: 'absolute',
+                                top: '0%',
+                                left: (index * 6.5).toString() + '%',
+                                width: '11.5%',
+                                height: '100%'
+                            }
+                            return <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
+                            selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/>;
+                        })}
                     </div>
                 </div>
             </div>

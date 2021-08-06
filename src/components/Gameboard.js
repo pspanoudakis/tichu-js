@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { PlayerHand } from './PlayerHand';
 import { TableCards } from './TableCards';
 import { Deck } from '../Deck';
+import { specialCards } from '../CardInfo';
 
 const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
@@ -86,15 +87,18 @@ export class Gameboard extends Component {
             playerHands[key] = [];
         }
 
-        let i = 0, card;
+        let i = 0, card, majongOwnerIndex;
         while ((card = this.state.deck.cards.pop()) !== undefined) {
+            if (card.key === specialCards.MAJONG) {
+                majongOwnerIndex = i;
+            }
             playerHands[playerKeys[i++]].push(card)
             i %= playerKeys.length;
         }
 
         this.setState({
             playerHands: playerHands,
-            currentPlayerIndex: 0
+            currentPlayerIndex: majongOwnerIndex
         });
     }
 

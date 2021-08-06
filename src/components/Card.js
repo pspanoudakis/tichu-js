@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+//import { cardBackground } from '../CardExports';
 
 export class Card extends Component {
     getStyle = (isSelected) => {
@@ -7,7 +8,8 @@ export class Card extends Component {
             style.opacity = '1';
         }
         else {
-            style.opacity = '0.6'
+            //style.opacity = '0.6';
+            style.opacity = '1';
         }
         Object.assign(style, this.props.style);
         return style;
