@@ -6,7 +6,6 @@ import { Deck } from '../Deck';
 const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
 export class Gameboard extends Component {
-
     state = {
         deck: new Deck(),
         playerHands: {
@@ -15,7 +14,7 @@ export class Gameboard extends Component {
             player3: [],
             player4: []
         },
-        currentPlayerIndex: 0,
+        currentPlayerIndex: -1,
         table: {
             previousCards: [],
             currentCards: [],
@@ -83,9 +82,7 @@ export class Gameboard extends Component {
 
     handCards = () => {
         let playerHands = {};
-        let playerKeys = [];
-        for (const [key] of Object.entries(this.state.playerHands)) {
-            playerKeys.push(key);
+        for (const key of playerKeys) {
             playerHands[key] = [];
         }
 
@@ -96,7 +93,8 @@ export class Gameboard extends Component {
         }
 
         this.setState({
-            playerHands: playerHands
+            playerHands: playerHands,
+            currentPlayerIndex: 0
         });
     }
 
@@ -153,7 +151,7 @@ export class Gameboard extends Component {
             height: '100%',
             display: 'grid',
             gridTemplateRows: '33% 33% 33%',
-            gridTemplateColumns: '32% 32% 32%',
+            gridTemplateColumns: '32.5% 32.5% 32.5%',
             gridColumnGap: '1%',
             gridRowGap: '1%'
         }
@@ -173,7 +171,9 @@ export class Gameboard extends Component {
                 </div>
                 {components[3]}
                 {components[2]}
-                <button onClick={this.handCards}>Hand Cards</button>                
+                {(this.state.currentPlayerIndex === -1)
+                ? <button onClick={this.handCards}>Hand Cards</button>
+                : ''}                                
             </div>
         );
     }

@@ -7,7 +7,6 @@ function compareCards(a, b) {
 }
 
 export class PlayerHand extends Component {
-
     voidButton = (event) => {
         event.preventDefault();
     }

@@ -11,13 +11,13 @@ export class TableCards extends Component {
             gridTemplateRows: '11% 89%',
             border: '1px solid white',
             width: '100%',
-            height: '100%'
+            height: '90%'
         }
         const tableCardList = {            
             display: 'flex',
             border: '1px solid white',
             width: '100%',
-            height: '90%'
+            height: '100%'
         }
         const cardStyle = {
             width: '100%',
