@@ -1,4 +1,4 @@
-import { cardImages } from "./res/CardExports";
+import { cardImages } from "./CardExports";
 
 export const cardColors = {
     //NONE: 'none',
@@ -81,21 +81,21 @@ export const normalCards = {
         value: 11
     },
     Q: {
-        black: cardImages.blue_A,
+        black: cardImages.black_Q,
         red: cardImages.red_Q,
-        blue: cardImages.blue_A,
-        green: cardImages.blue_A,
+        blue: cardImages.blue_Q,
+        green: cardImages.green_Q,
         value: 12
     },
     K: {
-        black: cardImages.blue_A,
+        black: cardImages.black_K,
         red: cardImages.red_K,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_K,
         green: cardImages.green_K,
         value: 13
     },
     A: {
-        black: cardImages.blue_A,
+        black: cardImages.black_A,
         red: cardImages.red_A,
         blue: cardImages.blue_A,
         green: cardImages.green_A,
