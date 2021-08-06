@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { Card } from './Card';
-//import { CardInfo, cardNames } from '../CardInfo';
 
 export class TableCards extends Component {
     void() {}

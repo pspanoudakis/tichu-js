@@ -74,10 +74,10 @@ export const normalCards = {
         value: 10
     },
     J: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_A,
-        green: cardImages.blue_A,
+        black: cardImages.black_J,
+        red: cardImages.red_J,
+        blue: cardImages.blue_J,
+        green: cardImages.green_J,
         value: 11
     },
     Q: {

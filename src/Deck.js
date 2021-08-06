@@ -39,20 +39,6 @@ export class Deck {
                 this.cards.push(new CardInfo(letter, color))
             }
         }
-        /*
-        for (const [, color] of Object.entries(cardColors)) {
-            this.cards.push(new CardInfo('J', color))
-        }
-        for (const [, color] of Object.entries(cardColors)) {
-            this.cards.push(new CardInfo('Q', color))
-        }
-        for (const [, color] of Object.entries(cardColors)) {
-            this.cards.push(new CardInfo('K', color))
-        }
-        for (const [, color] of Object.entries(cardColors)) {
-            this.cards.push(new CardInfo('A', color))
-        }
-        */
         shuffle(this.cards);
     }
 }

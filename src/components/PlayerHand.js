@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { Card } from './Card';
-//import { CardInfo, cardNames } from '../CardInfo';
 
 function compareCards(a, b) {
     return b.value - a.value;
@@ -22,15 +21,7 @@ export class PlayerHand extends Component {
     }
 
     playCards = () => {
-        /*
-        if (!this.hasSelectedCards()) {
-            window.alert('No cards selected');
-        }
-        else {
-            this.props.updateTableCards(this.props.id);
-        }
-        */
-        this.props.updateTableCards(this.props.id);       
+        this.props.playCards(this.props.id);       
     }
 
     passTurn = () => {

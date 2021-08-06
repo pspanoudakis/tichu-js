@@ -50,7 +50,7 @@ export class Gameboard extends Component {
         this.setState(newState);
     }
 
-    playerPlayerCards = (playerKey) => {
+    playerPlayedCards = (playerKey) => {
         let selectedCards = [];
         let playerHands = {};
         for (const key of playerKeys) {
@@ -138,7 +138,7 @@ export class Gameboard extends Component {
             styles[playerKeys[i]].height = '100%';
             components.push(
                 <PlayerHand key={playerKeys[i]} id={playerKeys[i]} cards={this.state.playerHands[playerKeys[i]]}
-                updateTableCards={this.playerPlayerCards} style={styles[playerKeys[i]]}
+                playCards={this.playerPlayedCards} style={styles[playerKeys[i]]}
                 hasTurn={hasTurn} canPass={canPass} passTurn={this.playerPassedTurn}/>
             );
         }
