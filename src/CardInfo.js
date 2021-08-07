@@ -11,63 +11,63 @@ export const cardColors = {
 export const normalCards = {
     // Use cardImages
     2: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_2,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 2
     },
     3: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_3,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 3
     },
     4: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_4,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 4
     },
     5: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_5,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 5
     },
     6: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_6,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 6
     },
     7: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_7,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 7
     },
     8: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_8,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 8
     },
     9: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_9,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,
         value: 9
     },
     10: {
-        black: cardImages.blue_A,
+        black: cardImages.blue_10,
         red: cardImages.blue_A,
         blue: cardImages.blue_A,
         green: cardImages.blue_A,

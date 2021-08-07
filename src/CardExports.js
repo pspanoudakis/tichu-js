@@ -8,6 +8,15 @@ import red_Q from './res/red_Q.png'
 import red_K from './res/red_K.png'
 import red_A from './res/red_A.png'
 // Blue cards
+import blue_2 from './res/blue_2.png'
+import blue_3 from './res/blue_3.png'
+import blue_4 from './res/blue_4.png'
+import blue_5 from './res/blue_5.png'
+import blue_6 from './res/blue_6.png'
+import blue_7 from './res/blue_7.png'
+import blue_8 from './res/blue_8.png'
+import blue_9 from './res/blue_9.png'
+import blue_10 from './res/blue_10.png'
 import blue_J from './res/blue_J.png'
 import blue_Q from './res/blue_Q.png'
 import blue_K from './res/blue_K.png'
@@ -34,6 +43,15 @@ export const cardImages = {
     red_Q,
     red_K,
     red_A,
+    blue_2,
+    blue_3,
+    blue_4,
+    blue_5,
+    blue_6,
+    blue_7,
+    blue_8,
+    blue_9,
+    blue_10,
     blue_J,
     blue_Q,
     blue_K,
