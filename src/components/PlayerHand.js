@@ -32,7 +32,7 @@ export class PlayerHand extends Component {
         const playerBox = {
             width: '100%',
             height: '90%',
-            border: '1px solid white',
+            border: '1px solid white'
         }
         const playerCardList = {
             display: 'flex',
@@ -46,8 +46,8 @@ export class PlayerHand extends Component {
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
                 bottom: (card.isSelected ? '40%' : '30%'),
-                width: '13%',
-                height: '50%'
+                width: '12%',
+                height: '49%'
             }
             cardComponents.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
@@ -79,8 +79,12 @@ export class PlayerHand extends Component {
                 passButton = <button onClick={this.passTurn}>Pass</button>
             }
         }
+        let divStyle = {
+            marginBottom: '20%',
+        }
+        Object.assign(divStyle, this.props.style);
         return (
-            <div style={this.props.style}>
+            <div style={divStyle}>
                 {this.renderedCards()}
                 {playCardsButton}{passButton}
             </div>

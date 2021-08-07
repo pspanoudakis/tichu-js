@@ -26,8 +26,8 @@ export class Table extends Component {
                             position: 'absolute',
                             bottom: '30%',
                             left: (index * 6.5).toString() + '%',
-                            width: '13%',
-                            height: '50%'
+                            width: '12%',
+                            height: '49%'
                         }
                         return <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
                         selected={true} clickCallback={this.void} style={cardStyle}/>;
