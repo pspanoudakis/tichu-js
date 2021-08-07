@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { cardBackground, cardImages } from '../CardExports';
+import { cardImages } from '../CardResources';
 
 export class Card extends Component {
     clickDetected = (e) => {

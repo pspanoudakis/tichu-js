@@ -1,4 +1,4 @@
-import { cardImages } from "./CardExports";
+import { cardImages } from "./CardResources";
 
 export const cardColors = {
     //NONE: 'none',
