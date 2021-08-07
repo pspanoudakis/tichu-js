@@ -6,8 +6,6 @@ export class Table extends Component {
 
     render() {
         const tableBox = {
-            display: 'grid',
-            gridTemplateRows: '11% 89%',
             border: '1px solid white',
             width: '100%',
             height: '90%'
@@ -15,21 +13,21 @@ export class Table extends Component {
         const tableCardList = {            
             display: 'flex',
             width: '100%',
-            height: '100%',
+            height: '90%',
             position: 'relative'
         }
         return (
             <div style={tableBox}>
-                Table
+                <span style={{paddingLeft: '2%'}}>Table</span>
                 <div style={tableCardList}>
                     {this.props.currentCards.map( (card, index) => {
                         const cardStyle = {
                             zindex: index.toString(),
                             position: 'absolute',
-                            top: '0%',
+                            bottom: '30%',
                             left: (index * 6.5).toString() + '%',
-                            width: '11%',
-                            height: '42%'
+                            width: '13%',
+                            height: '50%'
                         }
                         return <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
                         selected={true} clickCallback={this.void} style={cardStyle}/>;
