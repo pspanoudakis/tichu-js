@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { cardBackground } from '../CardExports';
+import { cardBackground, cardImages } from '../CardExports';
 
 export class Card extends Component {
     clickDetected = (e) => {
@@ -16,7 +16,7 @@ export class Card extends Component {
         }
         if (!this.props.selected) {
             imgStyle.opacity = '0.66';
-            divStyle.backgroundImage = `url(${cardBackground})`;
+            divStyle.backgroundImage = `url(${cardImages.cardBackground})`;
             divStyle.backgroundSize = '100% 100%'
         }
 

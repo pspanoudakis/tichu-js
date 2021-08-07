@@ -141,7 +141,8 @@ export class Gameboard extends Component {
             }
             styles[playerKeys[i]].height = '100%';
             components.push(
-                <PlayerHand key={playerKeys[i]} id={playerKeys[i]} cards={this.state.playerHands[playerKeys[i]]}
+                <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
+                cards={this.state.playerHands[playerKeys[i]]}
                 playCards={this.playerPlayedCards} style={styles[playerKeys[i]]}
                 hasTurn={hasTurn} canPass={canPass} passTurn={this.playerPassedTurn}/>
             );
@@ -171,7 +172,8 @@ export class Gameboard extends Component {
                 {components[0]}
                 {components[1]}
                 <div style={tableStyle}>
-                <Table currentCards={this.state.table.currentCards} previousCards={this.state.table.previousCards}/>
+                <Table currentCards={this.state.table.currentCards}
+                previousCards={this.state.table.previousCards}/>
                 </div>
                 {components[3]}
                 {components[2]}

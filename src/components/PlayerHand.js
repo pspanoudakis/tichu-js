@@ -11,7 +11,7 @@ export class PlayerHand extends Component {
     }
 
     hasSelectedCards = () => {
-        return this.props.cards.find(card => card.isSelected ===true) !== undefined;
+        return this.props.cards.find(card => card.isSelected === true) !== undefined;
     }
 
     cardClicked = (key) => {
@@ -50,8 +50,9 @@ export class PlayerHand extends Component {
                 height: '49%'
             }
             cardComponents.push(
-                <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                selected={card.isSelected} clickCallback={this.cardClicked} style={cardStyle}/>
+                <Card key={card.key} id={card.key} cardImg={card.cardImg}
+                alt={card.alt} selected={card.isSelected} 
+                clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });
         return (
