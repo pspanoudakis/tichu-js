@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { PlayerHand } from './PlayerHand';
-import { TableCards } from './TableCards';
+import { Table } from './Table';
 import { Deck } from '../Deck';
 import { specialCards } from '../CardInfo';
 
@@ -171,7 +171,7 @@ export class Gameboard extends Component {
                 {components[0]}
                 {components[1]}
                 <div style={tableStyle}>
-                <TableCards currentCards={this.state.table.currentCards} previousCards={this.state.table.previousCards}/>
+                <Table currentCards={this.state.table.currentCards} previousCards={this.state.table.previousCards}/>
                 </div>
                 {components[3]}
                 {components[2]}

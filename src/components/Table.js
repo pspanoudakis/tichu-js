@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { Card } from './Card';
 
-export class TableCards extends Component {
+export class Table extends Component {
     void() {}
 
     render() {
@@ -33,14 +33,7 @@ export class TableCards extends Component {
                         }
                         return <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
                         selected={true} clickCallback={this.void} style={cardStyle}/>;
-                    } 
-                     )}
-                    {/*
-                    <hr/>
-                    Rest
-                    {this.props.previousCards.map( card => 
-                    <Card key={card.key} id={card.key} cardImg={card.cardImg} alt={card.alt}
-                    selected={card.isSelected} clickCallback={this.cardClicked}/> )}*/}
+                    })}
                 </div>                
             </div>
         );
