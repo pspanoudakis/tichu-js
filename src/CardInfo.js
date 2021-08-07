@@ -8,100 +8,24 @@ export const cardColors = {
     GREEN: 'green'
 }
 
-export const normalCards = {
-    // Use cardImages
-    2: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_2,
-        green: cardImages.blue_A,
-        value: 2
-    },
-    3: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_3,
-        green: cardImages.blue_A,
-        value: 3
-    },
-    4: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_4,
-        green: cardImages.blue_A,
-        value: 4
-    },
-    5: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_5,
-        green: cardImages.blue_A,
-        value: 5
-    },
-    6: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_6,
-        green: cardImages.blue_A,
-        value: 6
-    },
-    7: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_7,
-        green: cardImages.blue_A,
-        value: 7
-    },
-    8: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_8,
-        green: cardImages.blue_A,
-        value: 8
-    },
-    9: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_9,
-        green: cardImages.blue_A,
-        value: 9
-    },
-    10: {
-        black: cardImages.blue_A,
-        red: cardImages.blue_A,
-        blue: cardImages.blue_10,
-        green: cardImages.blue_A,
-        value: 10
-    },
-    J: {
-        black: cardImages.black_J,
-        red: cardImages.red_J,
-        blue: cardImages.blue_J,
-        green: cardImages.green_J,
-        value: 11
-    },
-    Q: {
-        black: cardImages.black_Q,
-        red: cardImages.red_Q,
-        blue: cardImages.blue_Q,
-        green: cardImages.green_Q,
-        value: 12
-    },
-    K: {
-        black: cardImages.black_K,
-        red: cardImages.red_K,
-        blue: cardImages.blue_K,
-        green: cardImages.green_K,
-        value: 13
-    },
-    A: {
-        black: cardImages.black_A,
-        red: cardImages.red_A,
-        blue: cardImages.blue_A,
-        green: cardImages.green_A,
-        value: 14
-    }    
-}
+export var normalCards = {};
+(function initializeNormalCards() {
+    for (let i = 2; i <= 10; i++) {
+        normalCards[i] = {}
+        for (const [,color] of Object.entries(cardColors)) {
+            normalCards[i][color] = cardImages[color + '_' + i.toString()];
+            normalCards[i].value = i;
+        }
+    }
+    const letterValues = [['J', 11], ['Q', 12], ['K', 13], ['A', 14]];
+    for (const [letter, value] of letterValues) {
+        normalCards[letter] = {};
+        for (const [,color] of Object.entries(cardColors)) {
+            normalCards[letter][color] = cardImages[color + '_' + letter];
+            normalCards[letter].value = value;
+        }
+    }
+})();
 
 export const specialCards = {
     DOGS: 'Dogs',
