@@ -33,7 +33,6 @@ import blue_Q from './res/blue_Q.png'
 import blue_K from './res/blue_K.png'
 import blue_A from './res/blue_A.png'
 // Green cards
-/*
 import green_2 from './res/green_2.png'
 import green_3 from './res/green_3.png'
 import green_4 from './res/green_4.png'
@@ -43,7 +42,6 @@ import green_7 from './res/green_7.png'
 import green_8 from './res/green_8.png'
 import green_9 from './res/green_9.png'
 import green_10 from './res/green_10.png'
-*/
 import green_J from './res/green_J.png'
 import green_Q from './res/green_Q.png'
 import green_K from './res/green_K.png'
@@ -100,7 +98,7 @@ export const cardImages = {
     blue_Q,
     blue_K,
     blue_A,
-    /*
+    
     green_2,
     green_3,
     green_4,
@@ -110,7 +108,7 @@ export const cardImages = {
     green_8,
     green_9,
     green_10,
-    */
+    
     green_J,
     green_Q,
     green_K,
