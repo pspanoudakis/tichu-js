@@ -39,20 +39,19 @@ export class PlayerHand extends Component {
             display: 'grid',
             gridTemplateRows: '50% 50%',
             gridTemplateColumns: '100%',
-            border: '1px solid white',
             width: '100%',
             height: '90%'
         }
         const playerCardList = {
             display: 'flex',
             height: '100%',
-            border: '1px solid white',
             position: 'relative'
         }
         const cardBox = {
             display: 'grid',
             gridTemplateRows: '25% 75%',
-            width: '100%'
+            width: '100%',
+            border: '1px solid white',
         }
         return (
             <div style={playerBox}>

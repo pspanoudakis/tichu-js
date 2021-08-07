@@ -14,7 +14,6 @@ export class TableCards extends Component {
         }
         const tableCardList = {            
             display: 'flex',
-            border: '1px solid white',
             width: '100%',
             height: '100%',
             position: 'relative'
