@@ -11,65 +11,65 @@ export const cardColors = {
 export const normalCards = {
     // Use cardImages
     2: {
-        black: cardImages.blue_2,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_2,
         green: cardImages.blue_A,
         value: 2
     },
     3: {
-        black: cardImages.blue_3,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_3,
         green: cardImages.blue_A,
         value: 3
     },
     4: {
-        black: cardImages.blue_4,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_4,
         green: cardImages.blue_A,
         value: 4
     },
     5: {
-        black: cardImages.blue_5,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_5,
         green: cardImages.blue_A,
         value: 5
     },
     6: {
-        black: cardImages.blue_6,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_6,
         green: cardImages.blue_A,
         value: 6
     },
     7: {
-        black: cardImages.blue_7,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_7,
         green: cardImages.blue_A,
         value: 7
     },
     8: {
-        black: cardImages.blue_8,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_8,
         green: cardImages.blue_A,
         value: 8
     },
     9: {
-        black: cardImages.blue_9,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_9,
         green: cardImages.blue_A,
         value: 9
     },
     10: {
-        black: cardImages.blue_10,
+        black: cardImages.blue_A,
         red: cardImages.blue_A,
-        blue: cardImages.blue_A,
+        blue: cardImages.blue_10,
         green: cardImages.blue_A,
         value: 10
     },
