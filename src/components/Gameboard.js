@@ -3,6 +3,7 @@ import { PlayerHand } from './PlayerHand';
 import { Table } from './Table';
 import { Deck } from '../Deck';
 import { specialCards } from '../CardInfo';
+import { BombInfo } from '../BombInfo';
 
 const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
