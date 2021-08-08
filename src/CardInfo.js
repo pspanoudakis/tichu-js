@@ -69,4 +69,8 @@ export class CardInfo {
         this.key = this.alt;
         this.color = color;
     };
+
+    static compareCards(a, b) {
+        return b.value - a.value;
+    }
 };

@@ -9,9 +9,10 @@ const letterValues = {
 
 export class BombInfo {
     constructor(upper, lower, color='') {
-        this.upper = (letterValues[upper] != undefined) ? letterValues[upper] : upper;
-        this.lower = (letterValues[lower] != undefined) ? letterValues[lower] : lower;
-        this.length = upper - lower;
+        this.upper = (letterValues[upper] != undefined) ? letterValues[upper] : parseInt(upper);
+        this.lower = (letterValues[lower] != undefined) ? letterValues[lower] : parseInt(lower);
+        let length = this.upper - this.lower + 1;
+        this.length = (length > 1 ? length : 4);
         this.color = color;
     }
 
@@ -40,7 +41,7 @@ export class BombInfo {
             }
         }
         for (const card of cards) {
-            if(!Object.entries(specialCards).includes(card.name)) {
+            if(!Object.values(specialCards).includes(card.name)) {
                 // not a special card
                 groupedNormalCards[card.name][card.color] = true;
             }
@@ -84,19 +85,19 @@ export class BombInfo {
                 strongestBomb = colorStrongest;
             }
         }
-        if (strongestBomb != null) {
-            // What about 4 same cards?
+        if (strongestBomb === null) {
             for (let i = cardGroupArray.length - 1; i >= 0; i--) {
                 const [name, colors] = cardGroupArray[i];
                 if (!Object.values(colors).includes(false)) {
                     // we have a bomb
-                    let bomb = new BombInfo()
+                    let bomb = new BombInfo(name, name);
                     // We iterate over the cards starting from the strongest,
                     // so we won't find a stronger bomb
+                    strongestBomb = bomb;
                     break;
                 }
             }
-        }        
+        }
         return strongestBomb;
     }
-};
+}

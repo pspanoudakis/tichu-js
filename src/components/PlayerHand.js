@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
+import { CardInfo } from '../CardInfo';
 import { Card } from './Card';
-
-function compareCards(a, b) {
-    return b.value - a.value;
-}
 
 export class PlayerHand extends Component {
     voidButton = (event) => {
@@ -40,7 +37,7 @@ export class PlayerHand extends Component {
             position: 'relative'
         }
         let cardComponents = []
-        this.props.cards.sort(compareCards).forEach((card, index) => {
+        this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
             const cardStyle = {
                 zindex: index.toString(),
                 position: 'absolute',
