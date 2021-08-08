@@ -3,7 +3,6 @@ import phoenix from './res/phoenix.png'
 import dogs from './res/dogs.png'
 import dragon from './res/dragon.png'
 // Red cards
-/*
 import red_2 from './res/red_2.png'
 import red_3 from './res/red_3.png'
 import red_4 from './res/red_4.png'
@@ -13,7 +12,6 @@ import red_7 from './res/red_7.png'
 import red_8 from './res/red_8.png'
 import red_9 from './res/red_9.png'
 import red_10 from './res/red_10.png'
-*/
 import red_J from './res/red_J.png'
 import red_Q from './res/red_Q.png'
 import red_K from './res/red_K.png'
@@ -70,7 +68,7 @@ export const cardImages = {
     phoenix,
     dogs,
     dragon,
-    /*
+
     red_2,
     red_3,
     red_4,
@@ -80,11 +78,11 @@ export const cardImages = {
     red_8,
     red_9,
     red_10,
-    */
     red_J,
     red_Q,
     red_K,
     red_A,
+
     blue_2,
     blue_3,
     blue_4,
@@ -107,8 +105,7 @@ export const cardImages = {
     green_7,
     green_8,
     green_9,
-    green_10,
-    
+    green_10,    
     green_J,
     green_Q,
     green_K,
@@ -128,5 +125,6 @@ export const cardImages = {
     black_Q,
     black_K,
     black_A,
+    
     cardBackground
 }
