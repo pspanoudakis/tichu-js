@@ -1,4 +1,4 @@
-import { cardColors, CardInfo, normalCards, specialCards } from "./CardInfo";
+import { cardColors, normalCards, specialCards } from "./CardInfo";
 
 const letterValues = {
     J: 11,
@@ -7,7 +7,7 @@ const letterValues = {
     A: 14
 }
 
-class BombInfo {
+export class BombInfo {
     constructor(upper, lower, color='') {
         this.upper = (letterValues[upper] != undefined) ? letterValues[upper] : upper;
         this.lower = (letterValues[lower] != undefined) ? letterValues[lower] : lower;
