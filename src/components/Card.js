@@ -15,7 +15,7 @@ export class Card extends Component {
             opacity: '1'
         }
         if (!this.props.selected) {
-            imgStyle.opacity = '0.66';
+            imgStyle.opacity = '0.6';
             divStyle.backgroundImage = `url(${cardImages.cardBackground})`;
             divStyle.backgroundSize = '100% 100%'
         }

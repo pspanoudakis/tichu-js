@@ -64,9 +64,9 @@ export class CardInfo {
                 this.value = normalCards[name].value;
                 break;
         }
-        // maybe?
-        // this.name = name (to find general name for Majong Requests)
+        this.name = name;
         this.isSelected = false;
         this.key = this.alt;
+        this.color = color;
     };
 };
