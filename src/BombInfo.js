@@ -30,29 +30,27 @@ class BombInfo {
     }
 
     static getStrongestBomb(cards) {
-        let groupedNormalCards = {};
         let strongestBomb = null;
 
-        for (const [key] of Object.entries(normalCards)) {
+        let groupedNormalCards = {};
+        for (const key of Object.keys(normalCards)) {
             groupedNormalCards[key] = {};
-            for (const color of Object.entries(cardColors)) {
+            for (const color of Object.values(cardColors)) {
                 groupedNormalCards[key][color] = false;
             }
         }
-
         for (const card of cards) {
             if(!Object.entries(specialCards).includes(card.name)) {
                 // not a special card
                 groupedNormalCards[card.name][card.color] = true;
             }
         }
+        const cardGroupArray = Object.entries(groupedNormalCards);
 
-        for (const color of Object.entries(cardColors)) {
-            let upperIndex = -1;
-            let lowerIndex = -1;
+        for (const color of Object.values(cardColors)) {
+            let upperIndex, lowerIndex;
             let lengthCounter = 0;
             let colorStrongest = null;
-            const cardGroupArray = Object.entries(groupedNormalCards);
             for (let i = 0; i < cardGroupArray.length; i++) {
                 const [name, colors] = cardGroupArray[i];
                 if (colors[color] === false) {
@@ -64,26 +62,41 @@ class BombInfo {
                             colorStrongest = bomb;
                         }
                     }
-                    upperIndex = -1;
-                    lowerIndex = -1;
                     lengthCounter = 0;
                 }
                 else {
-                    if (lengthCounter > 0) {
-                        upperIndex = i;
-                        lengthCounter++;
-                    }
-                    else {
-                        upperIndex = i;
+                    if (lengthCounter == 0) {
                         lowerIndex = i;
-                        lengthCounter = 1;
                     }
+                    upperIndex = i;
+                    lengthCounter++;
+                }
+            }
+            if (lengthCounter >= 5) {
+                const [upperName] = cardGroupArray[upperIndex];
+                const [lowerName] = cardGroupArray[lowerIndex];
+                let bomb = new BombInfo(upperName, lowerName, color);
+                if (BombInfo.compareBombs(colorStrongest, bomb) < 0) {
+                    colorStrongest = bomb;
                 }
             }
             if (BombInfo.compareBombs(strongestBomb, colorStrongest) < 0) {
                 strongestBomb = colorStrongest;
             }
         }
+        if (strongestBomb != null) {
+            // What about 4 same cards?
+            for (let i = cardGroupArray.length - 1; i >= 0; i--) {
+                const [name, colors] = cardGroupArray[i];
+                if (!Object.values(colors).includes(false)) {
+                    // we have a bomb
+                    let bomb = new BombInfo()
+                    // We iterate over the cards starting from the strongest,
+                    // so we won't find a stronger bomb
+                    break;
+                }
+            }
+        }        
         return strongestBomb;
     }
 };
