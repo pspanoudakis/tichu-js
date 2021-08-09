@@ -45,7 +45,6 @@ import green_Q from './res/green_Q.png'
 import green_K from './res/green_K.png'
 import green_A from './res/green_A.png'
 // Black cards
-/*
 import black_2 from './res/black_2.png'
 import black_3 from './res/black_3.png'
 import black_4 from './res/black_4.png'
@@ -55,7 +54,6 @@ import black_7 from './res/black_7.png'
 import black_8 from './res/black_8.png'
 import black_9 from './res/black_9.png'
 import black_10 from './res/black_10.png'
-*/
 import black_J from './res/black_J.png'
 import black_Q from './res/black_Q.png'
 import black_K from './res/black_K.png'
@@ -110,7 +108,7 @@ export const cardImages = {
     green_Q,
     green_K,
     green_A,
-    /*
+    
     black_2,
     black_3,
     black_4,
@@ -120,7 +118,6 @@ export const cardImages = {
     black_8,
     black_9,
     black_10,
-    */
     black_J,
     black_Q,
     black_K,
