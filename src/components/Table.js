@@ -24,10 +24,10 @@ export class Table extends Component {
                         const cardStyle = {
                             zindex: index.toString(),
                             position: 'absolute',
-                            bottom: '30%',
+                            bottom: '29%',
                             left: (index * 6.5).toString() + '%',
                             width: '12%',
-                            height: '49%'
+                            height: '48%'
                         }
                         return (
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
