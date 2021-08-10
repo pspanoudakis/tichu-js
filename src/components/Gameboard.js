@@ -18,6 +18,7 @@ export class Gameboard extends Component {
         },
         currentPlayerIndex: -1,
         pendingMajongRequest: '',
+        pendingDragonToBeGiven: false,
         table: {
             previousCards: [],
             currentCards: [],
@@ -32,12 +33,23 @@ export class Gameboard extends Component {
         }
     }
 
+    giveDragon = (currentPlayer) => {
+        this.setState({
+            currentPlayerIndex: currentPlayer,
+            pendingDragonToBeGiven: true
+        })
+    }
+
     playerPassedTurn = () => {
         let newState = {
             currentPlayerIndex: (this.state.currentPlayerIndex + 1) % 4
         }
         if (newState.currentPlayerIndex === this.state.table.currentCardsOwnerIndex) {
         // Preparing for new round
+            if (this.state.table.currentCards[0].name === specialCards.DRAGON) {
+                this.giveDragon(newState.currentPlayerIndex);
+                return;
+            }
             newState.playerHeaps = {}
             for (let i = 0; i < playerKeys.length; i++) {
                 newState.playerHeaps[playerKeys[i]] = this.state.playerHeaps[playerKeys[i]];
@@ -79,13 +91,23 @@ export class Gameboard extends Component {
                 }
             }
         }
-        // TODO: If there is a pending majong request, the player must play the Majong
-        // TODO: If there is an active majong request, the player must play the requested
-        // card if present
+        if (this.state.pendingMajongRequest !== '') {
+            // If there is a pending majong request, the player must play the Majong
+            if (!selectedCards.some(card => card.name === specialCards.MAJONG)) {
+                    window.alert("The Majong must be played after a Majong request");
+                    return;
+                }
+        }
+        else if (this.state.table.requestedCardName !== '') {
+            // TODO: If there is an active majong request, the player must play the requested
+            // card if present AND playable
+            return;
+        }
         this.setState({
             playerHands: playerHands,
             currentPlayerIndex: (this.state.currentPlayerIndex + 1) % 4,
             pendingMajongRequest: '',
+            pendingDragonToBeGiven: false,
             table: {
                 previousCards: this.state.table.previousCards.concat(this.state.table.currentCards),
                 currentCards: selectedCards,
@@ -151,14 +173,17 @@ export class Gameboard extends Component {
             let pendingRequestMessage = '';
             if (hasTurn) {
                 canPass = this.state.table.currentCards.length !== 0;
-                // TODO: But what if Majong is not playable right now?
-                let hasSelectedMajong = this.state.playerHands[playerKeys[i]].some(
-                    card => card.name === specialCards.MAJONG);
-                let pendingRequest = this.state.pendingMajongRequest !== '';
-                displayMajongRequestBox = hasSelectedMajong && !pendingRequest;
-                if (pendingRequest) {
-                    pendingRequestMessage = 'Requested: ' + this.state.pendingMajongRequest;
+                if (!this.state.pendingDragonToBeGiven) {
+                    // TODO: But what if Majong is not playable right now?
+                    let hasSelectedMajong = this.state.playerHands[playerKeys[i]].some(
+                        card => card.name === specialCards.MAJONG);
+                    let pendingRequest = this.state.pendingMajongRequest !== '';
+                    displayMajongRequestBox = hasSelectedMajong && !pendingRequest;
+                    if (pendingRequest) {
+                        pendingRequestMessage = 'Requested: ' + this.state.pendingMajongRequest;
+                    }
                 }
+                
             }
             styles[playerKeys[i]].height = '100%';
             components.push(
@@ -166,6 +191,7 @@ export class Gameboard extends Component {
                 cards={this.state.playerHands[playerKeys[i]]}
                 playCards={this.playerPlayedCards} style={styles[playerKeys[i]]}
                 hasTurn={hasTurn} canPass={canPass} passTurn={this.playerPassedTurn}
+                showOptions={!this.state.pendingDragonToBeGiven}
                 displaySelectionBox={displayMajongRequestBox}
                 selectionMade={this.playerMadeMajongSelection}
                 pendingRequest={pendingRequestMessage}/>
@@ -196,8 +222,11 @@ export class Gameboard extends Component {
                 {components[0]}
                 {components[1]}
                 <div style={tableStyle}>
-                <Table currentCards={this.state.table.currentCards}
-                previousCards={this.state.table.previousCards}/>
+                    <Table currentCards={this.state.table.currentCards}
+                    previousCards={this.state.table.previousCards}
+                    playerNames={playerKeys}
+                    currentPlayerIndex={this.state.currentPlayerIndex}
+                    pendingDragon={this.state.pendingDragonToBeGiven}/>
                 </div>
                 {components[3]}
                 {components[2]}

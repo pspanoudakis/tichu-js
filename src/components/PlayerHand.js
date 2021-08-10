@@ -77,7 +77,7 @@ export class PlayerHand extends Component {
     render() {
         let playCardsButton = '';
         let passButton = '';
-        if (this.props.hasTurn) {
+        if (this.props.hasTurn && this.props.showOptions) {
             if (this.hasSelectedCards()) {
                 playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
             }
