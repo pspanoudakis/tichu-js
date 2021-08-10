@@ -33,6 +33,28 @@ export class Gameboard extends Component {
         }
     }
 
+    dragonGiven = (selectedPlayerKey) => {
+        // New current player is already set
+        let newState = {
+            pendingDragonToBeGiven: false
+        }
+        newState.playerHeaps = {}
+        for (let i = 0; i < playerKeys.length; i++) {
+            newState.playerHeaps[playerKeys[i]] = this.state.playerHeaps[playerKeys[i]];
+            if (playerKeys[i] === selectedPlayerKey) {
+                newState.playerHeaps[playerKeys[i]].push(...this.state.table.previousCards);
+                newState.playerHeaps[playerKeys[i]].push(...this.state.table.currentCards);
+                newState.table = {};
+                newState.table.previousCards = [];
+                newState.table.currentCards = [];
+                newState.table.currentCardsOwnerIndex = -1;
+                newState.table.requestedCardName = this.state.table.requestedCardName;
+                console.log(newState.playerHeaps[playerKeys[i]]);
+            }
+        }
+        this.setState(newState);
+    }
+
     giveDragon = (currentPlayer) => {
         this.setState({
             currentPlayerIndex: currentPlayer,
@@ -59,7 +81,9 @@ export class Gameboard extends Component {
                     newState.table = {};
                     newState.table.previousCards = [];
                     newState.table.currentCards = [];
-                    //console.log(newState.playerHeaps[playerKeys[i]]);
+                    newState.table.currentCardsOwnerIndex = -1;
+                    newState.table.requestedCardName = this.state.table.requestedCardName;
+                    console.log(newState.playerHeaps[playerKeys[i]]);
                 }
             }
         }
@@ -75,6 +99,7 @@ export class Gameboard extends Component {
     playerPlayedCards = (playerKey) => {
         let selectedCards = [];
         let playerHands = {};
+        let requestedCard = this.state.table.requestedCardName;
         for (const key of playerKeys) {
             if (playerKey !== key) {
                 playerHands[key] = this.state.playerHands[key];
@@ -94,15 +119,21 @@ export class Gameboard extends Component {
         if (this.state.pendingMajongRequest !== '') {
             // If there is a pending majong request, the player must play the Majong
             if (!selectedCards.some(card => card.name === specialCards.MAJONG)) {
-                    window.alert("The Majong must be played after a Majong request");
-                    return;
-                }
+                window.alert("The Majong must be played after a Majong request");
+                return;
+            }
+            else {
+                requestedCard = this.state.pendingMajongRequest;
+            }
         }
+        /* This will be enabled in the future        
         else if (this.state.table.requestedCardName !== '') {
             // TODO: If there is an active majong request, the player must play the requested
             // card if present AND playable
+            debugger;
             return;
         }
+        */
         this.setState({
             playerHands: playerHands,
             currentPlayerIndex: (this.state.currentPlayerIndex + 1) % 4,
@@ -112,7 +143,7 @@ export class Gameboard extends Component {
                 previousCards: this.state.table.previousCards.concat(this.state.table.currentCards),
                 currentCards: selectedCards,
                 currentCardsOwnerIndex: this.state.currentPlayerIndex,
-                requestedCardName: this.state.table.requestedCardName
+                requestedCardName: requestedCard
             }
         })
     }
@@ -226,7 +257,8 @@ export class Gameboard extends Component {
                     previousCards={this.state.table.previousCards}
                     playerNames={playerKeys}
                     currentPlayerIndex={this.state.currentPlayerIndex}
-                    pendingDragon={this.state.pendingDragonToBeGiven}/>
+                    pendingDragon={this.state.pendingDragonToBeGiven}
+                    dragonGiven={this.dragonGiven}/>
                 </div>
                 {components[3]}
                 {components[2]}
