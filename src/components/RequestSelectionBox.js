@@ -3,7 +3,7 @@ import { normalCards } from '../CardInfo';
 
 export class RequestSelectionBox extends Component {
 
-    selectionMade(event) {
+    selectionMade = (event) => {
         this.props.requestMade(event.target.id);
     }
 
@@ -20,7 +20,8 @@ export class RequestSelectionBox extends Component {
         return (
         <div style={selectionBoxStyle}>
             {Object.keys(normalCards).reverse().map(name => 
-                <button key={name} id={name} onClick={this.selectionMade}>
+                <button key={name} id={name} onClick={this.selectionMade}
+                style={selectionButtonStyle}>
                 {name}
                 </button>
             )}

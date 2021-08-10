@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import { CardInfo } from '../CardInfo';
+import { CardInfo, specialCards } from '../CardInfo';
 import { Card } from './Card';
+import { RequestSelectionBox } from './RequestSelectionBox';
 
 export class PlayerHand extends Component {
     voidButton = (event) => {
@@ -17,6 +18,10 @@ export class PlayerHand extends Component {
         this.setState({});
     }
 
+    madeRequestSelection = (cardName) => {
+        this.props.selectionMade(cardName);
+    }
+
     playCards = () => {
         this.props.playCards(this.props.id);       
     }
@@ -27,13 +32,16 @@ export class PlayerHand extends Component {
 
     renderedCards = () => {
         const playerBox = {
+            display: 'grid',
+            gridTemplateRows: '10% 80% 10%',
+            gridTemplateColumns: '100%',
             width: '100%',
             height: '90%',
             border: '1px solid white'
         }
         const playerCardList = {
             display: 'flex',
-            height: '90%',
+            height: '100%',
             position: 'relative'
         }
         let cardComponents = []
@@ -42,9 +50,9 @@ export class PlayerHand extends Component {
                 zindex: index.toString(),
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
-                bottom: (card.isSelected ? '40%' : '30%'),
+                bottom: (card.isSelected ? '30%' : '20%'),
                 width: '12%',
-                height: '49%'
+                height: '54%'
             }
             cardComponents.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
@@ -58,15 +66,18 @@ export class PlayerHand extends Component {
                 <div style={playerCardList}>
                     {cardComponents}
                 </div>
-            </div>
-            
+                {this.props.displaySelectionBox && this.props.cards.some(card => 
+                card.name === specialCards.MAJONG && card.isSelected)
+                ? <RequestSelectionBox requestMade={this.madeRequestSelection}/>
+                : this.props.pendingRequest}
+            </div>            
         )
     }
 
     render() {
         let playCardsButton = '';
         let passButton = '';
-        if (this.props.hasTurn) {
+        if (this.props.hasTurn && this.props.showOptions) {
             if (this.hasSelectedCards()) {
                 playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
             }
