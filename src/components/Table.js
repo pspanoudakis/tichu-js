@@ -25,10 +25,29 @@ export class Table extends Component {
         const dragonSelection = {
             display: 'flex',
             width: '100%',
-            height: '90%'
+            height: '90%',
+            position: 'relative'
         }
         const dragonStyle = {
-
+            position: 'absolute',
+            top: '23%',
+            left: '0%',
+            width: '12%',
+            height: '48%'
+        }
+        const selection1 = {
+            position: 'absolute',
+            top: '0%',
+            left: '14%',
+            width: '15%',
+            height: '100%'
+        }
+        const selection2 = {
+            position: 'absolute',
+            top: '0%',
+            left: '30%',
+            width: '15%',
+            height: '100%'
         }
         let buttonText1, buttonText2;
         if (this.props.pendingDragon) {
@@ -63,15 +82,15 @@ export class Table extends Component {
                     })}
                 </div> :
                 <div style={dragonSelection}>
-                    <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}>
-                        {buttonText1}
-                    </button>
-
                     <Card key={specialCards.DRAGON} id={specialCards.DRAGON}
                     cardImg={cardImages.dragon} alt={specialCards.DRAGON}
                     selected={true} clickCallback={this.void} style={dragonStyle}/>
-                    
-                    <button key={buttonText2} id={buttonText2} onClick={this.dragonGiven}>
+                    <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
+                    style={selection1}>
+                        {buttonText1}
+                    </button>
+                    <button key={buttonText2} id={buttonText2} onClick={this.dragonGiven}
+                    style={selection2}>
                         {buttonText2}
                     </button>
                 </div>}            
