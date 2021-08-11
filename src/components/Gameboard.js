@@ -221,7 +221,9 @@ export class Gameboard extends Component {
             let pendingRequestMessage = '';
             let canDropBomb = false;
             if (hasTurn) {
-                canPass = this.state.table.currentCards.length !== 0;
+                canPass = (this.state.table.currentCards.length !== 0) &&
+                            (!this.state.pendingBombToBePlayed) &&
+                            (this.state.pendingMajongRequest === '');
                 if (!this.state.pendingDragonToBeGiven) {
                     // TODO: But what if Majong is not playable right now?
                     let hasSelectedMajong = this.state.playerHands[playerKeys[i]].some(
