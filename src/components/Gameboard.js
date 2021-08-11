@@ -19,6 +19,7 @@ export class Gameboard extends Component {
         currentPlayerIndex: -1,
         pendingMajongRequest: '',
         pendingDragonToBeGiven: false,
+        pendingBombToBePlayed: false,
         table: {
             previousCards: [],
             currentCards: [],
@@ -31,6 +32,13 @@ export class Gameboard extends Component {
             player3: [],
             player4: []
         }
+    }
+
+    bombStop = (playerKey) => {
+        this.setState({
+            currentPlayerIndex: playerKeys.indexOf(playerKey),
+            pendingBombToBePlayed: true
+        })
     }
 
     dragonGiven = (selectedPlayerKey) => {
@@ -134,11 +142,20 @@ export class Gameboard extends Component {
             return;
         }
         */
+       // TODO: check 1) is combination valid 2) is it playable?
+       debugger;
+       if (this.state.pendingBombToBePlayed) {
+           if (BombInfo.createBomb(selectedCards) === null) {
+            window.alert("A bomb must be played");
+            return;
+           }
+       }
         this.setState({
             playerHands: playerHands,
             currentPlayerIndex: (this.state.currentPlayerIndex + 1) % 4,
             pendingMajongRequest: '',
             pendingDragonToBeGiven: false,
+            pendingBombToBePlayed: false,
             table: {
                 previousCards: this.state.table.previousCards.concat(this.state.table.currentCards),
                 currentCards: selectedCards,
@@ -202,6 +219,7 @@ export class Gameboard extends Component {
             let canPass = false;
             let displayMajongRequestBox = false;
             let pendingRequestMessage = '';
+            let canDropBomb = false;
             if (hasTurn) {
                 canPass = this.state.table.currentCards.length !== 0;
                 if (!this.state.pendingDragonToBeGiven) {
@@ -214,8 +232,15 @@ export class Gameboard extends Component {
                         pendingRequestMessage = 'Requested: ' + this.state.pendingMajongRequest;
                     }
                 }
-                
             }
+            let bomb = BombInfo.getStrongestBomb(this.state.playerHands[playerKeys[i]]);
+            if (bomb !== null) {
+                let tableBomb = BombInfo.createBomb(this.state.table.currentCards);
+                if (BombInfo.compareBombs(tableBomb, bomb) < 0) {
+                    canDropBomb = true;
+                }
+            }
+
             styles[playerKeys[i]].height = '100%';
             components.push(
                 <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
@@ -225,7 +250,8 @@ export class Gameboard extends Component {
                 showOptions={!this.state.pendingDragonToBeGiven}
                 displaySelectionBox={displayMajongRequestBox}
                 selectionMade={this.playerMadeMajongSelection}
-                pendingRequest={pendingRequestMessage}/>
+                pendingRequest={pendingRequestMessage}
+                canBomb={canDropBomb} dropBomb={this.bombStop}/>
             );
         }
         return components;

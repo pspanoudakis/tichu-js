@@ -30,6 +30,10 @@ export class PlayerHand extends Component {
         this.props.passTurn(this.props.id);
     }
 
+    dropBomb = () => {
+        this.props.dropBomb(this.props.id);
+    }
+
     renderedCards = () => {
         const playerBox = {
             display: 'grid',
@@ -77,15 +81,21 @@ export class PlayerHand extends Component {
     render() {
         let playCardsButton = '';
         let passButton = '';
-        if (this.props.hasTurn && this.props.showOptions) {
-            if (this.hasSelectedCards()) {
-                playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
+        let bombButton = '';
+        if (this.props.showOptions) {
+            if (this.props.hasTurn) {
+                if (this.hasSelectedCards()) {
+                    playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
+                }
+                else {
+                    playCardsButton = <button onClick={this.voidButton} style={{opacity: '0.5'}}>Play Cards</button>;
+                }
+                if (this.props.canPass) {
+                    passButton = <button onClick={this.passTurn}>Pass</button>
+                }
             }
-            else {
-                playCardsButton = <button onClick={this.voidButton} style={{opacity: '0.5'}}>Play Cards</button>;
-            }
-            if (this.props.canPass) {
-                passButton = <button onClick={this.passTurn}>Pass</button>
+            if (this.props.canBomb) {
+                bombButton = <button onClick={this.dropBomb}>Bomb</button>
             }
         }
         let divStyle = {
@@ -95,7 +105,7 @@ export class PlayerHand extends Component {
         return (
             <div style={divStyle}>
                 {this.renderedCards()}
-                {playCardsButton}{passButton}
+                {playCardsButton}{passButton}{bombButton}
             </div>
         )
     }
