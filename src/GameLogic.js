@@ -91,14 +91,19 @@ export class GameLogic {
     static passTurn(gameboard) {
         let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
         let newState = {};
-        if (nextPlayerIndex === gameboard.state.table.currentCardsOwnerIndex) {
-            GameLogic.endRound(gameboard, newState, nextPlayerIndex);
-        }
+        let possibleBug = false;
         while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
             nextPlayerIndex = (nextPlayerIndex + 1) % 4;
+            if (nextPlayerIndex === gameboard.state.table.currentCardsOwnerIndex) {
+                GameLogic.endRound(gameboard, newState, nextPlayerIndex);
+                possibleBug = true;
+            }
         }
         if (nextPlayerIndex === gameboard.state.table.currentCardsOwnerIndex) {
             GameLogic.endRound(gameboard, newState, nextPlayerIndex);
+            if (possibleBug) {
+                console.log('End round twice bug');
+            }   
         }
         newState.currentPlayerIndex = nextPlayerIndex;
         gameboard.setState(newState);
