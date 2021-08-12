@@ -65,13 +65,6 @@ export class Gameboard extends Component {
         this.setState(newState);
     }
 
-    giveDragon = (currentPlayer) => {
-        this.setState({
-            currentPlayerIndex: currentPlayer,
-            pendingDragonToBeGiven: true
-        })
-    }
-
     playerPassedTurn = () => {
         GameLogic.passTurn(this);
     }

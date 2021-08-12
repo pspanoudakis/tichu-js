@@ -109,17 +109,17 @@ export class GameLogic {
         gameboard.setState(newState);
     }
 
-    static endRound(gameboard, newState, nextPlayerIndex) {
+    static endRound(gameboard, newState, cardsOwnerIndex) {
         // Preparing for new round
         if (gameboard.state.table.currentCards[0].name === specialCards.DRAGON) {
             // TODO: Call GameLogic method directly
-            gameboard.giveDragon(nextPlayerIndex);
+            GameLogic.giveDragon(gameboard, cardsOwnerIndex);
             return;
         }
         newState.playerHeaps = {}
         for (let i = 0; i < playerKeys.length; i++) {
             newState.playerHeaps[playerKeys[i]] = gameboard.state.playerHeaps[playerKeys[i]];
-            if (i === nextPlayerIndex) {
+            if (i === cardsOwnerIndex) {
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.previousCards);
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.currentCards);
                 newState.table = {};
@@ -130,5 +130,12 @@ export class GameLogic {
                 console.log(newState.playerHeaps[playerKeys[i]]);
             }
         }
+    }
+
+    static giveDragon(gameboard, cardsOwnerIndex) {
+        gameboard.setState({
+            currentPlayerIndex: cardsOwnerIndex,
+            pendingDragonToBeGiven: true
+        });
     }
 }
