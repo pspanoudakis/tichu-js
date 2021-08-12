@@ -49,15 +49,23 @@ export class Table extends Component {
             width: '15%',
             height: '100%'
         }
-        let buttonText1, buttonText2;
+        let buttonText1 = '', buttonText2 = '';
         if (this.props.pendingDragon) {
             if (this.props.currentPlayerIndex % 2 === 0) {
-                buttonText1 = this.props.playerNames[1];
-                buttonText2 = this.props.playerNames[3];
+                if (this.props.activePlayers[1]) {
+                    buttonText1 = this.props.playerNames[1];
+                }
+                if (this.props.activePlayers[3]) {
+                    buttonText2 = this.props.playerNames[3];
+                }                
             }
             else {
-                buttonText1 = this.props.playerNames[0];
-                buttonText2 = this.props.playerNames[2];
+                if (this.props.activePlayers[0]) {
+                    buttonText1 = this.props.playerNames[0];
+                }
+                if (this.props.activePlayers[2]) {
+                    buttonText2 = this.props.playerNames[2];
+                }
             }
         }
         return (
@@ -85,14 +93,19 @@ export class Table extends Component {
                     <Card key={specialCards.DRAGON} id={specialCards.DRAGON}
                     cardImg={cardImages.dragon} alt={specialCards.DRAGON}
                     selected={true} clickCallback={this.void} style={dragonStyle}/>
-                    <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
+                    {buttonText1 !== ''
+                    ? <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
                     style={selection1}>
                         {buttonText1}
                     </button>
-                    <button key={buttonText2} id={buttonText2} onClick={this.dragonGiven}
+                    : ''}
+                    
+                    {buttonText2 !== ''
+                    ? <button key={buttonText2} id={buttonText2} onClick={this.dragonGiven}
                     style={selection2}>
                         {buttonText2}
                     </button>
+                    : ''}
                 </div>}            
             </div>
         );
