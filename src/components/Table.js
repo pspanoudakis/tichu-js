@@ -70,7 +70,11 @@ export class Table extends Component {
         }
         return (
             <div style={tableBox}>
-                <span style={{paddingLeft: '2%'}}>Table</span>
+                <span style={{paddingLeft: '2%'}}>
+                    {this.props.requestedCard === ''
+                    ? ''
+                    : ('Requested: ' + this.props.requestedCard)}
+                </span>
                 {!this.props.pendingDragon ?
                 <div style={tableCardList}>
                     {this.props.currentCards.map( (card, index) => {

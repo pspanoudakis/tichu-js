@@ -138,4 +138,48 @@ export class GameLogic {
             pendingDragonToBeGiven: true
         });
     }
+
+    static dragonGiven(gameboard, selectedPlayerKey) {
+        // New current player is already set
+        let newState = {
+            pendingDragonToBeGiven: false
+        }
+        newState.playerHeaps = {}
+        for (let i = 0; i < playerKeys.length; i++) {
+            newState.playerHeaps[playerKeys[i]] = gameboard.state.playerHeaps[playerKeys[i]];
+            if (playerKeys[i] === selectedPlayerKey) {
+                newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.previousCards);
+                newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.currentCards);
+                newState.table = {};
+                newState.table.previousCards = [];
+                newState.table.currentCards = [];
+                newState.table.currentCardsOwnerIndex = -1;
+                newState.table.requestedCardName = gameboard.state.table.requestedCardName;
+                console.log(newState.playerHeaps[playerKeys[i]]);
+            }
+        }
+        gameboard.setState(newState);
+    }
+
+    static handCards(gameboard) {
+        let playerHands = {};
+        for (const key of playerKeys) {
+            playerHands[key] = [];
+        }
+
+        let i = 0, card, majongOwnerIndex;
+        while ((card = gameboard.state.deck.cards.pop()) !== undefined) {
+            if (card.key === specialCards.MAJONG) {
+                majongOwnerIndex = i;
+            }
+            playerHands[playerKeys[i++]].push(card)
+            i %= playerKeys.length;
+        }
+
+        gameboard.setState({
+            gameHasStarted: true,
+            playerHands: playerHands,
+            currentPlayerIndex: majongOwnerIndex
+        });
+    }
 }
