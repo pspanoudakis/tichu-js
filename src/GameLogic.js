@@ -1,6 +1,85 @@
 import { BombInfo } from "./BombInfo";
-import { specialCards } from "./CardInfo";
+import { specialCards, normalCards } from "./CardInfo";
 import { playerKeys } from "./components/Gameboard";
+
+function getStrongestSteps(cards, requestedCard, length, hasPhoenix) {
+
+}
+
+function getStrongestKenta(cards, requestedCard, length, hasPhoenix) {
+
+}
+
+function containsPair(cards, requestedCard, hasPhoenix) {
+    let requestedPresentCards = cards.filter(card => card.name === requestedCard);
+    if (requestedPresentCards.length < 1) {
+        return false;
+    }
+    else if (requestedPresentCards.length < 2) {
+        return hasPhoenix;
+    }
+    else {
+        return true;
+    }
+}
+
+function containsTriplet(cards, requestedCard, hasPhoenix) {
+    let requestedPresentCards = cards.filter(card => card.name === requestedCard);
+    if (requestedPresentCards.length < 2) {
+        return false;
+    }
+    else if (requestedPresentCards.length < 3) {
+        return hasPhoenix;
+    }
+    else {
+        return true;
+    }
+}
+
+function getStrongestFullHouse(cards, requestedCard, hasPhoenix) {
+    let phoenixUsed = false;
+    let nonRequestedRequired = 0;
+    // Counts occurences of each card
+    let cardOccurences = {};
+    for (const cardName of Object.keys(normalCards).reverse()) {
+        cardOccurences[cardName] = 0;
+    }
+    const specialCardNames = Object.values(specialCards)
+    for (const card of cards) {
+        if (!specialCardNames.includes(card.name)) {
+            cardOccurences[card]++;
+        }        
+    }
+    // map ready
+
+    if (cardOccurences[requestedCard] < 1) {
+        // cannot create a full house with the requested card
+        return null;
+    }
+    if (cardOccurences[requestedCard] < 2) {
+        if (hasPhoenix) {
+            // Using phoenix to replace a second requested card
+            phoenixUsed = true;
+            // Looking for the strongest card with 3 occurences now...
+            nonRequestedRequired = 3;
+        }
+        else { return null; }
+    }
+    else {
+        nonRequestedRequired = 5 - Math.min(cardOccurences[requestedCard], 3);
+    }
+    
+    // Iterate over card names, starting from the strongest (skip the requested)
+    for (const [card, occurences] of Object.entries(cardOccurences)) {
+        if (card !== requestedCard) {
+            if (occurences >= nonRequestedRequired || 
+               ((occurences === nonRequestedRequired - 1) && !phoenixUsed)) {
+                return new FullHouse(card, occurences, requestedCard, cardOccurences[requestedCard]);
+            }
+        }
+    }
+    return null;
+}
 
 export class GameLogic {
 
@@ -16,11 +95,26 @@ export class GameLogic {
         return false;
     }
 
+    static isPlayable(tableCards, selectedCards, message) {
+        if (tableCards.length > 0) {
+            // Check if playable
+        }
+        else {
+            // Check if combination is valid
+        }
+        return true;
+    }
+
     static playCards(gameboard, playerKey) {
+        let normalCheck = true;
+        let checkBomb = false;
         let selectedCards = [];
         let playerHands = {};
         let requestedCard = gameboard.state.table.requestedCardName;
         let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
+        let message = {
+            text: ''
+        };
         for (const key of playerKeys) {
             if (playerKey !== key) {
                 playerHands[key] = gameboard.state.playerHands[key];
@@ -37,6 +131,7 @@ export class GameLogic {
                 }
             }
         }
+        
         if (gameboard.state.pendingMajongRequest !== '') {
             // If there is a pending majong request, the player must play the Majong
             if (!selectedCards.some(card => card.name === specialCards.MAJONG)) {
@@ -57,18 +152,35 @@ export class GameLogic {
         */
         // TODO: check 1) is combination valid 2) is it playable?
         else if (gameboard.state.pendingBombToBePlayed) {
-            if (BombInfo.createBomb(selectedCards) === null) {
+            let playerBomb = BombInfo.createBomb(selectedCards)
+            if ( playerBomb === null) {
                 window.alert("A bomb must be played");
                 return;
             }
+            else {
+                let tableBomb = BombInfo.createBomb(gameboard.state.table.currentCards);
+                if (BombInfo.compareBombs(tableBomb, playerBomb) >= 0) {
+                    window.alert("The selected combination cannot be played");
+                    return;
+                }
+            }
+            normalCheck = false;
         }
         else if (selectedCards.some(card => card.name === specialCards.DOGS)) {
             if (selectedCards.length !== 1) {
                 window.alert('Invalid card combination');
                 return;
             }
+            normalCheck = false;
             nextPlayerIndex = (gameboard.state.currentPlayerIndex + 2) % 4;
             selectedCards = [];
+        }
+        if (normalCheck) {
+            if ( !GameLogic.isPlayable(gameboard.state.table.currentCards,
+                selectedCards, message) ) {
+                    window.alert(message.text);
+                    return;
+            }
         }
         while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
             nextPlayerIndex = (nextPlayerIndex + 1) % 4;
