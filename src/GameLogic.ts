@@ -162,15 +162,52 @@ class Triplet extends CardCombination {
 class Steps extends CardCombination {
     length: number;
 
-    constructor(topCard: string, length: number) {
+    constructor(topValue: number, length: number) {
         super(cardCombinations.STEPS);
-        this.value = (letterValues[topCard] !== undefined) ? letterValues[topCard] : parseInt(topCard);
+        this.value = topValue;
         this.length = length;
     }
     static getStrongestRequested(cards: Array<Card>, requested: string, length: number, hasPhoenix: boolean) {
 
     }
-    static create(cards: Array<Card>) {
+    static create(cards: Array<Card>) {        
+        if (cards.length >= 4 && cards.length % 2) {
+            let cardOccurences: Map<number, number> = new Map();
+            let phoenixUsed = true;
+            const specialCardNames = Object.values(specialCards)
+            for (const card of cards) {
+                if (specialCardNames.includes(card.name)) {
+                    if (card.name !== specialCards.PHOENIX) {
+                        return null;
+                    }
+                    phoenixUsed = false;
+                }
+                else {
+                    let occurences = cardOccurences.get(card.value);
+                    if (occurences === undefined) {
+                        occurences = 0;
+                    }
+                    cardOccurences.set(card.value, occurences + 1);
+                }
+            }
+            const cardOccurencesArray = Array.from(cardOccurences)
+            if (cardOccurencesArray.length > 1) {
+                let previousValue = cardOccurencesArray[0][0] + 1;
+                for (const [cardValue, occurences] of cardOccurencesArray) {
+                    if (occurences !== 2) {
+                        if (occurences !== 1 || phoenixUsed) {
+                            return null;                        
+                        }
+                        phoenixUsed = true;
+                    }
+                    if (previousValue !== cardValue + 1) {
+                        return null;
+                    }
+                    previousValue = cardValue;
+                }
+                return new Steps(cardOccurencesArray[0][0], cardOccurencesArray.length);
+            }            
+        }
         return null;
     }
     compare(other: Steps | null) {
@@ -197,6 +234,7 @@ class Kenta extends CardCombination {
             let previousCardValue = cards[0].value;
             const color = cards[0].color;
             for (let i = 1; i < cards.length; i++) {
+                // Phoenix?
                 if (cards[i].value !== previousCardValue - 1) {
                     return null;
                 }
