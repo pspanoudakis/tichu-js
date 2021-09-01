@@ -46,6 +46,8 @@ export class CardInfo {
                 this.cardImg = cardImages.phoenix;
                 this.alt = specialCards.PHOENIX;
                 this.value = 0.5;
+                this.tempName = '';
+                this.tempValue = 0.5;
                 break;
             case specialCards.MAJONG:
                 this.cardImg = cardImages.majong;

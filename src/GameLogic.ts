@@ -2,6 +2,8 @@ interface Card {
     name: string
     value: number
     color: string
+    tempName: string
+    tempValue: number
 }
 
 interface LetterValues {
@@ -48,27 +50,12 @@ abstract class CardCombination {
     value: number;
     combination: string;
     abstract compare(other: CardCombination | null): number;
+
     constructor(combination: string) {
         this.combination = combination;
         this.value = -1;
     }
-}
-
-class SingleCard extends CardCombination {
-    constructor(cardName: string) {
-        super(cardCombinations.SINGLE);
-        this.value = (letterValues[cardName] !== undefined) ? letterValues[cardName] : parseInt(cardName);
-    }
-    static create(cards: Array<Card>) {
-        if (cards.length !== 1) {
-            return null;
-        }
-        return new SingleCard(cards[0].name);
-    }
-    compare(other: SingleCard | null) {
-        return SingleCard.compare(this, other)
-    }
-    static compare(a: SingleCard | null, b: SingleCard | null) {
+    static basicCompare(a: CardCombination | null, b: CardCombination | null) {
         if (a === b) {
             return 0;
         }
@@ -79,6 +66,28 @@ class SingleCard extends CardCombination {
             return -1;
         }
         return a.value - b.value;
+    }
+}
+
+class SingleCard extends CardCombination {
+    constructor(card: Card) {
+        super(cardCombinations.SINGLE);
+        if (card.name !== specialCards.PHOENIX) {
+            this.value = card.value;
+        }
+        else {
+            this.value = card.tempValue;
+        }
+        
+    }
+    static create(cards: Array<Card>) {
+        if (cards.length !== 1) {
+            return null;
+        }
+        return new SingleCard(cards[0]);
+    }
+    compare(other: SingleCard | null) {
+        return CardCombination.basicCompare(this, other);
     }
 }
 
@@ -116,16 +125,7 @@ class CardCouple extends CardCombination {
         return CardCouple.compare(this, other)
     }
     static compare(a: CardCouple | null, b: CardCouple | null) {
-        if (a === b) {
-            return 0;
-        }
-        if (a === null) {
-            return 1;
-        }
-        if (b === null) {
-            return -1;
-        }
-        return a.value - b.value;
+        return CardCombination.basicCompare(a, b);
     }
 }
 
@@ -155,24 +155,35 @@ class Triplet extends CardCombination {
         return new Triplet(targetName);
     }
     compare(other: Triplet | null) {
-        return Triplet.compare(this, other)
+        return CardCombination.basicCompare(this, other);
     }
-    static compare(a: Triplet | null, b: Triplet | null) {
-        if (a === b) {
-            return 0;
-        }
-        if (a === null) {
-            return 1;
-        }
-        if (b === null) {
-            return -1;
-        }
-        return a.value - b.value;
+}
+
+class Steps extends CardCombination {
+    length: number;
+
+    constructor(topCard: string, length: number) {
+        super(cardCombinations.STEPS);
+        this.value = (letterValues[topCard] !== undefined) ? letterValues[topCard] : parseInt(topCard);
+        this.length = length;
+    }
+    static getStrongestRequested(cards: Array<Card>, requested: string, length: number, hasPhoenix: boolean) {
+
+    }
+    static create(cards: Array<Card>) {
+        return null;
+    }
+    compare(other: Steps | null) {
+        return Steps.compare(this, other);
+    }
+    static compare(a: Steps | null, b: Steps | null) {
+        return 1;
     }
 }
 
 class Kenta extends CardCombination {
     length: number;
+
     constructor(topCard: string, length: number) {
         super(cardCombinations.KENTA);
         this.value = (letterValues[topCard] !== undefined) ? letterValues[topCard] : parseInt(topCard);
@@ -183,7 +194,6 @@ class Kenta extends CardCombination {
     }
     static create(cards: Array<Card>) {
         if (cards.length > 4) {
-            // Kenta bomb
             let previousCardValue = cards[0].value;
             const color = cards[0].color;
             for (let i = 1; i < cards.length; i++) {
@@ -215,13 +225,37 @@ class FullHouse extends CardCombination {
         }
     }
     static create(cards: Array<Card>) {
-        return new FullHouse('', 0, '', 0);
+        if (cards.length === 5) {
+            let cardOccurences: CardsMap = {};
+            let hasPhoenix = false;
+            for (const card of cards) {
+                if (card.name === specialCards.PHOENIX) {
+                    hasPhoenix = true;
+                    if (cardOccurences[card.tempName] === undefined) {
+                        cardOccurences[card.tempName] = 0;
+                    }
+                    cardOccurences[card.tempName]++;
+                }
+                else if (cardOccurences[card.name] === undefined) {
+                    cardOccurences[card.name] = 1;
+                }
+                else {
+                    cardOccurences[card.name]++;
+                }
+            }
+            const distinctCards = Object.entries(cardOccurences);
+            if ( distinctCards.length === 2 || (distinctCards.length === 3 && hasPhoenix) ) {
+                let temp = ['', '', ''];
+                for (const [cardName, times] of distinctCards) {
+                    temp[times - 1] = cardName;
+                }
+                return new FullHouse(temp[2], 3, temp[1], 2);
+            }
+        }
+        return null;
     }
     compare(other: FullHouse | null) {
-        return FullHouse.compare(this, other);
-    }
-    static compare(a: FullHouse | null, b: FullHouse | null) {
-        return 1;
+        return CardCombination.basicCompare(this, other);
     }
     static getStrongestRequested(cards: Array<Card>, requestedCard: string, hasPhoenix: boolean) {
         let phoenixUsed = false;
@@ -268,6 +302,8 @@ class FullHouse extends CardCombination {
         return null;
     }
 }
+
+// --------------------------------------------------------------------------------------------------------------------
 
 function getStrongestSteps(cards: Array<Card>, requestedCard: string, length: number, hasPhoenix: boolean) {
 
