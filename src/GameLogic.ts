@@ -6,6 +6,10 @@ interface Card {
     tempValue: number
 }
 
+function compareCards(a: Card, b: Card) {
+    return b.value - a.value;
+}
+
 interface LetterValues {
     [letter: string]: number
 }
@@ -49,11 +53,13 @@ const cardCombinations = {
 abstract class CardCombination {
     value: number;
     combination: string;
+    length: number;
     abstract compare(other: CardCombination | null): number;
 
-    constructor(combination: string) {
+    constructor(combination: string, len: number, val: number) {
         this.combination = combination;
-        this.value = -1;
+        this.length = len;
+        this.value = val;
     }
     static basicCompare(a: CardCombination | null, b: CardCombination | null) {
         if (a === b) {
@@ -67,18 +73,31 @@ abstract class CardCombination {
         }
         return a.value - b.value;
     }
+    static altCompare(a: CardCombination | null, b: CardCombination | null) {
+        if (a === b) {
+            return 0;
+        }
+        if (a === null) {
+            return 1;
+        }
+        if (b === null) {
+            return -1;
+        }
+        if (a.length !== b.length) {
+            return 0;
+        }
+        return a.value - b.value;
+    }
 }
 
 class SingleCard extends CardCombination {
     constructor(card: Card) {
-        super(cardCombinations.SINGLE);
         if (card.name !== specialCards.PHOENIX) {
-            this.value = card.value;
+            super(cardCombinations.SINGLE, 1, card.value);
         }
         else {
-            this.value = card.tempValue;
-        }
-        
+            super(cardCombinations.SINGLE, 1, card.tempValue);
+        }          
     }
     static create(cards: Array<Card>) {
         if (cards.length !== 1) {
@@ -92,15 +111,17 @@ class SingleCard extends CardCombination {
 }
 
 class CardCouple extends CardCombination {
-    constructor(cardName: string) {
-        super(cardCombinations.COUPLE)
-        this.value = (letterValues[cardName] !== undefined) ? letterValues[cardName] : parseInt(cardName);
+    constructor(cardValue: number) {
+        super(cardCombinations.COUPLE, 2, cardValue);
     }
     static getStrongestRequested(cards: Array<Card>, requestedCard: string, hasPhoenix: boolean) {
         let targetCards = cards.filter(card => card.name === requestedCard);
         if (targetCards.length >= 2 || 
             (targetCards.length === 1 && hasPhoenix)) {
-                return new CardCouple(requestedCard);
+                const value = (letterValues[requestedCard] !== undefined)
+                              ? letterValues[requestedCard]
+                              : parseInt(requestedCard);
+                return new CardCouple(value);
         }
         return null;
     }
@@ -114,12 +135,12 @@ class CardCouple extends CardCombination {
             if (phoenixIndex !== -1) {
                 const otherIndex = (phoenixIndex + 1) % 2;
                 if ( !Object.values(specialCards).includes(cards[otherIndex].name) ) {
-                    return new CardCouple(cards[otherIndex].name);
+                    return new CardCouple(cards[otherIndex].value);
                 }                
             }
             return null;
         }
-        return new CardCouple(cards[0].name);
+        return new CardCouple(cards[0].value);
     }
     compare(other: CardCouple | null) {
         return CardCouple.compare(this, other)
@@ -130,15 +151,17 @@ class CardCouple extends CardCombination {
 }
 
 class Triplet extends CardCombination {
-    constructor(cardName: string) {
-        super(cardCombinations.TRIPLET)
-        this.value = (letterValues[cardName] !== undefined) ? letterValues[cardName] : parseInt(cardName);
+    constructor(cardValue: number) {
+        super(cardCombinations.TRIPLET, 3, cardValue);
     }
     static getStrongestRequested(cards: Array<Card>, requestedCard: string, hasPhoenix: boolean) {
         let targetCards = cards.filter(card => card.name === requestedCard);
         if (targetCards.length >= 3 || 
             (targetCards.length === 2 && hasPhoenix)) {
-                return new Triplet(requestedCard);
+                const value = (letterValues[requestedCard] !== undefined)
+                              ? letterValues[requestedCard]
+                              : parseInt(requestedCard);
+                return new Triplet(value);
         }
         return null;
     }
@@ -147,12 +170,11 @@ class Triplet extends CardCombination {
             return null;
         }
         let normalCards = cards.filter(card => card.name !== specialCards.PHOENIX);
-        let targetName = normalCards[0].name;
-        if (normalCards.some(card => card.name !== targetName))
+        if (normalCards.some(card => card.name !== normalCards[0].name))
         {
             return null;
         }
-        return new Triplet(targetName);
+        return new Triplet(normalCards[0].value);
     }
     compare(other: Triplet | null) {
         return CardCombination.basicCompare(this, other);
@@ -160,12 +182,9 @@ class Triplet extends CardCombination {
 }
 
 class Steps extends CardCombination {
-    length: number;
 
     constructor(topValue: number, length: number) {
-        super(cardCombinations.STEPS);
-        this.value = topValue;
-        this.length = length;
+        super(cardCombinations.STEPS, length, topValue);
     }
     static getStrongestRequested(cards: Array<Card>, requested: string, length: number, hasPhoenix: boolean) {
 
@@ -211,56 +230,55 @@ class Steps extends CardCombination {
         return null;
     }
     compare(other: Steps | null) {
-        return Steps.compare(this, other);
-    }
-    static compare(a: Steps | null, b: Steps | null) {
-        return 1;
+        return CardCombination.altCompare(this, other);
     }
 }
 
 class Kenta extends CardCombination {
-    length: number;
-
-    constructor(topCard: string, length: number) {
-        super(cardCombinations.KENTA);
-        this.value = (letterValues[topCard] !== undefined) ? letterValues[topCard] : parseInt(topCard);
-        this.length = length;
+    constructor(topValue: number, length: number) {
+        super(cardCombinations.KENTA, length, topValue);
     }
     static getStrongestRequested(cards: Array<Card>, requested: string, length: number, hasPhoenix: boolean) {
 
     }
     static create(cards: Array<Card>) {
         if (cards.length > 4) {
-            let previousCardValue = cards[0].value;
-            const color = cards[0].color;
-            for (let i = 1; i < cards.length; i++) {
-                // Phoenix?
-                if (cards[i].value !== previousCardValue - 1) {
-                    return null;
-                }
-                previousCardValue--;
+            let phoenix = cards.find(card => card.name === specialCards.PHOENIX);
+            let topValue = cards[0].value;
+            if (phoenix !== undefined) {
+                topValue = Math.max(phoenix.tempValue, topValue);
             }
-            return new Kenta(cards[0].name, cards.length);
+            let expectedValue = topValue + 1;
+            for (const card of cards) {
+                expectedValue--;
+                if (card.value !== expectedValue && card !== phoenix) {
+                    if (phoenix === undefined || phoenix.tempValue !== expectedValue
+                        || card.value !== phoenix.tempValue - 1) {
+
+                        return null;
+                    }
+                    expectedValue = card.value;
+                }
+            }
+            return new Kenta(topValue, cards.length);
         }
         return null;
     }
     compare(other: Kenta | null) {
-        return Kenta.compare(this, other);
-    }
-    static compare(a: Kenta | null, b: Kenta | null) {
-        return 1;
+        return CardCombination.altCompare(this, other);
     }
 }
 
 class FullHouse extends CardCombination {
     constructor(cardA: string, timesA: number, cardB: string, timesB: number) {
-        super(cardCombinations.FULLHOUSE);
-        if (timesA > timesB) {
-            this.value = (letterValues[cardA] !== undefined) ? letterValues[cardA] : parseInt(cardA);
+        let value;
+        if (timesA > timesB){
+            value = (letterValues[cardA] !== undefined) ? letterValues[cardA] : parseInt(cardA);
         }
         else {
-            this.value = (letterValues[cardB] !== undefined) ? letterValues[cardB] : parseInt(cardB);
+            value = (letterValues[cardB] !== undefined) ? letterValues[cardB] : parseInt(cardB);
         }
+        super(cardCombinations.FULLHOUSE, 5, value);
     }
     static create(cards: Array<Card>) {
         if (cards.length === 5) {
