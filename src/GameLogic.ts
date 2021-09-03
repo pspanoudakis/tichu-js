@@ -235,8 +235,8 @@ class Steps extends CardCombination {
                     if (i < lowIndex) {
                         return new Steps(normalCards[normalCardNames[highIndex]].value, length);
                     }
-                    highIndex--;
-                    lowIndex--;
+                    highIndex = i - 1;
+                    lowIndex = highIndex - length + 1;
                 }
             }
         }
@@ -331,8 +331,8 @@ class Kenta extends CardCombination {
                     if (i < lowIndex) {
                         return new Kenta(normalCards[normalCardNames[highIndex]].value, length);
                     }
-                    highIndex--;
-                    lowIndex--;
+                    highIndex = i - 1;
+                    lowIndex = highIndex - length + 1;
                 }
             }
         }
