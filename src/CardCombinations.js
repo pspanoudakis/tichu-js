@@ -48,7 +48,7 @@ export class CardCombination {
     }
 }
 
-class SingleCard extends CardCombination {
+export class SingleCard extends CardCombination {
     constructor(card) {
         if (card.name !== specialCards.PHOENIX) {
             super(cardCombinations.SINGLE, 1, card.value);
@@ -72,7 +72,7 @@ class SingleCard extends CardCombination {
     }
 }
 
-class CardCouple extends CardCombination {
+export class CardCouple extends CardCombination {
     constructor(cardValue) {
         super(cardCombinations.COUPLE, 2, cardValue);
     }
@@ -113,7 +113,7 @@ class CardCouple extends CardCombination {
     }
 }
 
-class Triplet extends CardCombination {
+export class Triplet extends CardCombination {
     constructor(cardValue) {
         super(cardCombinations.TRIPLET, 3, cardValue);
     }
@@ -145,7 +145,7 @@ class Triplet extends CardCombination {
     }
 }
 
-class Steps extends CardCombination {
+export class Steps extends CardCombination {
 
     constructor(topValue, length) {
         super(cardCombinations.STEPS, length, topValue);
@@ -241,7 +241,7 @@ class Steps extends CardCombination {
     }
 }
 
-class Kenta extends CardCombination {
+export class Kenta extends CardCombination {
     constructor(topValue, length) {
         super(cardCombinations.KENTA, length, topValue);
     }
@@ -314,7 +314,7 @@ class Kenta extends CardCombination {
     }
 }
 
-class FullHouse extends CardCombination {
+export class FullHouse extends CardCombination {
     constructor(cardA, timesA, cardB, timesB) {
         let value;
         if (timesA > timesB){

@@ -1,6 +1,14 @@
 import { BombInfo } from "./BombInfo";
 import { specialCards } from "./CardInfo";
 import { playerKeys } from "./components/Gameboard";
+import { cardCombinations,
+         CardCombination,
+         SingleCard,
+         CardCouple,
+         Triplet,
+         FullHouse,
+         Steps,
+         Kenta } from "./CardCombinations";
 
 export class GameLogic {
 
