@@ -8,7 +8,7 @@ export const cardColors = {
     GREEN: 'green'
 }
 
-export var normalCards = new Map();
+let _normalCards_ = new Map();
 (function initializeNormalCards() {
     for (let i = 2; i <= 10; i++) {
         let currentInfo = {};
@@ -16,7 +16,7 @@ export var normalCards = new Map();
             currentInfo[color] = cardImages[color + '_' + i.toString()];
             currentInfo['value'] = i;
         }
-        normalCards.set(i.toString(), currentInfo);
+        _normalCards_.set(i.toString(), currentInfo);
     }
     const letterValues = [['J', 11], ['Q', 12], ['K', 13], ['A', 14]];
     for (const [letter, value] of letterValues) {
@@ -25,11 +25,12 @@ export var normalCards = new Map();
             currentInfo[color] = cardImages[color + '_' + letter];
             currentInfo['value'] = value;
         }
-        normalCards.set(letter, currentInfo);
+        _normalCards_.set(letter, currentInfo);
     }
 })();
 
-export var normalCardKeys = Array.from(normalCards.keys());
+export const normalCards = _normalCards_;
+export const normalCardKeys = Array.from(normalCards.keys());
 
 export const specialCards = {
     DOGS: 'Dogs',
