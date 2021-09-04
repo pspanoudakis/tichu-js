@@ -16,7 +16,7 @@ export var normalCards = new Map();
             currentInfo[color] = cardImages[color + '_' + i.toString()];
             currentInfo['value'] = i;
         }
-        normalCards.set(i, currentInfo);
+        normalCards.set(i.toString(), currentInfo);
     }
     const letterValues = [['J', 11], ['Q', 12], ['K', 13], ['A', 14]];
     for (const [letter, value] of letterValues) {

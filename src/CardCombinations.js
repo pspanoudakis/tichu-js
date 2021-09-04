@@ -4,6 +4,15 @@ function isBetween(target, a, b) {
     return target >= a && target <= b;
 }
 
+const cardCombinations = {
+    KENTA: 'Kenta',
+    FULLHOUSE: 'FullHouse',
+    STEPS: 'Steps',
+    TRIPLET: 'Triplet',
+    COUPLE: 'Couple',
+    SINGLE: 'Single'
+}
+
 export class CardCombination {
     constructor(combination, len, val) {
         this.combination = combination;
@@ -250,6 +259,7 @@ class Kenta extends CardCombination {
                 }
             }
             const requestedOccurences = cardOccurences.get(requested);
+            //if ( requestedOccurences !== undefined || !phoenixUsed) )
             if ( requestedOccurences !== undefined &&
                 (requestedOccurences >= 1 || !phoenixUsed) ) {
                 let requestedIndex = normalCardKeys.indexOf(requested);
@@ -260,13 +270,10 @@ class Kenta extends CardCombination {
                     let i = highIndex;
                     for (; i >= lowIndex; i--) {
                         const occurences = cardOccurences.get(normalCardKeys[i]);
-                        if (occurences !== undefined) {
-                            if (occurences < 1) {
-                                if (phoenixUsedTemp) { break; }
-                                phoenixUsedTemp = true;
-                            }
+                        if (occurences === undefined) {
+                            if (phoenixUsedTemp) { break; }
+                            phoenixUsedTemp = true;
                         }
-                        else { break; }
                     }
                     if (i < lowIndex) {
                         return new Kenta(normalCards.get(normalCardKeys[highIndex]).value, length);
