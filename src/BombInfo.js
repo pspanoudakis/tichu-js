@@ -1,4 +1,4 @@
-import { cardColors, normalCards, specialCards } from "./CardInfo";
+import { cardColors, normalCardKeys, specialCards } from "./CardInfo";
 
 const letterValues = {
     J: 11,
@@ -62,7 +62,7 @@ export class BombInfo {
         let strongestBomb = null;
 
         let groupedNormalCards = {};
-        for (const key of Object.keys(normalCards)) {
+        for (const key of normalCardKeys) {
             groupedNormalCards[key] = {};
             for (const color of Object.values(cardColors)) {
                 groupedNormalCards[key][color] = false;

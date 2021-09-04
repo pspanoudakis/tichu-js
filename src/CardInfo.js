@@ -8,24 +8,28 @@ export const cardColors = {
     GREEN: 'green'
 }
 
-export var normalCards = {};
+export var normalCards = new Map();
 (function initializeNormalCards() {
     for (let i = 2; i <= 10; i++) {
-        normalCards[i] = {}
+        let currentInfo = {};
         for (const [,color] of Object.entries(cardColors)) {
-            normalCards[i][color] = cardImages[color + '_' + i.toString()];
-            normalCards[i].value = i;
+            currentInfo[color] = cardImages[color + '_' + i.toString()];
+            currentInfo['value'] = i;
         }
+        normalCards.set(i, currentInfo);
     }
     const letterValues = [['J', 11], ['Q', 12], ['K', 13], ['A', 14]];
     for (const [letter, value] of letterValues) {
-        normalCards[letter] = {};
+        let currentInfo = {};
         for (const [,color] of Object.entries(cardColors)) {
-            normalCards[letter][color] = cardImages[color + '_' + letter];
-            normalCards[letter].value = value;
+            currentInfo[color] = cardImages[color + '_' + letter];
+            currentInfo['value'] = value;
         }
+        normalCards.set(letter, currentInfo);
     }
 })();
+
+export var normalCardKeys = Array.from(normalCards.keys());
 
 export const specialCards = {
     DOGS: 'Dogs',
@@ -61,9 +65,9 @@ export class CardInfo {
                 break;
             default:
                 // normal card, color is not null
-                this.cardImg = normalCards[name][color];
+                this.cardImg = normalCards.get(name)[color];
                 this.alt = name + "_" + color;
-                this.value = normalCards[name].value;
+                this.value = normalCards.get(name).value;
                 break;
         }
         this.name = name;
