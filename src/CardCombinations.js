@@ -396,40 +396,47 @@ class FullHouse extends CardCombination {
                 requestedOccurences = Math.min(requestedOccurences, 3);
                 nonRequestedRequired = 5 - requestedOccurences;
             }
-            const requestedValue = normalCards.get(requestedCard).value;
-            if (requestedOccurences === 3) {
-                let eligible = undefined;
-                for (const [cardName, occurences] of Array.from(cardOccurences)) {
-                    if (cardName !== requestedCard) {
-                        const value = normalCards.get(cardName).value;
-                        if (occurences >= 3 || (occurences === 2 && !phoenixUsed)) {
-                            if (value > requestedValue) {
-                                return new FullHouse(cardName, 3, requestedCard, 2);
-                            }
-                        }
-                        else if ( occurences === 2 || !phoenixUsed ) {
-                            eligible = cardName;
-                        }
+            return strongestRequestedFullHouse(
+                cardOccurences, requestedCard, requestedOccurences, phoenixUsed
+            );
+        }
+        return null;
+    }
+}
+
+function strongestRequestedFullHouse(cardOccurences, requestedCard, requestedOccurences, phoenixUsed) {
+    const requestedValue = normalCards.get(requestedCard).value;
+    if (requestedOccurences === 3) {
+        let eligible = undefined;
+        for (const [cardName, occurences] of Array.from(cardOccurences)) {
+            if (cardName !== requestedCard) {
+                const value = normalCards.get(cardName).value;
+                if (occurences >= 3 || (occurences === 2 && !phoenixUsed)) {
+                    if (value > requestedValue) {
+                        return new FullHouse(cardName, 3, requestedCard, 2);
                     }
                 }
-                if (eligible !== undefined) {
-                    return new FullHouse(eligible, 2, requestedCard, 3);
+                else if ( occurences === 2 || !phoenixUsed ) {
+                    eligible = cardName;
                 }
             }
-            else {
-                for (const [cardName, occurences] of Array.from(cardOccurences)) {
-                    if (cardName !== requestedCard) {
-                        if ((occurences >= 3) || (occurences === 2 && !phoenixUsed)) {
-                            const value = normalCards.get(cardName).value;
-                            if (value < requestedValue && !phoenixUsed) {
-                                return new FullHouse(cardName, 2, requestedCard, 3);
-                            }
-                            return new FullHouse(cardName, 3, requestedCard, 2);
-                        }
-                    }
-                }
-            }
-            return null;
+        }
+        if (eligible !== undefined) {
+            return new FullHouse(eligible, 2, requestedCard, 3);
         }
     }
+    else {
+        for (const [cardName, occurences] of Array.from(cardOccurences)) {
+            if (cardName !== requestedCard) {
+                if ((occurences >= 3) || (occurences === 2 && !phoenixUsed)) {
+                    const value = normalCards.get(cardName).value;
+                    if (value < requestedValue && !phoenixUsed) {
+                        return new FullHouse(cardName, 2, requestedCard, 3);
+                    }
+                    return new FullHouse(cardName, 3, requestedCard, 2);
+                }
+            }
+        }
+    }
+    return null;
 }
