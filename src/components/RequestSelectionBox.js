@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { normalCards } from '../CardInfo';
+import { normalCardKeys } from '../CardInfo';
 
 export class RequestSelectionBox extends Component {
 
@@ -19,7 +19,7 @@ export class RequestSelectionBox extends Component {
         }
         return (
         <div style={selectionBoxStyle}>
-            {Object.keys(normalCards).reverse().map(name => 
+            {normalCardKeys.reverse().map(name => 
                 <button key={name} id={name} onClick={this.selectionMade}
                 style={selectionButtonStyle}>
                 {name}

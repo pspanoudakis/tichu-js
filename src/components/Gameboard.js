@@ -3,7 +3,7 @@ import { PlayerHand } from './PlayerHand';
 import { Table } from './Table';
 import { Deck } from '../Deck';
 import { specialCards } from '../CardInfo';
-import { BombInfo } from '../BombInfo';
+import { Bomb } from '../CardCombinations';
 import { GameLogic } from '../GameLogic';
 
 export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
@@ -25,6 +25,7 @@ export class Gameboard extends Component {
         table: {
             previousCards: [],
             currentCards: [],
+            currentCombination: undefined,
             currentCardsOwnerIndex: -1,
             requestedCardName: ''
         },
@@ -114,10 +115,10 @@ export class Gameboard extends Component {
                     }
                 }
             }
-            let bomb = BombInfo.getStrongestBomb(this.state.playerHands[playerKeys[i]]);
+            let bomb = Bomb.getStrongestBomb(this.state.playerHands[playerKeys[i]]);
             if (bomb !== null) {
-                let tableBomb = BombInfo.createBomb(this.state.table.currentCards);
-                if (BombInfo.compareBombs(tableBomb, bomb) < 0) {
+                let tableBomb = Bomb.createBomb(this.state.table.currentCards);
+                if (Bomb.compareBombs(tableBomb, bomb) < 0) {
                     canDropBomb = true;
                 }
             }

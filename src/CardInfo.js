@@ -8,24 +8,29 @@ export const cardColors = {
     GREEN: 'green'
 }
 
-export var normalCards = {};
+let _normalCards_ = new Map();
 (function initializeNormalCards() {
     for (let i = 2; i <= 10; i++) {
-        normalCards[i] = {}
+        let currentInfo = {};
         for (const [,color] of Object.entries(cardColors)) {
-            normalCards[i][color] = cardImages[color + '_' + i.toString()];
-            normalCards[i].value = i;
+            currentInfo[color] = cardImages[color + '_' + i.toString()];
+            currentInfo['value'] = i;
         }
+        _normalCards_.set(i.toString(), currentInfo);
     }
     const letterValues = [['J', 11], ['Q', 12], ['K', 13], ['A', 14]];
     for (const [letter, value] of letterValues) {
-        normalCards[letter] = {};
+        let currentInfo = {};
         for (const [,color] of Object.entries(cardColors)) {
-            normalCards[letter][color] = cardImages[color + '_' + letter];
-            normalCards[letter].value = value;
+            currentInfo[color] = cardImages[color + '_' + letter];
+            currentInfo['value'] = value;
         }
+        _normalCards_.set(letter, currentInfo);
     }
 })();
+
+export const normalCards = _normalCards_;
+export const normalCardKeys = Array.from(normalCards.keys());
 
 export const specialCards = {
     DOGS: 'Dogs',
@@ -46,6 +51,8 @@ export class CardInfo {
                 this.cardImg = cardImages.phoenix;
                 this.alt = specialCards.PHOENIX;
                 this.value = 0.5;
+                this.tempName = '';
+                this.tempValue = 0.5;
                 break;
             case specialCards.MAJONG:
                 this.cardImg = cardImages.majong;
@@ -59,9 +66,9 @@ export class CardInfo {
                 break;
             default:
                 // normal card, color is not null
-                this.cardImg = normalCards[name][color];
+                this.cardImg = normalCards.get(name)[color];
                 this.alt = name + "_" + color;
-                this.value = normalCards[name].value;
+                this.value = normalCards.get(name).value;
                 break;
         }
         this.name = name;
