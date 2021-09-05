@@ -24,6 +24,11 @@ export class GameLogic {
         return false;
     }
 
+    static majongIsPlayable(gameboard) {
+        return gameboard.table.currentCards.length === 0 || 
+        gameboard.table.currentCards[0].name == specialCards.PHOENIX;
+    }
+
     static isPlayable(tableCombination, selectedCombination) {
         if (tableCombination !== undefined) {
             if (selectedCombination.combination === cardCombinations.BOMB) {
@@ -98,10 +103,16 @@ export class GameLogic {
         }
     }
 
-    static createCombination(cards) {
+    static createCombination(cards, tableCards) {
         let combination = null;
         switch (cards.length) {
             case 1:
+                debugger;
+                if (cards[0].name === specialCards.PHOENIX) {
+                    if (tableCards[0].name !== specialCards.DRAGON) {
+                        cards[0].tempValue = tableCards[0].value + 0.5;                        
+                    }
+                }
                 combination = SingleCard.create(cards);
                 break;
             case 2:
@@ -235,7 +246,7 @@ export class GameLogic {
                 }
             }
         }
-        let combination = GameLogic.createCombination(selectedCards);
+        let combination = GameLogic.createCombination(selectedCards, gameboard.state.table.currentCards);
         if (combination !== null) {
             if (gameboard.state.pendingMajongRequest !== '') {
                 // If there is a pending majong request, the player must play the Majong
