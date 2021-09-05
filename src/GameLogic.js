@@ -1,7 +1,6 @@
 import { specialCards } from "./CardInfo";
 import { playerKeys } from "./components/Gameboard";
 import { cardCombinations,
-         CardCombination,
          SingleCard,
          CardCouple,
          Triplet,
@@ -25,8 +24,8 @@ export class GameLogic {
     }
 
     static majongIsPlayable(gameboard) {
-        return gameboard.table.currentCards.length === 0 || 
-        gameboard.table.currentCards[0].name == specialCards.PHOENIX;
+        return gameboard.state.table.currentCards.length === 0 || 
+        gameboard.state.table.currentCards[0].name === specialCards.PHOENIX;
     }
 
     static isPlayable(tableCombination, selectedCombination) {
@@ -107,7 +106,6 @@ export class GameLogic {
         let combination = null;
         switch (cards.length) {
             case 1:
-                debugger;
                 if (cards[0].name === specialCards.PHOENIX) {
                     if (tableCards[0].name !== specialCards.DRAGON) {
                         cards[0].tempValue = tableCards[0].value + 0.5;                        
@@ -139,7 +137,6 @@ export class GameLogic {
     }
 
     static isMajongCompliant(requestedCard, tableCombination, allCards, combination, selectedCards) {
-        debugger;
         if (combination.combination === cardCombinations.BOMB) { return true; }
         if (tableCombination === undefined) {
             // See if there is *any* valid combination with the requested card

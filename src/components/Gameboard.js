@@ -94,6 +94,7 @@ export class Gameboard extends Component {
             }            
         }
         let components = [];
+        let majongIsPlayable = GameLogic.majongIsPlayable(this);
         for (let i = 0; i < playerKeys.length; i++) {
             let hasTurn = this.state.currentPlayerIndex === i;
             let canPass = false;
@@ -105,12 +106,10 @@ export class Gameboard extends Component {
                             (!this.state.pendingBombToBePlayed) &&
                             (this.state.pendingMajongRequest === '');
                 if (!this.state.pendingDragonToBeGiven) {
-                    // TODO: But what if Majong is not playable right now?
                     let majong = this.state.playerHands[playerKeys[i]].find(
                         card => card.name === specialCards.MAJONG);
-                    let pendingRequest = this.state.pendingMajongRequest !== '';
-                    let isPlayable = GameLogic.majongIsPlayable(this);
-                    displayMajongRequestBox = majong !== undefined && !pendingRequest && isPlayable;
+                    let pendingRequest = this.state.pendingMajongRequest !== '';                    
+                    displayMajongRequestBox = majong !== undefined && !pendingRequest && majongIsPlayable;
                     if (pendingRequest) {
                         pendingRequestMessage = 'Requested: ' + this.state.pendingMajongRequest;
                     }
