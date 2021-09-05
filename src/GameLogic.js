@@ -41,6 +41,7 @@ export class GameLogic {
     }
 
     static canPassTurn(tableCombination, requestedCard, playerCards) {
+        if (requestedCard === "") { return true; }
         if (tableCombination !== undefined) {
             switch(tableCombination.combination) {
                 case cardCombinations.BOMB:
@@ -264,7 +265,7 @@ export class GameLogic {
                 }
             }
             else if (selectedCards.some(card => card.name === specialCards.DOGS)) {
-                normalCheck = false;
+                //normalCheck = false;
                 nextPlayerIndex = (gameboard.state.currentPlayerIndex + 2) % 4;
                 selectedCards = [];
                 combination = undefined;
@@ -299,7 +300,10 @@ export class GameLogic {
     }
 
     static passTurn(gameboard) {
-        if (GameLogic.canPassTurn()) {
+        const currentPlayerKey = playerKeys[gameboard.state.currentPlayerIndex];
+        const currentPlayerHand = gameboard.state.playerHands[currentPlayerKey];
+        if (GameLogic.canPassTurn(gameboard.state.table.combination,
+            gameboard.state.table.requestedCardName, currentPlayerHand)) {
             let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
             let newState = {};
             let endedRound = false;
@@ -327,7 +331,6 @@ export class GameLogic {
     static endRound(gameboard, newState, cardsOwnerIndex) {
         // Preparing for new round
         if (gameboard.state.table.currentCards[0].name === specialCards.DRAGON) {
-            // TODO: Call GameLogic method directly
             GameLogic.giveDragon(gameboard, cardsOwnerIndex);
             return;
         }
