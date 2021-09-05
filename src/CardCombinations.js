@@ -32,10 +32,10 @@ export class CardCombination {
             return 0;
         }
         if (a === null) {
-            return 1;
+            return -1;
         }
         if (b === null) {
-            return -1;
+            return 1;
         }
         return a.value - b.value;
     }
@@ -44,10 +44,10 @@ export class CardCombination {
             return 0;
         }
         if (a === null) {
-            return 1;
+            return -1;
         }
         if (b === null) {
-            return -1;
+            return 1;
         }
         if (a.length !== b.length) {
             return 0;
@@ -205,7 +205,7 @@ export class Steps extends CardCombination {
         return null;
     }
     static create(cards) {        
-        if (cards.length >= 4 && cards.length % 2) {
+        if (cards.length >= 4 && cards.length % 2 === 0) {
             let cardOccurences = new Map();
             let phoenixUsed = true;
             const specialCardNames = Object.values(specialCards)

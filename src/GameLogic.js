@@ -33,6 +33,8 @@ export class GameLogic {
                 return true;
             }
             if (selectedCombination.combination === tableCombination.combination) {
+                //if (tableCombination.combination === cardCombinations.KENTA || 
+                //    tableCombination.combination)
                 return tableCombination.compare(selectedCombination) < 0;
             }
             return false;
@@ -47,38 +49,38 @@ export class GameLogic {
                 case cardCombinations.BOMB:
                     return true;
                 case cardCombinations.SINGLE:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         SingleCard.getStrongestRequested(playerCards, requestedCard) ) < 0) {
                             return false;
                     }
                     break;
                 case cardCombinations.COUPLE:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         CardCouple.getStrongestRequested(playerCards, requestedCard) ) < 0) {
                             return false;
                     }
                     break;
                 case cardCombinations.TRIPLET:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         Triplet.getStrongestRequested(playerCards, requestedCard) ) < 0) {
                             return false;
                     }
                     break;
                 case cardCombinations.FULLHOUSE:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         FullHouse.getStrongestRequested(playerCards, requestedCard) ) < 0) {
                             return false;
                     }
                     break;
                 case cardCombinations.STEPS:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         Steps.getStrongestRequested(playerCards, requestedCard,
                         tableCombination.length) ) < 0) {
                             return false;
                     }
                     break;
                 case cardCombinations.KENTA:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         Kenta.getStrongestRequested(playerCards, requestedCard,
                         tableCombination.length) ) < 0) {
                             return false;
@@ -89,6 +91,7 @@ export class GameLogic {
                 
                 // TODO: If the player has a bomb with the requested cards, he can't pass
             }
+            return true;
         }
         else {
             return false;
@@ -125,6 +128,8 @@ export class GameLogic {
     }
 
     static isMajongCompliant(requestedCard, tableCombination, allCards, combination, selectedCards) {
+        debugger;
+        if (combination.combination === cardCombinations.BOMB) { return true; }
         if (tableCombination === undefined) {
             // See if there is *any* valid combination with the requested card
             if (SingleCard.getStrongestRequested(allCards, requestedCard) !== null) {
@@ -140,59 +145,53 @@ export class GameLogic {
                 case cardCombinations.BOMB:
                     return true;
                 case cardCombinations.SINGLE:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         SingleCard.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( (combination.combination !== cardCombinations.SINGLE) ||
-                                tableCombination.compare(combination) >= 0) {
-                                    return false;
-                                }
+                            if ( !selectedCards.some(card => card.name === requestedCard)) {
+                                return false;
+                            }
                     }
                     break;
                 case cardCombinations.COUPLE:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         CardCouple.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( (combination.combination !== cardCombinations.COUPLE) ||
-                                tableCombination.compare(combination) >= 0) {
-                                    return false;
-                                }
+                            if ( !selectedCards.some(card => card.name === requestedCard)) {
+                                return false;
+                            }
                     }
                     break;
                 case cardCombinations.TRIPLET:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         Triplet.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( (combination.combination !== cardCombinations.TRIPLET) ||
-                                tableCombination.compare(combination) >= 0) {
-                                    return false;
-                                }
+                            if ( !selectedCards.some(card => card.name === requestedCard)) {
+                                return false;
+                            }
                     }
                     break;
                 case cardCombinations.FULLHOUSE:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         FullHouse.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( (combination.combination !== cardCombinations.FULLHOUSE) ||
-                                tableCombination.compare(combination) >= 0) {
-                                    return false;
-                                }
+                            if ( !selectedCards.some(card => card.name === requestedCard)) {
+                                return false;
+                            }
                     }
                     break;
                 case cardCombinations.STEPS:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         Steps.getStrongestRequested(allCards, requestedCard,
                         tableCombination.length) ) < 0) {
-                            if ( (combination.combination !== cardCombinations.STEPS) ||
-                                tableCombination.compare(combination) >= 0) {
-                                    return false;
-                                }
+                            if ( !selectedCards.some(card => card.name === requestedCard)) {
+                                return false;
+                            }
                     }
                     break;
                 case cardCombinations.KENTA:
-                    if (tableCombination.compare( tableCombination,
+                    if (tableCombination.compare(
                         Kenta.getStrongestRequested(allCards, requestedCard,
                         tableCombination.length) ) < 0) {
-                            if ( (combination.combination !== cardCombinations.KENTA) ||
-                                tableCombination.compare(combination) >= 0) {
-                                    return false;
-                                }
+                            if ( !selectedCards.some(card => card.name === requestedCard)) {
+                                return false;
+                            }
                     }
                     break;
                 default:
@@ -201,6 +200,14 @@ export class GameLogic {
                 // TODO: If the player has a bomb with the requested cards, he can't pass
             }
             return true;
+        }
+    }
+
+    static satisfyRequestIfPossible(requestObject, selectedCards) {
+        if (requestObject.card !== "") {
+            if (selectedCards.some(card => card.name === requestObject.card)) {
+                requestObject.card = "";
+            }
         }
     }
 
@@ -265,7 +272,11 @@ export class GameLogic {
                 }
             }
             else if (selectedCards.some(card => card.name === specialCards.DOGS)) {
-                //normalCheck = false;
+                if (gameboard.state.table.combination !== undefined) {
+                    window.alert("Dogs cannot be played on top of other cards.");
+                    return;
+                }
+                normalCheck = false;
                 nextPlayerIndex = (gameboard.state.currentPlayerIndex + 2) % 4;
                 selectedCards = [];
                 combination = undefined;
@@ -276,6 +287,8 @@ export class GameLogic {
                     return;
                 }
             }
+            let requestObject = { card: requestedCard };
+            GameLogic.satisfyRequestIfPossible(requestObject, selectedCards);
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
             }
@@ -290,7 +303,7 @@ export class GameLogic {
                     currentCards: selectedCards,
                     combination: combination,
                     currentCardsOwnerIndex: gameboard.state.currentPlayerIndex,
-                    requestedCardName: requestedCard
+                    requestedCardName: requestObject.card
                 }
             });
         }
