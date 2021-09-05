@@ -262,7 +262,8 @@ export class GameLogic {
                 }
                 else {
                     const tableCombination = gameboard.state.table.combination;
-                    if ( tableCombination.combination === cardCombinations.BOMB) {
+                    if ( tableCombination !== undefined && 
+                         tableCombination.combination === cardCombinations.BOMB) {
                         if (Bomb.compareBombs(tableCombination, combination) >= 0) {
                             window.alert("The selected combination cannot be played");
                             return;
