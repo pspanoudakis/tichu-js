@@ -336,7 +336,6 @@ export class FullHouse extends CardCombination {
     static create(cards) {
         if (cards.length === 5) {
             let cardOccurences = {};
-            // TODO: We need to know what value to give to the phoenix...
             let hasPhoenix = false;
             for (const card of cards) {
                 if (card.name === specialCards.PHOENIX) {

@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { normalCardKeys } from '../CardInfo';
 
+const reversedCardKeys = Array.from(normalCardKeys).reverse();
+
 export class RequestSelectionBox extends Component {
 
     selectionMade = (event) => {
@@ -19,7 +21,7 @@ export class RequestSelectionBox extends Component {
         }
         return (
         <div style={selectionBoxStyle}>
-            {normalCardKeys.reverse().map(name => 
+            {reversedCardKeys.map(name => 
                 <button key={name} id={name} onClick={this.selectionMade}
                 style={selectionButtonStyle}>
                 {name}

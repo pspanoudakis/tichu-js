@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { CardInfo, specialCards } from '../CardInfo';
 import { Card } from './Card';
 import { RequestSelectionBox } from './RequestSelectionBox';
+import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
 
 export class PlayerHand extends Component {
     voidButton = (event) => {
@@ -34,10 +35,10 @@ export class PlayerHand extends Component {
         this.props.dropBomb(this.props.id);
     }
 
-    renderedCards = () => {
+    renderedMainBox = () => {
         const playerBox = {
             display: 'grid',
-            gridTemplateRows: '10% 80% 10%',
+            gridTemplateRows: '2.5% 80% 8.75% 8.75%',
             gridTemplateColumns: '100%',
             width: '100%',
             height: '90%',
@@ -64,6 +65,8 @@ export class PlayerHand extends Component {
                 clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });
+        const phoenix = this.props.cards.find(card => card.name === specialCards.PHOENIX);
+        const selectedCards = this.props.cards.filter(card => card.isSelected);
         return (
             <div style={playerBox}>
                 <span style={{paddingLeft: '2%'}}>{this.props.id}</span>
@@ -74,6 +77,9 @@ export class PlayerHand extends Component {
                 card.name === specialCards.MAJONG && card.isSelected)
                 ? <RequestSelectionBox requestMade={this.madeRequestSelection}/>
                 : this.props.pendingRequest}
+                { (selectedCards.length >= 5 && phoenix !== undefined && phoenix.isSelected) 
+                ? <PhoenixSelectionMenu phoenix={phoenix}></PhoenixSelectionMenu>
+                : ''}
             </div>            
         )
     }
@@ -104,7 +110,7 @@ export class PlayerHand extends Component {
         Object.assign(divStyle, this.props.style);
         return (
             <div style={divStyle}>
-                {this.renderedCards()}
+                {this.renderedMainBox()}
                 {playCardsButton}{passButton}{bombButton}
             </div>
         )
