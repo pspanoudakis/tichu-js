@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { normalCards, normalCardKeys } from '../CardInfo';
+import {normalCards, normalCardKeys} from '../CardInfo';
 
 const reversedCardKeys = Array.from(normalCardKeys).reverse();
 

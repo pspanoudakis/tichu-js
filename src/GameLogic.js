@@ -1,13 +1,13 @@
-import { specialCards } from "./CardInfo";
-import { playerKeys } from "./components/Gameboard";
-import { cardCombinations,
-         SingleCard,
-         CardCouple,
-         Triplet,
-         FullHouse,
-         Steps,
-         Kenta,
-         Bomb } from "./CardCombinations";
+import {specialCards} from "./CardInfo";
+import {playerKeys} from "./components/Gameboard";
+import {cardCombinations,
+        SingleCard,
+        CardCouple,
+        Triplet,
+        FullHouse,
+        Steps,
+        Kenta,
+        Bomb} from "./CardCombinations";
 
 export class GameLogic {
 
@@ -37,8 +37,6 @@ export class GameLogic {
                 return true;
             }
             if (selectedCombination.combination === tableCombination.combination) {
-                //if (tableCombination.combination === cardCombinations.KENTA || 
-                //    tableCombination.combination)
                 return tableCombination.compare(selectedCombination) < 0;
             }
             return false;
@@ -51,6 +49,7 @@ export class GameLogic {
         if (tableCombination !== undefined) {
             switch(tableCombination.combination) {
                 case cardCombinations.BOMB:
+                    // TODO: decide behaviour here
                     return true;
                 case cardCombinations.SINGLE:
                     if (tableCombination.compare(
@@ -92,8 +91,6 @@ export class GameLogic {
                     break;
                 default:
                     return false;
-                
-                // TODO: If the player has a bomb with the requested cards, he can't pass
             }
             return true;
         }
@@ -204,8 +201,6 @@ export class GameLogic {
                     break;
                 default:
                     return false;
-                
-                // TODO: If the player has a bomb with the requested cards, he can't pass
             }
             return true;
         }
@@ -297,7 +292,9 @@ export class GameLogic {
                 }
             }
             let requestObject = { card: requestedCard };
-            GameLogic.satisfyRequestIfPossible(requestObject, selectedCards);
+            if (gameboard.state.pendingMajongRequest === '') {
+                GameLogic.satisfyRequestIfPossible(requestObject, selectedCards);
+            }
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
             }
@@ -339,7 +336,7 @@ export class GameLogic {
             if (nextPlayerIndex === gameboard.state.table.currentCardsOwnerIndex) {
                 GameLogic.endRound(gameboard, newState, nextPlayerIndex);
                 if (endedRound) {
-                    console.log('End round twice bug');
+                    window.alert('End round twice bug');
                 }
             }
             newState.currentPlayerIndex = nextPlayerIndex;

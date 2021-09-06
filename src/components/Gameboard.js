@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import { PlayerHand } from './PlayerHand';
-import { Table } from './Table';
-import { Deck } from '../Deck';
-import { specialCards } from '../CardInfo';
-import { Bomb } from '../CardCombinations';
-import { GameLogic } from '../GameLogic';
+import {PlayerHand} from './PlayerHand';
+import {Table} from './Table';
+import {Deck} from '../Deck';
+import {specialCards} from '../CardInfo';
+import {Bomb} from '../CardCombinations';
+import {GameLogic} from '../GameLogic';
 
 export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 

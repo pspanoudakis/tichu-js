@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import { specialCards } from '../CardInfo';
-import { cardImages } from '../CardResources';
-import { Card } from './Card';
+import {specialCards} from '../CardInfo';
+import {cardImages} from '../CardResources';
+import {Card} from './Card';
 
 export class Table extends Component {
     void() {}

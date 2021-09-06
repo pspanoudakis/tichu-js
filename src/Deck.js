@@ -1,4 +1,4 @@
-import { cardColors, CardInfo, specialCards } from "./CardInfo";
+import {cardColors, CardInfo, specialCards} from "./CardInfo";
 
 /**
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array

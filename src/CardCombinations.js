@@ -1,11 +1,4 @@
-import { cardColors, normalCardKeys, normalCards, specialCards } from "./CardInfo";
-
-const letterValues = {
-    J: 11,
-    Q: 12,
-    K: 13,
-    A: 14
-}
+import {cardColors, normalCardKeys, normalCards, letterValues, specialCards} from "./CardInfo";
 
 function isBetween(target, a, b) {
     return target >= a && target <= b;

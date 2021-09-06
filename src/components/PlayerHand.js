@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { CardInfo, specialCards } from '../CardInfo';
-import { Card } from './Card';
-import { RequestSelectionBox } from './RequestSelectionBox';
-import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
+import {CardInfo, specialCards} from '../CardInfo';
+import {Card} from './Card';
+import {RequestSelectionBox} from './RequestSelectionBox';
+import {PhoenixSelectionMenu} from './PhoenixSelectionMenu';
 
 export class PlayerHand extends Component {
     voidButton = (event) => {

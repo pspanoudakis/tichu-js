@@ -1,11 +1,17 @@
-import { cardImages } from "./CardResources";
+import {cardImages} from "./CardResources";
 
 export const cardColors = {
-    //NONE: 'none',
     BLACK: 'black',
     RED: 'red',
     BLUE: 'blue',
     GREEN: 'green'
+}
+
+export const letterValues = {
+    J: 11,
+    Q: 12,
+    K: 13,
+    A: 14
 }
 
 let _normalCards_ = new Map();
@@ -18,8 +24,7 @@ let _normalCards_ = new Map();
         }
         _normalCards_.set(i.toString(), currentInfo);
     }
-    const letterValues = [['J', 11], ['Q', 12], ['K', 13], ['A', 14]];
-    for (const [letter, value] of letterValues) {
+    for (const [letter, value] of Object.entries(letterValues)) {
         let currentInfo = {};
         for (const [,color] of Object.entries(cardColors)) {
             currentInfo[color] = cardImages[color + '_' + letter];
