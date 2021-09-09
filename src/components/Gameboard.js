@@ -6,6 +6,8 @@ import {specialCards} from '../CardInfo';
 import {Bomb} from '../CardCombinations';
 import {GameLogic} from '../GameLogic';
 
+import * as styles from "../styles/Components.module.css"
+
 export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
 export class Gameboard extends Component {
@@ -67,32 +69,6 @@ export class Gameboard extends Component {
     }
 
     playerComponents = () => {
-        let styles = {
-            player1: {
-                gridRowStart: '1',
-                gridRowEnd: '2',
-                gridColumnStart: '2',
-                gridColumnEnd: '3'
-            },
-            player2: {
-                gridRowStart: '2',
-                gridRowEnd: '3',
-                gridColumnStart: '1',
-                gridColumnEnd: '2'
-            },
-            player3: {
-                gridRowStart: '3',
-                gridRowEnd: '4',
-                gridColumnStart: '2',
-                gridColumnEnd: '3'
-            },
-            player4: {
-                gridRowStart: '2',
-                gridRowEnd: '3',
-                gridColumnStart: '3',
-                gridColumnEnd: '4'
-            }            
-        }
         let components = [];
         let majongIsPlayable = GameLogic.majongIsPlayable(this);
         for (let i = 0; i < playerKeys.length; i++) {
@@ -122,8 +98,6 @@ export class Gameboard extends Component {
                     canDropBomb = true;
                 }
             }
-
-            styles[playerKeys[i]].height = '100%';
             components.push(
                 <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
                 cards={this.state.playerHands[playerKeys[i]]}
@@ -150,28 +124,12 @@ export class Gameboard extends Component {
         for (const key of playerKeys) {
             activePlayers.push(this.state.playerHands[key].length > 0);
         }
-
-        const style = {
-            width: '100%',
-            height: '100%',
-            display: 'grid',
-            gridTemplateRows: '32.5% 32.5% 32.5%',
-            gridTemplateColumns: '32.5% 32.5% 32.5%',
-            gridColumnGap: '1%',
-            gridRowGap: '1%'
-        }
-        const tableStyle = {
-            gridRowStart: '2',
-            gridRowEnd: '3',
-            gridColumnStart: '2',
-            gridColumnEnd: '3'
-        }
         const components = this.playerComponents();
         return (
-            <div style={style}>
+            <div className={styles.gameboardStyle}>
                 {components[0]}
                 {components[1]}
-                <div style={tableStyle}>
+                <div className={styles.tableStyle}>
                     <Table currentCards={this.state.table.currentCards}
                     previousCards={this.state.table.previousCards}
                     playerNames={playerKeys} activePlayers={activePlayers}

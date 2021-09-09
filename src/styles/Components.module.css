@@ -1,0 +1,115 @@
+.playerBox {
+    display: grid;
+    grid-template-rows: 2.5% 80% 8.75% 8.75%;
+    grid-template-columns: 100%;
+    width: 100%;
+    height: 90%;
+    border: 1px solid white;
+}
+.playerCardList {
+    display: flex;
+    height: 100%;
+    position: relative;
+}
+
+.player1 .player2 .player3 .player4 {
+    margin-bottom: 20%;
+    height: 100%;
+}
+
+.player1 {
+    grid-row-start: 1;
+    grid-row-end: 2;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.player2 {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+.player3 {
+    grid-row-start: 3;
+    grid-row-end: 4;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.player4 {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 3;
+    grid-column-end: 4;
+}
+
+.gameboardStyle {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 32.5% 32.5% 32.5%;
+    grid-template-columns: 32.5% 32.5% 32.5%;
+    grid-column-gap: 1%;
+    grid-row-gap: 1%;
+}
+.tableStyle {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+.disabledButton {
+    opacity: 0.5;
+}
+
+.playerIDSpan {
+    padding-left: 2%;
+}
+
+.selectionBoxStyle {
+    display: flex;
+    width: 100%;
+    height: min-content;
+    overflow: visible;
+}
+.selectionButtonStyle {
+    overflow: visible;
+}
+
+.selection1 {
+    position: absolute;
+    top: 0%;
+    left: 14%;
+    width: 15%;
+    height: 100%;
+}
+.selection2 {
+    position: absolute;
+    top: 0%;
+    left: 30%;
+    width: 15%;
+    height: 100%;
+}
+
+.tableBox {
+    border: 1px solid white;
+    width: 100%;
+    height: 90%;
+}
+.tableCardList {            
+    display: flex;
+    width: 100%;
+    height: 90%;
+    position: relative;
+}
+
+.dragonSelection {
+    display: flex;
+    width: 100%;
+    height: 90%;
+    position: relative;
+}
+
+.requestedCardTable {
+    padding-left: 2%;
+}

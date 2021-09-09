@@ -45,6 +45,7 @@ export class GameLogic {
     }
 
     static canPassTurn(tableCombination, requestedCard, playerCards) {
+        // If the player has a bomb, he may not pass...
         if (requestedCard === "") { return true; }
         if (tableCombination !== undefined) {
             switch(tableCombination.combination) {
@@ -104,7 +105,7 @@ export class GameLogic {
         switch (cards.length) {
             case 1:
                 if (cards[0].name === specialCards.PHOENIX) {
-                    if (tableCards[0].name !== specialCards.DRAGON) {
+                    if (tableCards.length > 0 && tableCards[0].name !== specialCards.DRAGON) {
                         cards[0].tempValue = tableCards[0].value + 0.5;                        
                     }
                 }
