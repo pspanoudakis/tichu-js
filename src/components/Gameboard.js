@@ -3,7 +3,7 @@ import {PlayerHand} from './PlayerHand';
 import {Table} from './Table';
 import {Deck} from '../Deck';
 import {specialCards} from '../CardInfo';
-import {Bomb} from '../CardCombinations';
+import {cardCombinations, Bomb} from '../CardCombinations';
 import {GameLogic} from '../GameLogic';
 
 import * as styles from "../styles/Components.module.css"
@@ -70,6 +70,8 @@ export class Gameboard extends Component {
 
     playerComponents = () => {
         let components = [];
+
+        // TODO: Maybe move all these in GameLogic as well...
         let majongIsPlayable = GameLogic.majongIsPlayable(this);
         for (let i = 0; i < playerKeys.length; i++) {
             let hasTurn = this.state.currentPlayerIndex === i;
@@ -91,11 +93,12 @@ export class Gameboard extends Component {
                     }
                 }
             }
-            let bomb = Bomb.getStrongestBomb(this.state.playerHands[playerKeys[i]]);
+            const bomb = Bomb.getStrongestBomb(this.state.playerHands[playerKeys[i]]);
             if (bomb !== null) {
-                let tableBomb = Bomb.createBomb(this.state.table.currentCards);
-                if (Bomb.compareBombs(tableBomb, bomb) < 0) {
-                    canDropBomb = true;
+                canDropBomb = true;
+                if (this.state.table.combination !== undefined &&
+                    this.state.table.combination.combination === cardCombinations.BOMB) {
+                    canDropBomb = Bomb.compareBombs(this.state.table.combination, bomb) < 0;
                 }
             }
             components.push(

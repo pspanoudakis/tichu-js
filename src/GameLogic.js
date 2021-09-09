@@ -45,7 +45,6 @@ export class GameLogic {
     }
 
     static canPassTurn(tableCombination, requestedCard, playerCards) {
-        // If the player has a bomb, he may not pass...
         if (requestedCard === "") { return true; }
         if (tableCombination !== undefined) {
             switch(tableCombination.combination) {
@@ -93,7 +92,7 @@ export class GameLogic {
                 default:
                     return false;
             }
-            return true;
+            return Bomb.getStrongestRequested(playerCards, requestedCard) === null;
         }
         else {
             return false;

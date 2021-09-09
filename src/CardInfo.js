@@ -9,6 +9,12 @@ export const cardColors = {
 
 export const cardColorValues = Object.values(cardColors);
 
+let _letterValues_ = new Map();
+_letterValues_.set('J', 11);
+_letterValues_.set('Q', 12);
+_letterValues_.set('K', 13);
+_letterValues_.set('A', 14);
+
 export const letterValues = {
     J: 11,
     Q: 12,
@@ -20,15 +26,15 @@ let _normalCards_ = new Map();
 (function initializeNormalCards() {
     for (let i = 2; i <= 10; i++) {
         let currentInfo = {};
-        for (const [,color] of Object.entries(cardColors)) {
+        for (const color of cardColorValues) {
             currentInfo[color] = cardImages[color + '_' + i.toString()];
             currentInfo['value'] = i;
         }
         _normalCards_.set(i.toString(), currentInfo);
     }
-    for (const [letter, value] of Object.entries(letterValues)) {
+    for (const [letter, value] of _letterValues_.entries()) {
         let currentInfo = {};
-        for (const [,color] of Object.entries(cardColors)) {
+        for (const color of cardColorValues) {
             currentInfo[color] = cardImages[color + '_' + letter];
             currentInfo['value'] = value;
         }

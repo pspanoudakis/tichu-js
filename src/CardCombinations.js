@@ -485,10 +485,7 @@ export class Bomb extends CardCombination{
         if (a.length !== b.length) {
             return a.length - b.length;
         }
-        if (a.upper !== b.upper) {
-            return a.upper - b.upper;
-        }
-        return 0;
+        return a.value - b.value;
     }
 
     // TODO: test this
@@ -509,8 +506,9 @@ export class Bomb extends CardCombination{
         }
         const cardColorsArray = Object.entries(normalCardsColorMap);
         const targetIndex = cardColorsArray.findIndex(([name]) => name === requested);
+        const [, targetColorMap] = cardColorsArray[targetIndex];
         for (const color of cardColorValues) {
-            if (cardColorsArray[targetIndex][color] === true) {
+            if (targetColorMap[color] === true) {
                 let upperIndex, lowerIndex;
                 let lengthCounter = 0;
                 let colorStrongest = null;
