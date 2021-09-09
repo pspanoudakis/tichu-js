@@ -7,6 +7,8 @@ export const cardColors = {
     GREEN: 'green'
 }
 
+export const cardColorValues = Object.values(cardColors);
+
 export const letterValues = {
     J: 11,
     Q: 12,
@@ -43,6 +45,8 @@ export const specialCards = {
     MAJONG: 'Majong',
     DRAGON: 'Dragon'
 };
+
+export const specialCardNames = Object.values(specialCards);
 
 export class CardInfo {
     constructor(name, color = '') {

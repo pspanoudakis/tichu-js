@@ -1,4 +1,9 @@
-import {cardColors, normalCardKeys, normalCards, letterValues, specialCards} from "./CardInfo";
+import {cardColorValues,
+        normalCardKeys,
+        normalCards,
+        letterValues,
+        specialCards,
+        specialCardNames} from "./CardInfo";
 
 function isBetween(target, a, b) {
     return target >= a && target <= b;
@@ -98,7 +103,7 @@ export class CardCouple extends CardCombination {
             const phoenixIndex = cards.findIndex(card => card.name === specialCards.PHOENIX);
             if (phoenixIndex !== -1) {
                 const otherIndex = (phoenixIndex + 1) % 2;
-                if ( !Object.values(specialCards).includes(cards[otherIndex].name) ) {
+                if (specialCardNames.includes(cards[otherIndex].name)) {
                     return new CardCouple(cards[otherIndex].value);
                 }                
             }
@@ -155,7 +160,6 @@ export class Steps extends CardCombination {
         if (cards.length >= length) {
             let cardOccurences = new Map();
             let phoenixUsed = true;
-            const specialCardNames = Object.values(specialCards)
             for (const card of cards) {
                 if ( !specialCardNames.includes(card.name) ) {
                     let occurences = cardOccurences.get(card.name);
@@ -201,7 +205,6 @@ export class Steps extends CardCombination {
         if (cards.length >= 4 && cards.length % 2 === 0) {
             let cardOccurences = new Map();
             let phoenixUsed = true;
-            const specialCardNames = Object.values(specialCards)
             for (const card of cards) {
                 if (specialCardNames.includes(card.name)) {
                     if (card.name !== specialCards.PHOENIX) {
@@ -250,7 +253,6 @@ export class Kenta extends CardCombination {
         if (cards.length >= length) {
             let cardOccurences = new Map();
             let phoenixUsed = true;
-            const specialCardNames = Object.values(specialCards)
             for (const card of cards) {
                 if ( !specialCardNames.includes(card.name) ) {
                     let occurences = cardOccurences.get(card.name);
@@ -365,7 +367,6 @@ export class FullHouse extends CardCombination {
             let requestedOccurences = 0;
             // Counts occurences of each card
             let cardOccurences = new Map();
-            const specialCardNames = Object.values(specialCards)
             for (const card of cards) {
                 if ( !specialCardNames.includes(card.name) ) {
                     let occurences = cardOccurences.get(card.name);
@@ -490,25 +491,96 @@ export class Bomb extends CardCombination{
         return 0;
     }
 
+    // TODO: test this
+    static getStrongestRequested(cards, requested) {
+        let strongestBomb = null;
+
+        let normalCardsColorMap = {};
+        for (const key of normalCardKeys) {
+            normalCardsColorMap[key] = {};
+            for (const color of cardColorValues) {
+                normalCardsColorMap[key][color] = false;
+            }
+        }
+        for (const card of cards) {
+            if(!specialCardNames.includes(card.name)) {
+                normalCardsColorMap[card.name][card.color] = true;
+            }
+        }
+        const cardColorsArray = Object.entries(normalCardsColorMap);
+        const targetIndex = cardColorsArray.findIndex(([name]) => name === requested);
+        for (const color of cardColorValues) {
+            if (cardColorsArray[targetIndex][color] === true) {
+                let upperIndex, lowerIndex;
+                let lengthCounter = 0;
+                let colorStrongest = null;
+                
+                for (let i = 0; i < cardColorsArray.length; i++) {
+                    const [,colors] = cardColorsArray[i];
+                    if (colors[color] === false) {
+                        if (lengthCounter >= 5) {
+                            if (targetIndex >= lowerIndex && targetIndex <= upperIndex) {
+                                const [upperName] = cardColorsArray[upperIndex];
+                                const [lowerName] = cardColorsArray[lowerIndex];
+                                let bomb = new Bomb(upperName, lowerName, color);
+                                if (Bomb.compareBombs(colorStrongest, bomb) < 0) {
+                                    colorStrongest = bomb;
+                                }
+                            }
+                        }
+                        lengthCounter = 0;
+                    }
+                    else {
+                        if (lengthCounter === 0) {
+                            lowerIndex = i;
+                        }
+                        upperIndex = i;
+                        lengthCounter++;
+                    }
+                }
+                if (lengthCounter >= 5) {
+                    if (targetIndex >= lowerIndex && targetIndex <= upperIndex) {
+                        const [upperName] = cardColorsArray[upperIndex];
+                        const [lowerName] = cardColorsArray[lowerIndex];
+                        let bomb = new Bomb(upperName, lowerName, color);
+                        if (Bomb.compareBombs(colorStrongest, bomb) < 0) {
+                            colorStrongest = bomb;
+                        }
+                    }
+                }
+                if (Bomb.compareBombs(strongestBomb, colorStrongest) < 0) {
+                    strongestBomb = colorStrongest;
+                }
+            }
+        }
+        if (strongestBomb === null) {
+            const [, targetColors] = cardColorsArray[targetIndex];
+            if (Object.values(targetColors).every(hasColor => hasColor === true)) {
+                strongestBomb = new Bomb(requested, requested);
+            }
+        }
+        return strongestBomb;
+    }
+
     static getStrongestBomb(cards) {
         let strongestBomb = null;
 
         let groupedNormalCards = {};
         for (const key of normalCardKeys) {
             groupedNormalCards[key] = {};
-            for (const color of Object.values(cardColors)) {
+            for (const color of cardColorValues) {
                 groupedNormalCards[key][color] = false;
             }
         }
         for (const card of cards) {
-            if(!Object.values(specialCards).includes(card.name)) {
+            if(!specialCardNames.includes(card.name)) {
                 // not a special card
                 groupedNormalCards[card.name][card.color] = true;
             }
         }
         const cardGroupArray = Object.entries(groupedNormalCards);
 
-        for (const color of Object.values(cardColors)) {
+        for (const color of cardColorValues) {
             let upperIndex, lowerIndex;
             let lengthCounter = 0;
             let colorStrongest = null;
