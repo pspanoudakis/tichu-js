@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import './App.css';
+import './styles/App.css';
 import {Gameboard} from './components/Gameboard'
 
 class App extends Component {

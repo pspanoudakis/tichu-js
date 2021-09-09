@@ -3,6 +3,8 @@ import {specialCards} from '../CardInfo';
 import {cardImages} from '../CardResources';
 import {Card} from './Card';
 
+import * as styles from "../styles/Components.module.css"
+
 export class Table extends Component {
     void() {}
 
@@ -11,23 +13,6 @@ export class Table extends Component {
     }
 
     render() {
-        const tableBox = {
-            border: '1px solid white',
-            width: '100%',
-            height: '90%'
-        }
-        const tableCardList = {            
-            display: 'flex',
-            width: '100%',
-            height: '90%',
-            position: 'relative'
-        }
-        const dragonSelection = {
-            display: 'flex',
-            width: '100%',
-            height: '90%',
-            position: 'relative'
-        }
         const dragonStyle = {
             position: 'absolute',
             top: '23%',
@@ -35,20 +20,7 @@ export class Table extends Component {
             width: '12%',
             height: '48%'
         }
-        const selection1 = {
-            position: 'absolute',
-            top: '0%',
-            left: '14%',
-            width: '15%',
-            height: '100%'
-        }
-        const selection2 = {
-            position: 'absolute',
-            top: '0%',
-            left: '30%',
-            width: '15%',
-            height: '100%'
-        }
+        
         let buttonText1 = '', buttonText2 = '';
         if (this.props.pendingDragon) {
             if (this.props.currentPlayerIndex % 2 === 0) {
@@ -69,14 +41,14 @@ export class Table extends Component {
             }
         }
         return (
-            <div style={tableBox}>
-                <span style={{paddingLeft: '2%'}}>
+            <div className={styles.tableBox}>
+                <span className={styles.requestedCardTable}>
                     {this.props.requestedCard === ''
                     ? ''
                     : ('Requested: ' + this.props.requestedCard)}
                 </span>
                 {!this.props.pendingDragon ?
-                <div style={tableCardList}>
+                <div className={styles.tableCardList}>
                     {this.props.currentCards.map( (card, index) => {
                         const cardStyle = {
                             zindex: index.toString(),
@@ -93,20 +65,20 @@ export class Table extends Component {
                         );
                     })}
                 </div> :
-                <div style={dragonSelection}>
+                <div className={styles.dragonSelection}>
                     <Card key={specialCards.DRAGON} id={specialCards.DRAGON}
                     cardImg={cardImages.dragon} alt={specialCards.DRAGON}
                     selected={true} clickCallback={this.void} style={dragonStyle}/>
                     {buttonText1 !== ''
                     ? <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
-                    style={selection1}>
+                    className={styles.selection1}>
                         {buttonText1}
                     </button>
                     : ''}
                     
                     {buttonText2 !== ''
                     ? <button key={buttonText2} id={buttonText2} onClick={this.dragonGiven}
-                    style={selection2}>
+                    className={styles.selection2}>
                         {buttonText2}
                     </button>
                     : ''}

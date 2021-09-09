@@ -4,6 +4,8 @@ import {Card} from './Card';
 import {RequestSelectionBox} from './RequestSelectionBox';
 import {PhoenixSelectionMenu} from './PhoenixSelectionMenu';
 
+import * as styles from "../styles/Components.module.css"
+
 export class PlayerHand extends Component {
     voidButton = (event) => {
         event.preventDefault();
@@ -36,19 +38,6 @@ export class PlayerHand extends Component {
     }
 
     renderedMainBox = () => {
-        const playerBox = {
-            display: 'grid',
-            gridTemplateRows: '2.5% 80% 8.75% 8.75%',
-            gridTemplateColumns: '100%',
-            width: '100%',
-            height: '90%',
-            border: '1px solid white'
-        }
-        const playerCardList = {
-            display: 'flex',
-            height: '100%',
-            position: 'relative'
-        }
         let cardComponents = []
         this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
             const cardStyle = {
@@ -68,9 +57,9 @@ export class PlayerHand extends Component {
         const phoenix = this.props.cards.find(card => card.name === specialCards.PHOENIX);
         const selectedCards = this.props.cards.filter(card => card.isSelected);
         return (
-            <div style={playerBox}>
-                <span style={{paddingLeft: '2%'}}>{this.props.id}</span>
-                <div style={playerCardList}>
+            <div className={styles.playerBox}>
+                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.playerCardList}>
                     {cardComponents}
                 </div>
                 {this.props.displaySelectionBox && this.props.cards.some(card => 
@@ -94,7 +83,9 @@ export class PlayerHand extends Component {
                     playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
                 }
                 else {
-                    playCardsButton = <button onClick={this.voidButton} style={{opacity: '0.5'}}>Play Cards</button>;
+                    playCardsButton =   <button className={styles.disabledButton} onClick={this.voidButton}>
+                                        Play Cards
+                                        </button>;
                 }
                 if (this.props.canPass) {
                     passButton = <button onClick={this.passTurn}>Pass</button>
@@ -104,12 +95,8 @@ export class PlayerHand extends Component {
                 bombButton = <button onClick={this.dropBomb}>Bomb</button>
             }
         }
-        let divStyle = {
-            marginBottom: '20%',
-        }
-        Object.assign(divStyle, this.props.style);
         return (
-            <div style={divStyle}>
+            <div className={this.props.style}>
                 {this.renderedMainBox()}
                 {playCardsButton}{passButton}{bombButton}
             </div>

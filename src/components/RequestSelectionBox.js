@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {normalCardKeys} from '../CardInfo';
 
+import * as styles from "../styles/Components.module.css"
+
 const reversedCardKeys = Array.from(normalCardKeys).reverse();
 
 export class RequestSelectionBox extends Component {
@@ -10,20 +12,11 @@ export class RequestSelectionBox extends Component {
     }
 
     render() {
-        const selectionBoxStyle = {
-            display: 'flex',
-            width: '100%',
-            height: 'min-content',
-            overflow: 'visible'
-        };
-        const selectionButtonStyle = {
-            overflow: 'visible'
-        }
         return (
-        <div style={selectionBoxStyle}>
+        <div className={styles.selectionBoxStyle}>
             {reversedCardKeys.map(name => 
                 <button key={name} id={name} onClick={this.selectionMade}
-                style={selectionButtonStyle}>
+                className={styles.selectionButtonStyle}>
                 {name}
                 </button>
             )}
