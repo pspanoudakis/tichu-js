@@ -420,4 +420,31 @@ export class GameLogic {
             currentPlayerIndex: majongOwnerIndex
         });
     }
+
+    static getPlayerPossibleActions(gameboard, playerIndex, majongIsPlayable, actions) {
+        if (actions.hasTurn) {
+            actions.canPass = (gameboard.state.table.currentCards.length !== 0) &&
+                        (!gameboard.state.pendingBombToBePlayed) &&
+                        (gameboard.state.pendingMajongRequest === '');
+            if (!gameboard.state.pendingDragonToBeGiven) {
+                let majong = gameboard.state.playerHands[playerKeys[playerIndex]].find(
+                    card => card.name === specialCards.MAJONG);
+                let pendingRequest = gameboard.state.pendingMajongRequest !== '';                    
+                actions.displayMajongRequestBox = majong !== undefined && !pendingRequest && majongIsPlayable
+                                                  && !gameboard.state.pendingBombToBePlayed;
+                if (pendingRequest) {
+                    actions.pendingRequestMessage = 'Requested: ' + gameboard.state.pendingMajongRequest;
+                }
+            }
+        }
+        const bomb = Bomb.getStrongestBomb(gameboard.state.playerHands[playerKeys[playerIndex]]);
+        if (bomb !== null) {
+            actions.canDropBomb = true;
+            if (gameboard.state.table.combination !== undefined &&
+                gameboard.state.table.combination.combination === cardCombinations.BOMB) {
+                actions.canDropBomb = Bomb.compareBombs(gameboard.state.table.combination, bomb) < 0
+                                      && (gameboard.state.pendingMajongRequest === '');
+            }
+        }
+    }
 }

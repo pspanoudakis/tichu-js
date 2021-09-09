@@ -44,6 +44,7 @@ let _normalCards_ = new Map();
 
 export const normalCards = _normalCards_;
 export const normalCardKeys = Array.from(normalCards.keys());
+export const reversedCardKeys = Array.from(normalCardKeys).reverse();
 
 export const specialCards = {
     DOGS: 'Dogs',

@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {PlayerHand} from './PlayerHand';
 import {Table} from './Table';
 import {Deck} from '../Deck';
-import {specialCards} from '../CardInfo';
-import {cardCombinations, Bomb} from '../CardCombinations';
 import {GameLogic} from '../GameLogic';
 
 import * as styles from "../styles/Components.module.css"
@@ -70,47 +68,28 @@ export class Gameboard extends Component {
 
     playerComponents = () => {
         let components = [];
-
-        // TODO: Maybe move all these in GameLogic as well...
         let majongIsPlayable = GameLogic.majongIsPlayable(this);
         for (let i = 0; i < playerKeys.length; i++) {
-            let hasTurn = this.state.currentPlayerIndex === i;
-            let canPass = false;
-            let displayMajongRequestBox = false;
-            let pendingRequestMessage = '';
-            let canDropBomb = false;
-            if (hasTurn) {
-                canPass = (this.state.table.currentCards.length !== 0) &&
-                            (!this.state.pendingBombToBePlayed) &&
-                            (this.state.pendingMajongRequest === '');
-                if (!this.state.pendingDragonToBeGiven) {
-                    let majong = this.state.playerHands[playerKeys[i]].find(
-                        card => card.name === specialCards.MAJONG);
-                    let pendingRequest = this.state.pendingMajongRequest !== '';                    
-                    displayMajongRequestBox = majong !== undefined && !pendingRequest && majongIsPlayable;
-                    if (pendingRequest) {
-                        pendingRequestMessage = 'Requested: ' + this.state.pendingMajongRequest;
-                    }
-                }
+            let actions = {
+                hasTurn: this.state.currentPlayerIndex === i,
+                canPass: false,
+                displayMajongRequestBox: false,
+                pendingRequestMessage: '',
+                canDropBomb: false,
             }
-            const bomb = Bomb.getStrongestBomb(this.state.playerHands[playerKeys[i]]);
-            if (bomb !== null) {
-                canDropBomb = true;
-                if (this.state.table.combination !== undefined &&
-                    this.state.table.combination.combination === cardCombinations.BOMB) {
-                    canDropBomb = Bomb.compareBombs(this.state.table.combination, bomb) < 0;
-                }
-            }
+            GameLogic.getPlayerPossibleActions(this, i, majongIsPlayable, actions);
             components.push(
                 <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
                 cards={this.state.playerHands[playerKeys[i]]}
-                playCards={this.playerPlayedCards} style={styles[playerKeys[i]]}
-                hasTurn={hasTurn} canPass={canPass} passTurn={this.playerPassedTurn}
+                style={styles[playerKeys[i]]}
+                hasTurn={actions.hasTurn} canPass={actions.canPass}
+                displaySelectionBox={actions.displayMajongRequestBox}
+                pendingRequest={actions.pendingRequestMessage}
+                canBomb={actions.canDropBomb}
                 showOptions={!this.state.pendingDragonToBeGiven}
-                displaySelectionBox={displayMajongRequestBox && !this.state.pendingBombToBePlayed}
+                playCards={this.playerPlayedCards}
+                passTurn={this.playerPassedTurn}
                 selectionMade={this.playerMadeMajongSelection}
-                pendingRequest={pendingRequestMessage}
-                canBomb={canDropBomb && (this.state.pendingMajongRequest === '')}
                 dropBomb={this.bombStop}/>
             );
         }

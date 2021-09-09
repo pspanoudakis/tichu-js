@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
-import {normalCardKeys} from '../CardInfo';
+import {reversedCardKeys} from '../CardInfo';
 
 import * as styles from "../styles/Components.module.css"
-
-const reversedCardKeys = Array.from(normalCardKeys).reverse();
 
 export class RequestSelectionBox extends Component {
 
