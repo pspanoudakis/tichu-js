@@ -64,6 +64,11 @@ export class Gameboard extends Component {
 
     handCards = () => {
         GameLogic.handCards(this);
+        /*
+        while (!GameLogic.testHandCards(this)) {
+            this.state.deck = new Deck();
+        }
+        */
     }
 
     playerComponents = () => {

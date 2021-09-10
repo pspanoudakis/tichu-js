@@ -477,6 +477,10 @@ export class Bomb extends CardCombination{
         }
     }
 
+    compare(other) {
+        return Bomb.compareBombs(this, other);
+    }
+
     static compareBombs(a, b) {
         if (a === b) { return 0; }
         if (a === null) { return -1; }
@@ -488,7 +492,6 @@ export class Bomb extends CardCombination{
         return a.value - b.value;
     }
 
-    // TODO: test this
     static getStrongestRequested(cards, requested) {
         let strongestBomb = null;
 

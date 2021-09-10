@@ -49,7 +49,10 @@ export class GameLogic {
         if (tableCombination !== undefined) {
             switch(tableCombination.combination) {
                 case cardCombinations.BOMB:
-                    // TODO: decide behaviour here
+                    if (tableCombination.compare(
+                        Bomb.getStrongestRequested(playerCards, requestedCard)) < 0 ) {
+                            return false;
+                        }
                     return true;
                 case cardCombinations.SINGLE:
                     if (tableCombination.compare(
@@ -419,6 +422,40 @@ export class GameLogic {
             playerHands: playerHands,
             currentPlayerIndex: majongOwnerIndex
         });
+    }
+
+    static testHandCards(gameboard) {
+        let playerHands = {};
+        for (const key of playerKeys) {
+            playerHands[key] = [];
+        }
+
+        let i = 0, card, majongOwnerIndex;
+        while ((card = gameboard.state.deck.cards.pop()) !== undefined) {
+            if (card.key === specialCards.MAJONG) {
+                majongOwnerIndex = i;
+            }
+            playerHands[playerKeys[i++]].push(card)
+            i %= playerKeys.length;
+        }
+
+        let count = 0;
+        for (const key of playerKeys) {
+            if (Bomb.getStrongestBomb(playerHands[key]) !== null ) {
+                count++;
+            }
+        }
+        if (count >= 2) {
+            gameboard.setState({
+                gameHasStarted: true,
+                playerHands: playerHands,
+                currentPlayerIndex: majongOwnerIndex
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     static getPlayerPossibleActions(gameboard, playerIndex, majongIsPlayable, actions) {
