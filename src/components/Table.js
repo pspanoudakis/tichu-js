@@ -23,7 +23,7 @@ export class Table extends Component {
         
         let buttonText1 = '', buttonText2 = '';
         if (this.props.pendingDragon) {
-            if (this.props.currentPlayerIndex % 2 === 0) {
+            if (this.props.currentCardsOwnerIndex % 2 === 0) {
                 if (this.props.activePlayers[1]) {
                     buttonText1 = this.props.playerNames[1];
                 }

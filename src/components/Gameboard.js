@@ -120,7 +120,7 @@ export class Gameboard extends Component {
                     <Table currentCards={this.state.table.currentCards}
                     previousCards={this.state.table.previousCards}
                     playerNames={playerKeys} activePlayers={activePlayers}
-                    currentPlayerIndex={this.state.currentPlayerIndex}
+                    currentCardsOwnerIndex={this.state.table.currentCardsOwnerIndex}
                     pendingDragon={this.state.pendingDragonToBeGiven}
                     dragonGiven={this.dragonGiven}
                     requestedCard={this.state.table.requestedCardName}/>

@@ -481,11 +481,11 @@ export class GameLogic {
         }
         const bomb = Bomb.getStrongestBomb(gameboard.state.playerHands[playerKeys[playerIndex]]);
         if (bomb !== null) {
-            actions.canDropBomb = true;
-            if (gameboard.state.table.combination !== undefined &&
+            actions.canDropBomb = gameboard.state.pendingMajongRequest === ''
+                                  && !gameboard.state.pendingBombToBePlayed;
+            if (actions.canDropBomb && gameboard.state.table.combination !== undefined &&
                 gameboard.state.table.combination.combination === cardCombinations.BOMB) {
-                actions.canDropBomb = Bomb.compareBombs(gameboard.state.table.combination, bomb) < 0
-                                      && (gameboard.state.pendingMajongRequest === '');
+                actions.canDropBomb = Bomb.compareBombs(gameboard.state.table.combination, bomb) < 0;
             }
         }
     }
