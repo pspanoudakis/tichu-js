@@ -107,8 +107,13 @@ export class GameLogic {
         switch (cards.length) {
             case 1:
                 if (cards[0].name === specialCards.PHOENIX) {
-                    if (tableCards.length > 0 && tableCards[0].name !== specialCards.DRAGON) {
-                        cards[0].tempValue = tableCards[0].value + 0.5;                        
+                    if (tableCards.length > 0) {
+                        if (tableCards[0].name !== specialCards.DRAGON) {
+                            cards[0].tempValue = tableCards[0].value + 0.5;
+                        }
+                    }
+                    else {
+                        cards[0].tempValue = 1.5;
                     }
                 }
                 combination = SingleCard.create(cards);
