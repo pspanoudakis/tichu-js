@@ -36,6 +36,9 @@ export class GameLogic {
         };
         console.log(gameboard.state);
         playerKeys.forEach( (key, index) => {
+            if (gameboard.state.table.currentCardsOwnerIndex === key) {
+                playerHeaps[key] = Array.from(gameboard.state.table.currentCards);
+            }
             if (gameboard.state.playerHands[key].length > 0) {
                 for (const card of gameboard.state.playerHeaps[key]) {
                     playerHeaps[gameboard.state.gameRoundWinnerKey].push(card);
