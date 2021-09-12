@@ -11,7 +11,11 @@ import {cardCombinations,
 
 export class GameLogic {
 
-    static mustEndGame(gameboard) {
+    static gameEnded(state) {
+        return state.team02Points >= 10 || state.team13Points >= 10;
+    }
+
+    static mustEndGameRound(gameboard) {
         if (gameboard.state.playerHands[playerKeys[0]].length === 0 &&
             gameboard.state.playerHands[playerKeys[2]].length === 0) {
                 return true;
@@ -21,6 +25,94 @@ export class GameLogic {
                 return true;
             }
         return false;
+    }
+
+    static evaluateTeamPoints(gameboard, points) {
+        let playerHeaps = {
+            player1: [],
+            player2: [],
+            player3: [],
+            player4: []
+        };
+        console.log(gameboard.state);
+        playerKeys.forEach( (key, index) => {
+            if (gameboard.state.playerHands[key].length > 0) {
+                for (const card of gameboard.state.playerHeaps[key]) {
+                    playerHeaps[gameboard.state.gameRoundWinnerKey].push(card);
+                }
+                if (index % 2 === 0) {
+                    points.team13 += GameLogic.evaluatePoints(gameboard.state.playerHands[key]);
+                }
+                else {
+                    points.team02 += GameLogic.evaluatePoints(gameboard.state.playerHands[key]);
+                }
+            }
+            else {
+                for (const card of gameboard.state.playerHeaps[key]) {
+                    playerHeaps[key].push(card);
+                }
+            }
+        } );
+        playerKeys.forEach( (key, index) => {
+            if (index % 2 === 0) {
+                points.team02 += GameLogic.evaluatePoints(playerHeaps[key]);
+            }
+            else {
+                points.team13 += GameLogic.evaluatePoints(playerHeaps[key]);
+            }
+        } );
+    }
+
+    static endGameRound(gameboard) {
+        window.alert('Round Ended');
+        let points = {
+            team02: gameboard.state.team02Points,
+            team13: gameboard.state.team13Points
+        }
+        let activePlayers = playerKeys.reduce( (active, key) => {
+            return active + (gameboard.state.playerHands[key].length > 0);
+        }, 0);
+        if (activePlayers > 1) {
+            if (playerKeys.indexOf(gameboard.state.gameRoundWinnerKey) % 2 === 0) {
+                points.team02 += 200;
+            }
+            else {
+                points.team13 += 200;
+            }
+        }
+        else {
+            GameLogic.evaluateTeamPoints(gameboard, points);
+        }
+        console.log(points);
+        gameboard.setState({
+            playerHands: {
+                player1: [],
+                player2: [],
+                player3: [],
+                player4: []
+            },
+            gameHasStarted: false,
+            currentPlayerIndex: -1,
+            pendingMajongRequest: '',
+            pendingDragonToBeGiven: false,
+            pendingBombToBePlayed: false,
+            table: {
+                previousCards: [],
+                currentCards: [],
+                combination: undefined,
+                currentCardsOwnerIndex: -1,
+                requestedCardName: ''
+            },
+            playerHeaps : {
+                player1: [],
+                player2: [],
+                player3: [],
+                player4: []
+            },
+            gameRoundWinnerKey: '',
+            team02Points: points.team02,
+            team13Points: points.team13
+        });
     }
 
     static majongIsPlayable(gameboard) {
@@ -229,6 +321,7 @@ export class GameLogic {
         let playerHands = {};
         let requestedCard = gameboard.state.table.requestedCardName;
         let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
+        let gameRoundWinnerKey = gameboard.state.gameRoundWinnerKey;
         for (const key of playerKeys) {
             if (playerKey !== key) {
                 playerHands[key] = gameboard.state.playerHands[key];
@@ -306,6 +399,10 @@ export class GameLogic {
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
             }
+            if (gameRoundWinnerKey === '' && playerHands[playerKey].length === 0) {
+                console.log(`Winner: ${playerKey}`);
+                gameRoundWinnerKey = playerKey;
+            }
             gameboard.setState({
                 playerHands: playerHands,
                 currentPlayerIndex: nextPlayerIndex,
@@ -318,7 +415,8 @@ export class GameLogic {
                     combination: combination,
                     currentCardsOwnerIndex: gameboard.state.currentPlayerIndex,
                     requestedCardName: requestObject.card
-                }
+                },
+                gameRoundWinnerKey: gameRoundWinnerKey
             });
         }
         else {
@@ -434,7 +532,6 @@ export class GameLogic {
         for (const key of playerKeys) {
             playerHands[key] = [];
         }
-
         let i = 0, card, majongOwnerIndex;
         while ((card = gameboard.state.deck.cards.pop()) !== undefined) {
             if (card.key === specialCards.MAJONG) {
@@ -488,5 +585,30 @@ export class GameLogic {
                 actions.canDropBomb = Bomb.compareBombs(gameboard.state.table.combination, bomb) < 0;
             }
         }
+    }
+
+    static evaluatePoints(cards) {
+        let points = 0;
+        for (const card of cards) {
+            switch (card.name) {
+                case '5':
+                    points += 5;
+                    break;
+                case '10':
+                case 'K':
+                    points += 10;
+                    break;
+                case specialCards.DRAGON:
+                    points += 25;
+                    break;
+                case specialCards.PHOENIX:
+                    points -= 25;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return points;
     }
 }
