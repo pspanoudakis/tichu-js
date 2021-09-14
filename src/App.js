@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import './styles/App.css';
-import {Gameboard} from './components/Gameboard'
+import { TichuGame } from './components/TichuGame';
 
 class App extends Component {
 	render() {
 		return (
 		<div className="App-body">
-			< Gameboard/>
+			<TichuGame/>
 		</div>
 		);
 	}

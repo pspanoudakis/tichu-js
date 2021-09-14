@@ -11,8 +11,8 @@ import {cardCombinations,
 
 export class GameLogic {
 
-    static gameEnded(state) {
-        return state.team02Points >= 10 || state.team13Points >= 10;
+    static gameEnded(gameState) {
+        return gameState.team02Points >= 10 || gameState.team13Points >= 10;
     }
 
     static mustEndGameRound(gameboard) {
@@ -34,7 +34,6 @@ export class GameLogic {
             player3: [],
             player4: []
         };
-        console.log(gameboard.state);
         playerKeys.forEach( (key, index) => {
             if (gameboard.state.table.currentCardsOwnerIndex === key) {
                 playerHeaps[key] = Array.from(gameboard.state.table.currentCards);
@@ -66,12 +65,9 @@ export class GameLogic {
         } );
     }
 
-    static endGameRound(gameboard) {
+    static endGameRound(gameboard, points) {
         window.alert('Round Ended');
-        let points = {
-            team02: gameboard.state.team02Points,
-            team13: gameboard.state.team13Points
-        }
+
         let activePlayers = playerKeys.reduce( (active, key) => {
             return active + (gameboard.state.playerHands[key].length > 0);
         }, 0);
@@ -86,7 +82,7 @@ export class GameLogic {
         else {
             GameLogic.evaluateTeamPoints(gameboard, points);
         }
-        console.log(points);
+        /*
         gameboard.setState({
             playerHands: {
                 player1: [],
@@ -116,6 +112,7 @@ export class GameLogic {
             team02Points: points.team02,
             team13Points: points.team13
         });
+        */
     }
 
     static majongIsPlayable(gameboard) {
@@ -403,7 +400,7 @@ export class GameLogic {
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
             }
             if (gameRoundWinnerKey === '' && playerHands[playerKey].length === 0) {
-                console.log(`Winner: ${playerKey}`);
+                //console.log(`Winner: ${playerKey}`);
                 gameRoundWinnerKey = playerKey;
             }
             gameboard.setState({
@@ -474,7 +471,7 @@ export class GameLogic {
                 newState.table.combination = undefined;
                 newState.table.currentCardsOwnerIndex = -1;
                 newState.table.requestedCardName = gameboard.state.table.requestedCardName;
-                console.log(newState.playerHeaps[playerKeys[i]]);
+                //console.log(newState.playerHeaps[playerKeys[i]]);
             }
         }
     }
@@ -502,7 +499,7 @@ export class GameLogic {
                 newState.table.currentCards = [];
                 newState.table.currentCardsOwnerIndex = -1;
                 newState.table.requestedCardName = gameboard.state.table.requestedCardName;
-                console.log(newState.playerHeaps[playerKeys[i]]);
+                //console.log(newState.playerHeaps[playerKeys[i]]);
             }
         }
         gameboard.setState(newState);
