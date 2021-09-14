@@ -12,7 +12,8 @@ import {cardCombinations,
 export class GameLogic {
 
     static gameEnded(gameState) {
-        return gameState.team02Points >= 10 || gameState.team13Points >= 10;
+        return gameState.team02TotalPoints >= gameState.winningScore ||
+               gameState.team13TotalPoints >= gameState.winningScore;
     }
 
     static mustEndGameRound(gameboard) {
