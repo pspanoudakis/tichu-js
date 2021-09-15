@@ -103,7 +103,7 @@ export class CardCouple extends CardCombination {
             const phoenixIndex = cards.findIndex(card => card.name === specialCards.PHOENIX);
             if (phoenixIndex !== -1) {
                 const otherIndex = (phoenixIndex + 1) % 2;
-                if (specialCardNames.includes(cards[otherIndex].name)) {
+                if ( !specialCardNames.includes(cards[otherIndex].name) ) {
                     return new CardCouple(cards[otherIndex].value);
                 }                
             }

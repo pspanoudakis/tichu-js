@@ -1,13 +1,15 @@
 import {specialCards} from "./CardInfo";
 import {playerKeys} from "./components/Gameboard";
-import {cardCombinations,
-        SingleCard,
-        CardCouple,
-        Triplet,
-        FullHouse,
-        Steps,
-        Kenta,
-        Bomb} from "./CardCombinations";
+import {
+            cardCombinations,
+            SingleCard,
+            CardCouple,
+            Triplet,
+            FullHouse,
+            Steps,
+            Kenta,
+            Bomb
+        } from "./CardCombinations";
 
 export class GameLogic {
 
@@ -83,37 +85,6 @@ export class GameLogic {
         else {
             GameLogic.evaluateTeamPoints(gameboard, points);
         }
-        /*
-        gameboard.setState({
-            playerHands: {
-                player1: [],
-                player2: [],
-                player3: [],
-                player4: []
-            },
-            gameHasStarted: false,
-            currentPlayerIndex: -1,
-            pendingMajongRequest: '',
-            pendingDragonToBeGiven: false,
-            pendingBombToBePlayed: false,
-            table: {
-                previousCards: [],
-                currentCards: [],
-                combination: undefined,
-                currentCardsOwnerIndex: -1,
-                requestedCardName: ''
-            },
-            playerHeaps : {
-                player1: [],
-                player2: [],
-                player3: [],
-                player4: []
-            },
-            gameRoundWinnerKey: '',
-            team02Points: points.team02,
-            team13Points: points.team13
-        });
-        */
     }
 
     static majongIsPlayable(gameboard) {

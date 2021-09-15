@@ -17,13 +17,15 @@ export class Scoreboard extends Component {
                 </div>
             )
         }
-        return <span></span>
+        return <span></span>;
     }
 
     toggleExpansion = () => {
-        this.setState({
-            isExpanded: !this.state.isExpanded
-        })
+        if (this.props.scores.length > 0) {
+            this.setState({
+                isExpanded: !this.state.isExpanded
+            });
+        }
     }
 
     render() {
