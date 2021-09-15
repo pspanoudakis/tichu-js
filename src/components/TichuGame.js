@@ -7,7 +7,7 @@ import * as styles from "../styles/Components.module.css"
 export class TichuGame extends Component {
 
     state = {
-        previousGames: [],
+        previousGames: [[1,2], [2,3], [3,4]],
         team02TotalPoints: 0,
         team13TotalPoints: 0,
         winningScore: 0
@@ -19,6 +19,8 @@ export class TichuGame extends Component {
             team02TotalPoints: this.state.team02TotalPoints + team02,
             team13TotalPoints: this.state.team13TotalPoints + team13
         });
+        // TODO: Check if game must end here, and make sure Gameboard does not restart.
+        // Maybe "gameOver" prop?
     }
 
     render() {
