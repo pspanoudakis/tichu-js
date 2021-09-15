@@ -11,7 +11,7 @@ import {cardCombinations,
 
 export class GameLogic {
 
-    static gameEnded(gameState) {
+    static gameShouldEnd(gameState) {
         return gameState.team02TotalPoints >= gameState.winningScore ||
                gameState.team13TotalPoints >= gameState.winningScore;
     }

@@ -33,7 +33,6 @@ export class Scoreboard extends Component {
                 width: '100%',
                 height: 100 + 50 * innerEntries + '%',
                 backgroundColor: 'rgb(80, 80, 80)',
-                //transform: innerEntries === 1 ? 
                 transform: 'translateY(-' + 100/(1 + innerEntries/2) * innerEntries/2  + '%)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -43,7 +42,6 @@ export class Scoreboard extends Component {
             },
             {
                 width: '100%',
-                //height: items * 100 * 0.75 + '%',
                 height: 100 + 50 * innerEntries + '%',
                 backgroundColor: 'rgb(80, 80, 80)',
                 transform: 'translateY(0%)',
@@ -55,7 +53,7 @@ export class Scoreboard extends Component {
             }
         ];
 
-        return(
+        return (
             <div style={this.state.isExpanded ? mainStyles[1] : mainStyles[0]} onClick={this.toggleExpansion}>
                 {this.expandedScores()}
                 <div className={styles.scoreboardMainEntry}>
