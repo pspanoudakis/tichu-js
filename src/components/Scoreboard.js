@@ -9,8 +9,13 @@ export class Scoreboard extends Component {
     }
 
     expandedScores = () => {
-        if (this.props.scores.length === 0) {
-            return <div className={styles.scoreboardExpanded}></div>
+        if (this.props.scores.length > 0) {
+            return this.props.scores.map(([team02, team13]) => 
+                <div className={styles.scoreboardEntry}>
+                    <div className={styles.innerScore}>{team02}</div> 
+                    <div className={styles.innerScore}>{team13}</div>
+                </div>
+            )
         }
         return <span></span>
     }
@@ -22,23 +27,24 @@ export class Scoreboard extends Component {
     }
 
     render() {
-        const items = (this.props.scores.length + 1);
+        const innerEntries = this.props.scores.length;
         const mainStyles = [
             {
                 width: '100%',
-                height: items * 100 + '%',
+                height: 100 + 50 * innerEntries + '%',
                 backgroundColor: 'rgb(80, 80, 80)',
-                transform: 'translateY(-' + 100/items * this.props.scores.length + '%)',
+                //transform: innerEntries === 1 ? 
+                transform: 'translateY(-' + 100/(1 + innerEntries/2) * innerEntries/2  + '%)',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'visible',
                 zIndex: '1',
-                transition: '500ms',
+                transition: '400ms',
             },
             {
                 width: '100%',
                 //height: items * 100 * 0.75 + '%',
-                height: items * 100 + '%',
+                height: 100 + 50 * innerEntries + '%',
                 backgroundColor: 'rgb(80, 80, 80)',
                 transform: 'translateY(0%)',
                 display: 'flex',
@@ -51,10 +57,17 @@ export class Scoreboard extends Component {
 
         return(
             <div style={this.state.isExpanded ? mainStyles[1] : mainStyles[0]} onClick={this.toggleExpansion}>
-                <div className={styles.scoreboardEntry}>hello1</div>
-                <div className={styles.scoreboardEntry}>hello2</div>
-                <div className={styles.scoreboardEntry}>hello3</div>
-                <div className={styles.scoreboardMainEntry}>Main</div>
+                {this.expandedScores()}
+                <div className={styles.scoreboardMainEntry}>
+                    <span className={styles.mainScore}>
+                        <span style={{fontSize: 'large'}}>Team 1-3</span>
+                        {this.props.current[0]}
+                    </span> 
+                    <span className={styles.mainScore}>
+                        <span style={{fontSize: 'large'}}>Team 2-4</span>
+                        {this.props.current[1]}
+                    </span>
+                </div>
             </div>
         );
     }

@@ -7,9 +7,9 @@ import * as styles from "../styles/Components.module.css"
 export class TichuGame extends Component {
 
     state = {
-        previousGames: [[1,2], [2,3], [3,4]],
-        team02TotalPoints: 0,
-        team13TotalPoints: 0,
+        previousGames: [[200,0], [55,-66], [100,150], [1,2]],
+        team02TotalPoints: 60,
+        team13TotalPoints: 90,
         winningScore: 0
     }
 
