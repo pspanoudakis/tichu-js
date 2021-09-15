@@ -34,7 +34,8 @@ export class Gameboard extends Component {
             player2: [],
             player3: [],
             player4: []
-        }
+        },
+        gameRoundWinnerKey: ''
     }
 
     bombStop = (playerKey) => {
@@ -69,6 +70,7 @@ export class Gameboard extends Component {
             this.state.deck = new Deck();
         }
         */
+        //GameLogic.testHandCards(this)
     }
 
     playerComponents = () => {
@@ -101,10 +103,18 @@ export class Gameboard extends Component {
         return components;
     }
 
-    render() {
-        if (this.state.gameHasStarted && GameLogic.mustEndGame(this)) {
-            return <div>Game Ended</div>
+    componentDidUpdate() {
+        if (this.state.gameHasStarted && GameLogic.mustEndGameRound(this)) {
+            let points = {
+                team02: 0,
+                team13: 0
+            }
+            GameLogic.endGameRound(this, points);
+            this.props.gameRoundEnded(points.team02, points.team13);
         }
+    }
+
+    render() {
         // The Table must be aware of the active players
         // for an upcoming dragon selection
         let activePlayers = [];
