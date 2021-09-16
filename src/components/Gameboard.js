@@ -10,7 +10,7 @@ export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
 export class Gameboard extends Component {
     state = {
-        deck: new Deck(),
+        deck: (this.props.gameOver ? undefined : new Deck()),
         playerHands: {
             player1: [],
             player2: [],
@@ -103,6 +103,23 @@ export class Gameboard extends Component {
         return components;
     }
 
+    inactivePlayerComponents = () => {
+        let components = [];
+        for (let i = 0; i < playerKeys.length; i++) {
+            components.push(
+                <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
+                cards={[]}
+                style={styles[playerKeys[i]]}
+                hasTurn={false} canPass={false}
+                displaySelectionBox={false}
+                pendingRequest={''}
+                canBomb={false}
+                showOptions={false}/>
+            );
+        }
+        return components;
+    }
+
     componentDidUpdate() {
         if (this.state.gameHasStarted && GameLogic.mustEndGameRound(this)) {
             let points = {
@@ -121,11 +138,17 @@ export class Gameboard extends Component {
         for (const key of playerKeys) {
             activePlayers.push(this.state.playerHands[key].length > 0);
         }
-        const components = this.playerComponents();
+        let playerComponents;
+        if ( !this.props.gameOver ) {
+            playerComponents = this.playerComponents();
+        }
+        else {
+            playerComponents = this.inactivePlayerComponents();
+        }
         return (
             <div className={styles.gameboardStyle}>
-                {components[0]}
-                {components[1]}
+                {playerComponents[0]}
+                {playerComponents[1]}
                 <div className={styles.tableStyle}>
                     <Table currentCards={this.state.table.currentCards}
                     previousCards={this.state.table.previousCards}
@@ -135,9 +158,9 @@ export class Gameboard extends Component {
                     dragonGiven={this.dragonGiven}
                     requestedCard={this.state.table.requestedCardName}/>
                 </div>
-                {components[3]}
-                {components[2]}
-                {(this.state.currentPlayerIndex === -1)
+                {playerComponents[3]}
+                {playerComponents[2]}
+                {(!this.props.gameOver && this.state.currentPlayerIndex === -1)
                 ? <button onClick={this.handCards}>Hand Cards</button>
                 : ''}                                
             </div>

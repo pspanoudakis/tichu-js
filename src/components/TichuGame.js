@@ -9,9 +9,9 @@ export class TichuGame extends Component {
 
     state = {
         /*
-        previousGames: [[200,0], [55,-66], [100,150], [1,2]],
-        team02TotalPoints: 60,
-        team13TotalPoints: 90,
+        previousGames: [[200,0], [55,45], [-25,125]],
+        team02TotalPoints: 230,
+        team13TotalPoints: 170,
         */
         previousGames: [],
         team02TotalPoints: 0,
@@ -25,10 +25,12 @@ export class TichuGame extends Component {
             previousGames: [...this.state.previousGames, [team02, team13]],
             team02TotalPoints: this.state.team02TotalPoints + team02,
             team13TotalPoints: this.state.team13TotalPoints + team13,
+            winningScore: this.state.winningScore,
             gameOver: false
         }
         if (GameLogic.gameShouldEnd(newState)) {
             newState.gameOver = true;
+            window.alert('Game over');
         }
         this.setState(newState);
     }

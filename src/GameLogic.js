@@ -14,8 +14,9 @@ import {
 export class GameLogic {
 
     static gameShouldEnd(gameState) {
-        return gameState.team02TotalPoints >= gameState.winningScore ||
-               gameState.team13TotalPoints >= gameState.winningScore;
+        return (gameState.winningScore === 0 ||
+                gameState.team02TotalPoints >= gameState.winningScore ||
+                gameState.team13TotalPoints >= gameState.winningScore);
     }
 
     static mustEndGameRound(gameboard) {
