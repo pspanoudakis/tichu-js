@@ -1,9 +1,11 @@
-import {cardColorValues,
-        normalCardKeys,
-        normalCards,
-        letterValues,
-        specialCards,
-        specialCardNames} from "./CardInfo";
+import {
+            cardColorValues,
+            normalCardKeys,
+            normalCards,
+            letterValues,
+            specialCards,
+            specialCardNames
+        } from "./CardInfo";
 
 function isBetween(target, a, b) {
     return target >= a && target <= b;

@@ -1,12 +1,11 @@
-import React, {Component} from 'react';
-import {PlayerHand} from './PlayerHand';
-import {Table} from './Table';
-import {Deck} from '../Deck';
-import {GameLogic} from '../GameLogic';
+import { Component } from 'react';
+import { PlayerHand } from './PlayerHand';
+import { InitialPlayerHand } from './InitialPlayerHand';
+import { Table } from './Table';
+import { Deck } from '../Deck';
+import { GameLogic, playerKeys } from '../GameLogic';
 
 import * as styles from "../styles/Components.module.css"
-
-export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
 export class Gameboard extends Component {
     state = {
@@ -17,7 +16,6 @@ export class Gameboard extends Component {
             player3: [],
             player4: []
         },
-        gameHasStarted: false,
         currentPlayerIndex: -1,
         pendingMajongRequest: '',
         pendingDragonToBeGiven: false,
@@ -120,8 +118,14 @@ export class Gameboard extends Component {
         return components;
     }
 
+    componentDidMount() {
+        if (!this.props.gameOver && this.state.currentPlayerIndex === -1) {
+            GameLogic.handCards(this);
+        }
+    }
+
     componentDidUpdate() {
-        if (this.state.gameHasStarted && GameLogic.mustEndGameRound(this)) {
+        if (GameLogic.mustEndGameRound(this)) {
             let points = {
                 team02: 0,
                 team13: 0
@@ -160,9 +164,6 @@ export class Gameboard extends Component {
                 </div>
                 {playerComponents[3]}
                 {playerComponents[2]}
-                {(!this.props.gameOver && this.state.currentPlayerIndex === -1)
-                ? <button onClick={this.handCards}>Hand Cards</button>
-                : ''}                                
             </div>
         );
     }

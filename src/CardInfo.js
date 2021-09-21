@@ -1,4 +1,4 @@
-import {cardImages} from "./CardResources";
+import { cardImages } from "./CardResources";
 
 export const cardColors = {
     BLACK: 'black',

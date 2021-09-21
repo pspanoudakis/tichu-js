@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {CardInfo, specialCards} from '../CardInfo';
-import {Card} from './Card';
-import {RequestSelectionBox} from './RequestSelectionBox';
-import {PhoenixSelectionMenu} from './PhoenixSelectionMenu';
+import { Component } from 'react';
+import { CardInfo, specialCards } from '../CardInfo';
+import { Card } from './Card';
+import { RequestSelectionBox } from './RequestSelectionBox';
+import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
 
 import * as styles from "../styles/Components.module.css"
 

@@ -1,5 +1,4 @@
-import {specialCards} from "./CardInfo";
-import {playerKeys} from "./components/Gameboard";
+import { specialCards } from "./CardInfo";
 import {
             cardCombinations,
             SingleCard,
@@ -10,6 +9,8 @@ import {
             Kenta,
             Bomb
         } from "./CardCombinations";
+
+export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
 export class GameLogic {
 
@@ -494,7 +495,6 @@ export class GameLogic {
         }
 
         gameboard.setState({
-            gameHasStarted: true,
             playerHands: playerHands,
             currentPlayerIndex: majongOwnerIndex
         });
@@ -522,7 +522,6 @@ export class GameLogic {
         }
         if (count >= 2) {
             gameboard.setState({
-                gameHasStarted: true,
                 playerHands: playerHands,
                 currentPlayerIndex: majongOwnerIndex
             });

@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {specialCards} from '../CardInfo';
-import {cardImages} from '../CardResources';
-import {Card} from './Card';
+import { Component } from 'react';
+import { specialCards } from '../CardInfo';
+import { cardImages } from '../CardResources';
+import { Card } from './Card';
 
 import * as styles from "../styles/Components.module.css"
 

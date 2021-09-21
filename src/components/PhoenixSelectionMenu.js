@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {normalCards, reversedCardKeys} from '../CardInfo';
+import { Component } from 'react';
+import { normalCards, reversedCardKeys } from '../CardInfo';
 
 const options = [<option value="" key="none"></option>].concat( reversedCardKeys.map(
     cardKey => <option value={cardKey} key={cardKey}>{cardKey}</option>

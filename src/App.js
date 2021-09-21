@@ -1,6 +1,7 @@
-import React, {Component} from 'react';
-import './styles/App.css';
+import { Component } from 'react';
 import { TichuGame } from './components/TichuGame';
+
+import './styles/App.css';
 
 class App extends Component {
 	render() {
