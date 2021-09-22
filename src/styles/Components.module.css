@@ -105,6 +105,15 @@
     width: 35%;
 }
 
+.cardsSentButton {
+    width: 35%;
+    opacity: 0.5;
+}
+
+.cardsSentButton:active {
+    border-style: outset;
+}
+
 .gameboardStyle {
     width: 100%;
     height: 95%;

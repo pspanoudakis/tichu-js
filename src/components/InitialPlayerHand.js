@@ -7,18 +7,26 @@ import * as styles from "../styles/Components.module.css"
 
 export class InitialPlayerHand extends Component {
 
+    selfIndex = playerKeys.indexOf(this.props.id);
+
     state = {
         //cardsExpanded: false,
         cardsExpanded: true,
         tradesSent: false,
+        tradesReceived: false,
         /**
          * 0: left opponent, 1: teammate, 2: right opponent
          * */
         trades: [
-            ['player1', undefined],
-            ['player2', undefined],
-            ['player2', undefined]
-        ]
+            ['', undefined],
+            ['', undefined],
+            ['', undefined]
+        ],
+        indexes: {
+            teammate: (this.selfIndex + 2) % 4,
+            left: this.selfIndex > 0 ? this.selfIndex - 1 : 3,
+            right: (this.selfIndex + 1) % 4
+        }
     }
     
     voidButton = (event) => {
@@ -31,9 +39,19 @@ export class InitialPlayerHand extends Component {
         })
     }
 
+    receiveTrades = () => {
+        this.setState({
+            tradesReceived: true
+        })
+        this.props.receiveCards(this.props.key, this.state.trades);
+    }
+
     sendTrades = () => {
         if ( !this.state.trades.some( ([, card]) => card === undefined )) {
-            //this.props.sendCards(this.props.id, this.state.trades);
+            this.props.sendCards(this.props.id, this.state.trades);
+            this.setState({
+                tradesSent: true
+            })
         }
         else {
             window.alert('You must select a card for each of the other players.');
@@ -54,7 +72,7 @@ export class InitialPlayerHand extends Component {
                             newTrades.push([player, target]);
                         }
                         return newTrades;
-                    }, [])
+                    }, []);
                     target.isSelected = true;
                     this.setState({
                         trades: newTrades
@@ -86,6 +104,7 @@ export class InitialPlayerHand extends Component {
     renderedMainBox = () => {
         let nonSelectedCards = [];
         let selectedCards = [];
+        let button;
         this.props.cards.sort(CardInfo.compareCards).forEach((card) => {
             if (!card.isSelected) {
                 const cardStyle = {
@@ -103,8 +122,42 @@ export class InitialPlayerHand extends Component {
                 );
             }
         });
-        
-        this.state.trades.forEach(([player, card], index) => {
+        let targetArray;
+
+        if (this.props.incomingCards.length === 3 && this.state.tradesSent) {
+            targetArray = [];
+            targetArray.push(this.props.incomingCards.find(
+                ([key, ]) => key === playerKeys[this.state.indexes.left] ));
+            targetArray.push(this.props.incomingCards.find(
+                ([key, ]) => key === playerKeys[this.state.indexes.teammate] ));
+            targetArray.push(this.props.incomingCards.find(
+                ([key, ]) => key === playerKeys[this.state.indexes.right] ));
+            if (!this.state.tradesReceived) {
+                button = <button className={styles.sendCardsButton} onClick={this.receiveTrades}>
+                            Receive
+                        </button>;
+            }
+            else {
+                button = <button className={styles.cardsSentButton} onClick={this.voidButton}>
+                            Received
+                        </button>;
+            }
+        }
+        else {
+            targetArray = this.state.trades;
+            if (this.state.tradesSent) {
+                button = <button className={styles.cardsSentButton} onClick={this.voidButton}>
+                            Cards Sent
+                        </button>;
+            }
+            else {
+                button = <button className={styles.sendCardsButton} onClick={this.sendTrades}>
+                            Send
+                         </button>;
+            }
+        }
+
+        targetArray.forEach(([player, card]) => {
             const cardStyle = {
                 width: '37.5%',
                 height: '55%'
@@ -115,13 +168,13 @@ export class InitialPlayerHand extends Component {
                     {card !== undefined ?
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
                         alt={card.alt} selected={card.isSelected} 
-                        clickCallback={this.cardClicked} style={cardStyle}/> :
+                        clickCallback={!this.state.tradesSent ? this.cardClicked : this.voidButton}
+                        style={cardStyle}/> :
                         <span></span>
                     }
                 </div>
             );
         });
-            
 
         return (
             <div className={styles.preTradePlayerBox}>
@@ -133,25 +186,18 @@ export class InitialPlayerHand extends Component {
                     {selectedCards}
                 </div>
                 <div className={styles.sendCardsButtonContainer}>
-                    <button className={styles.sendCardsButton} onClick={this.sendTrades}>
-                        Send
-                    </button>
+                    {button}
                 </div>
             </div>            
         )
     }
 
     componentDidMount() {
-        const thisIndex = playerKeys.indexOf(this.props.id);
-        const teammateIndex = (thisIndex + 2) % 4;
-        const leftIndex =  thisIndex > 0 ? thisIndex - 1 : 3;
-        const rightIndex = (thisIndex + 1) % 4;
-
         this.setState({
             trades: [
-                [playerKeys[leftIndex], this.state.trades[0][1]],
-                [playerKeys[teammateIndex], this.state.trades[1][1]],
-                [playerKeys[rightIndex], this.state.trades[2][1]]
+                [playerKeys[this.state.indexes.left], this.state.trades[0][1]],
+                [playerKeys[this.state.indexes.teammate], this.state.trades[1][1]],
+                [playerKeys[this.state.indexes.right], this.state.trades[2][1]]
             ]
         })
     }
