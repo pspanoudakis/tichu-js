@@ -16,6 +16,7 @@ export class Gameboard extends Component {
             player3: [],
             player4: []
         },
+        tradingPhaseCompleted: false,
         currentPlayerIndex: -1,
         pendingMajongRequest: '',
         pendingDragonToBeGiven: false,
@@ -136,6 +137,31 @@ export class Gameboard extends Component {
     }
 
     render() {
+        
+        if (!this.state.tradingPhaseCompleted) {
+            let playerComponents = [];
+            for (let i = 0; i < playerKeys.length; i++) {
+                playerComponents.push(
+                    <InitialPlayerHand key={playerKeys[i]} id={playerKeys[i]}
+                    cards={this.state.playerHands[playerKeys[i]]}/>
+                );
+            }
+            return (
+                <div className={styles.gameboardPreTradesStyle}>
+                    <div className={styles.preTradesCol}>
+                        {playerComponents[1]}
+                    </div>
+                    <div className={styles.preTradesCol}>
+                        {playerComponents[0]}
+                        {playerComponents[2]}
+                    </div>
+                    <div className={styles.preTradesCol}>
+                        {playerComponents[3]}
+                    </div>
+                </div>
+            );
+        }
+
         // The Table must be aware of the active players
         // for an upcoming dragon selection
         let activePlayers = [];
