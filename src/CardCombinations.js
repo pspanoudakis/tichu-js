@@ -2,7 +2,6 @@ import {
             cardColorValues,
             normalCardKeys,
             normalCards,
-            letterValues,
             specialCards,
             specialCardNames
         } from "./CardInfo";
@@ -89,10 +88,7 @@ export class CardCouple extends CardCombination {
         let targetCards = cards.filter(card => card.name === requestedCard);
         if (targetCards.length >= 2 || 
             (targetCards.length === 1 && hasPhoenix)) {
-                const value = (letterValues[requestedCard] !== undefined)
-                              ? letterValues[requestedCard]
-                              : parseInt(requestedCard);
-                return new CardCouple(value);
+                return new CardCouple(normalCards.get(requestedCard).value);
         }
         return null;
     }
@@ -130,10 +126,7 @@ export class Triplet extends CardCombination {
         let targetCards = cards.filter(card => card.name === requestedCard);
         if (targetCards.length >= 3 || 
             (targetCards.length === 2 && hasPhoenix)) {
-                const value = (letterValues[requestedCard] !== undefined)
-                              ? letterValues[requestedCard]
-                              : parseInt(requestedCard);
-                return new Triplet(value);
+                return new Triplet(normalCards.get(requestedCard).value);
         }
         return null;
     }
@@ -323,10 +316,10 @@ export class FullHouse extends CardCombination {
     constructor(cardA, timesA, cardB, timesB) {
         let value;
         if (timesA > timesB){
-            value = (letterValues[cardA] !== undefined) ? letterValues[cardA] : parseInt(cardA);
+            value = normalCards.get(cardA).value;
         }
         else {
-            value = (letterValues[cardB] !== undefined) ? letterValues[cardB] : parseInt(cardB);
+            value = normalCards.get(cardB).value;
         }
         super(cardCombinations.FULLHOUSE, 5, value);
     }
@@ -444,8 +437,8 @@ function strongestRequestedFullHouse(cardOccurences, requestedCard, requestedOcc
 
 export class Bomb extends CardCombination{
     constructor(upperCard, lowerCard, color='') {
-        const topValue = (letterValues[upperCard] !== undefined) ? letterValues[upperCard] : parseInt(upperCard);
-        const lower = (letterValues[lowerCard] !== undefined) ? letterValues[lowerCard] : parseInt(lowerCard);
+        const topValue = normalCards.get(upperCard).value;
+        const lower = normalCards.get(lowerCard).value;
         const length = topValue - lower + 1;
         super(cardCombinations.BOMB, length > 1 ? length : 4, topValue);
         this.color = color;

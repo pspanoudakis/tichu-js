@@ -166,35 +166,34 @@ export class Gameboard extends Component {
         }
     }
 
-    render() {
-
-        if (!this.state.tradingPhaseCompleted && !this.props.gameOver) {
-            let playerComponents = [];
-            for (let i = 0; i < playerKeys.length; i++) {
-                playerComponents.push(
-                    <InitialPlayerHand key={playerKeys[i]} id={playerKeys[i]}
-                    cards={this.state.playerHands[playerKeys[i]]}
-                    incomingCards={this.state.playerTrades[playerKeys[i]]}
-                    sendCards={this.makeTrades}
-                    receiveCards={this.tradeReceived}/>
-                );
-            }
-            return (
-                <div className={styles.gameboardPreTradesStyle}>
-                    <div className={styles.preTradesCol}>
-                        {playerComponents[1]}
-                    </div>
-                    <div className={styles.preTradesCol}>
-                        {playerComponents[0]}
-                        {playerComponents[2]}
-                    </div>
-                    <div className={styles.preTradesCol}>
-                        {playerComponents[3]}
-                    </div>
-                </div>
+    tradePhaseRender = () => {
+        let playerComponents = [];
+        for (let i = 0; i < playerKeys.length; i++) {
+            playerComponents.push(
+                <InitialPlayerHand key={playerKeys[i]} id={playerKeys[i]}
+                cards={this.state.playerHands[playerKeys[i]]}
+                incomingCards={this.state.playerTrades[playerKeys[i]]}
+                sendCards={this.makeTrades}
+                receiveCards={this.tradeReceived}/>
             );
         }
+        return (
+            <div className={styles.gameboardPreTradesStyle}>
+                <div className={styles.preTradesCol}>
+                    {playerComponents[1]}
+                </div>
+                <div className={styles.preTradesCol}>
+                    {playerComponents[0]}
+                    {playerComponents[2]}
+                </div>
+                <div className={styles.preTradesCol}>
+                    {playerComponents[3]}
+                </div>
+            </div>
+        );
+    }
 
+    inGameRender = () => {
         // The Table must be aware of the active players
         // for an upcoming dragon selection
         let activePlayers = [];
@@ -225,5 +224,12 @@ export class Gameboard extends Component {
                 {playerComponents[2]}
             </div>
         );
+    }
+
+    render() {
+        if (!this.state.tradingPhaseCompleted && !this.props.gameOver) {
+            return this.tradePhaseRender();
+        }
+        return this.inGameRender();
     }
 }
