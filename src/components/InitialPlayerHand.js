@@ -8,6 +8,9 @@ import * as styles from "../styles/Components.module.css"
 export class InitialPlayerHand extends Component {
 
     selfIndex = playerKeys.indexOf(this.props.id);
+    teammateIndex = (this.selfIndex + 2) % 4;
+    leftIndex = this.selfIndex > 0 ? this.selfIndex - 1 : 3;
+    rightIndex = (this.selfIndex + 1) % 4;
 
     state = {
         //cardsExpanded: false,
@@ -18,9 +21,9 @@ export class InitialPlayerHand extends Component {
          * 0: left opponent, 1: teammate, 2: right opponent
          * */
         trades: [
-            ['', undefined],
-            ['', undefined],
-            ['', undefined]
+            [playerKeys[this.leftIndex], undefined],
+            [playerKeys[this.teammateIndex], undefined],
+            [playerKeys[this.rightIndex], undefined]
         ],
         indexes: {
             teammate: (this.selfIndex + 2) % 4,
@@ -43,7 +46,7 @@ export class InitialPlayerHand extends Component {
         this.setState({
             tradesReceived: true
         })
-        this.props.receiveCards(this.props.key, this.state.trades);
+        this.props.receiveCards(this.props.id);
     }
 
     sendTrades = () => {
@@ -101,68 +104,89 @@ export class InitialPlayerHand extends Component {
         }
     }
 
-    renderedMainBox = () => {
-        let nonSelectedCards = [];
-        let selectedCards = [];
-        let button;
+    mainComponent = () => {
+        let elements = {
+            nonSelectedCards: [],
+            selectedCards: [],
+            button: undefined,
+        }
         this.props.cards.sort(CardInfo.compareCards).forEach((card) => {
             if (!card.isSelected) {
                 const cardStyle = {
-                    zindex: nonSelectedCards.length.toString(),
+                    zindex: elements.nonSelectedCards.length.toString(),
                     position: 'absolute',
-                    left: (nonSelectedCards.length * 6.5).toString() + '%',
+                    left: (elements.nonSelectedCards.length * 6.5).toString() + '%',
                     bottom: '20%',
                     width: '11%',
                     height: '70%'
                 }
-                nonSelectedCards.push(
+                elements.nonSelectedCards.push(
                     <Card key={card.key} id={card.key} cardImg={card.cardImg}
                     alt={card.alt} selected={card.isSelected} 
                     clickCallback={this.cardClicked} style={cardStyle}/>
                 );
             }
         });
-        let targetArray;
 
+        this.createInnerElements(elements);
+
+        return (
+            <div className={styles.preTradePlayerBox}>
+                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.preTradeCardList}>
+                    {elements.nonSelectedCards}
+                </div>
+                <div className={styles.tradingCardSlots}>
+                    {elements.selectedCards}
+                </div>
+                <div className={styles.sendCardsButtonContainer}>
+                    {elements.button}
+                </div>
+            </div>            
+        );
+    }
+
+    createInnerElements = (elements) => {
+        let slotsArray;
         if (this.props.incomingCards.length === 3 && this.state.tradesSent) {
-            targetArray = [];
-            targetArray.push(this.props.incomingCards.find(
-                ([key, ]) => key === playerKeys[this.state.indexes.left] ));
-            targetArray.push(this.props.incomingCards.find(
-                ([key, ]) => key === playerKeys[this.state.indexes.teammate] ));
-            targetArray.push(this.props.incomingCards.find(
-                ([key, ]) => key === playerKeys[this.state.indexes.right] ));
+            slotsArray = [];
+            slotsArray.push(this.props.incomingCards.find(
+                ([key, ]) => key === playerKeys[this.leftIndex] ));
+            slotsArray.push(this.props.incomingCards.find(
+                ([key, ]) => key === playerKeys[this.teammateIndex] ));
+            slotsArray.push(this.props.incomingCards.find(
+                ([key, ]) => key === playerKeys[this.rightIndex] ));
             if (!this.state.tradesReceived) {
-                button = <button className={styles.sendCardsButton} onClick={this.receiveTrades}>
-                            Receive
-                        </button>;
+                elements.button =   <button className={styles.sendCardsButton} onClick={this.receiveTrades}>
+                                        Receive
+                                    </button>;
             }
             else {
-                button = <button className={styles.cardsSentButton} onClick={this.voidButton}>
-                            Received
-                        </button>;
+                elements.button =   <button className={styles.cardsSentButton} onClick={this.voidButton}>
+                                        Received
+                                    </button>;
             }
         }
         else {
-            targetArray = this.state.trades;
+            slotsArray = this.state.trades;
             if (this.state.tradesSent) {
-                button = <button className={styles.cardsSentButton} onClick={this.voidButton}>
-                            Cards Sent
-                        </button>;
+                elements.button =   <button className={styles.cardsSentButton} onClick={this.voidButton}>
+                                        Cards Sent
+                                    </button>;
             }
             else {
-                button = <button className={styles.sendCardsButton} onClick={this.sendTrades}>
-                            Send
-                         </button>;
+                elements.button =   <button className={styles.sendCardsButton} onClick={this.sendTrades}>
+                                        Send
+                                    </button>;
             }
         }
 
-        targetArray.forEach(([player, card]) => {
+        slotsArray.forEach(([player, card]) => {
             const cardStyle = {
                 width: '37.5%',
                 height: '55%'
             }
-            selectedCards.push(
+            elements.selectedCards.push(
                 <div className={styles.tradingCardSlot}>
                     <span>{player}</span>
                     {card !== undefined ?
@@ -175,34 +199,9 @@ export class InitialPlayerHand extends Component {
                 </div>
             );
         });
-
-        return (
-            <div className={styles.preTradePlayerBox}>
-                <span className={styles.playerIDSpan}>{this.props.id}</span>
-                <div className={styles.preTradeCardList}>
-                    {nonSelectedCards}
-                </div>
-                <div className={styles.tradingCardSlots}>
-                    {selectedCards}
-                </div>
-                <div className={styles.sendCardsButtonContainer}>
-                    {button}
-                </div>
-            </div>            
-        )
-    }
-
-    componentDidMount() {
-        this.setState({
-            trades: [
-                [playerKeys[this.state.indexes.left], this.state.trades[0][1]],
-                [playerKeys[this.state.indexes.teammate], this.state.trades[1][1]],
-                [playerKeys[this.state.indexes.right], this.state.trades[2][1]]
-            ]
-        })
     }
     
     render() {
-        return this.renderedMainBox();
+        return this.mainComponent();
     }
 }

@@ -512,7 +512,6 @@ export class GameLogic {
                         majongOwnerIndex = index;
                     }
                 }
-                card.isSelected = false;
             }
             for (const [,card] of gameboard.state.playerTrades[key]) {
                 playerHands[key].push(card)

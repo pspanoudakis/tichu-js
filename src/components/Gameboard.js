@@ -59,8 +59,11 @@ export class Gameboard extends Component {
         });
     }
 
-    tradeReceived = () => {
+    tradeReceived = (playerKey) => {
         const total = this.state.receivedTrades + 1;
+        for (const [,card] of this.state.playerTrades[playerKey]) {
+            card.isSelected = false;
+        }
         this.setState({
             receivedTrades: total,
             tradingPhaseCompleted: total === 4
