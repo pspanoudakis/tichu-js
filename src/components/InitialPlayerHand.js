@@ -13,10 +13,10 @@ export class InitialPlayerHand extends Component {
     rightIndex = (this.selfIndex + 1) % 4;
 
     state = {
-        //cardsExpanded: false,
-        cardsExpanded: true,
+        cardsExpanded: false,
         tradesSent: false,
         tradesReceived: false,
+        grandTichuBet: false,
         /**
          * 0: left opponent, 1: teammate, 2: right opponent
          * */
@@ -31,9 +31,13 @@ export class InitialPlayerHand extends Component {
             right: (this.selfIndex + 1) % 4
         }
     }
-    
+
     voidButton = (event) => {
         event.preventDefault();
+    }
+
+    grandTichuBet = () => {
+        this.props.grandTichuBet(this.props.id);
     }
 
     expandCards = () => {
@@ -104,12 +108,52 @@ export class InitialPlayerHand extends Component {
         }
     }
 
-    mainComponent = () => {
+    preExpansionElements = () => {
+        let cards = [];
+        this.props.cards.slice(0,8).sort(CardInfo.compareCards).forEach((card) => {
+            const cardStyle = {
+                zindex: cards.length.toString(),
+                position: 'absolute',
+                left: (cards.length * 6.5).toString() + '%',
+                bottom: '20%',
+                width: '11%',
+                height: '70%'
+            }
+            cards.push(
+                <Card key={card.key} id={card.key} cardImg={card.cardImg}
+                alt={card.alt} selected={card.isSelected} 
+                clickCallback={this.cardClicked} style={cardStyle}/>
+            );
+        });
+        let grandTichuButton = <span></span>;
+        if (!this.state.grandTichuBet) {
+            grandTichuButton =  <button className={styles.tradePhaseButton} onClick={this.grandTichuBet}>
+                                    Grand Tichu
+                                </button>;
+        }
+
+        return (
+            <div className={styles.preTradePlayerBox}>
+                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.preTradeCardList}>
+                    {cards}
+                </div>
+                <div className={styles.tradingCardSlots}/>
+                <div className={styles.tradePhaseButtonContainer}>
+                    <button className={styles.tradePhaseButton} onClick={this.expandCards}>Expand Cards</button>
+                    {grandTichuButton}
+                </div>
+            </div>            
+        );
+    }
+
+    postExpansionElements = () => {
         let elements = {
             nonSelectedCards: [],
             selectedCards: [],
             button: undefined,
         }
+
         this.props.cards.sort(CardInfo.compareCards).forEach((card) => {
             if (!card.isSelected) {
                 const cardStyle = {
@@ -139,11 +183,18 @@ export class InitialPlayerHand extends Component {
                 <div className={styles.tradingCardSlots}>
                     {elements.selectedCards}
                 </div>
-                <div className={styles.sendCardsButtonContainer}>
+                <div className={styles.tradePhaseButtonContainer}>
                     {elements.button}
                 </div>
             </div>            
         );
+    }
+
+    mainComponent = () => {
+        if (this.state.cardsExpanded) {
+            return this.postExpansionElements()
+        }
+        return this.preExpansionElements();
     }
 
     createInnerElements = (elements) => {
@@ -157,12 +208,12 @@ export class InitialPlayerHand extends Component {
             slotsArray.push(this.props.incomingCards.find(
                 ([key, ]) => key === playerKeys[this.rightIndex] ));
             if (!this.state.tradesReceived) {
-                elements.button =   <button className={styles.sendCardsButton} onClick={this.receiveTrades}>
+                elements.button =   <button className={styles.tradePhaseButton} onClick={this.receiveTrades}>
                                         Receive
                                     </button>;
             }
             else {
-                elements.button =   <button className={styles.cardsSentButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.disabledButton} onClick={this.voidButton}>
                                         Received
                                     </button>;
             }
@@ -170,12 +221,12 @@ export class InitialPlayerHand extends Component {
         else {
             slotsArray = this.state.trades;
             if (this.state.tradesSent) {
-                elements.button =   <button className={styles.cardsSentButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.disabledButton} onClick={this.voidButton}>
                                         Cards Sent
                                     </button>;
             }
             else {
-                elements.button =   <button className={styles.sendCardsButton} onClick={this.sendTrades}>
+                elements.button =   <button className={styles.tradePhaseButton} onClick={this.sendTrades}>
                                         Send
                                     </button>;
             }
