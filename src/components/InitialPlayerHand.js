@@ -1,7 +1,7 @@
 import { Component } from "react";
 import { CardInfo } from "../CardInfo";
 import { Card } from "./Card";
-import { playerKeys } from "../GameLogic";
+import { playerKeys, gameBets } from "../GameLogic";
 
 import * as styles from "../styles/Components.module.css"
 
@@ -16,7 +16,6 @@ export class InitialPlayerHand extends Component {
         cardsExpanded: false,
         tradesSent: false,
         tradesReceived: false,
-        grandTichuBet: false,
         /**
          * 0: left opponent, 1: teammate, 2: right opponent
          * */
@@ -37,7 +36,11 @@ export class InitialPlayerHand extends Component {
     }
 
     grandTichuBet = () => {
-        this.props.grandTichuBet(this.props.id);
+        this.props.placeBet(this.props.id, gameBets.GRAND_TICHU);
+    }
+
+    tichuBet = () => {
+        this.props.placeBet(this.props.id, gameBets.TICHU);
     }
 
     expandCards = () => {
@@ -126,7 +129,7 @@ export class InitialPlayerHand extends Component {
             );
         });
         let grandTichuButton = <span></span>;
-        if (!this.state.grandTichuBet) {
+        if (this.props.currentBet === gameBets.NONE) {
             grandTichuButton =  <button className={styles.tradePhaseButton} onClick={this.grandTichuBet}>
                                     Grand Tichu
                                 </button>;
@@ -173,6 +176,12 @@ export class InitialPlayerHand extends Component {
         });
 
         this.createInnerElements(elements);
+        let tichuButton = <span></span>;
+        if (this.props.currentBet === gameBets.NONE) {
+            tichuButton =   <button className={styles.tradePhaseButton} onClick={this.tichuBet}>
+                                Tichu
+                            </button>;
+        }
 
         return (
             <div className={styles.preTradePlayerBox}>
@@ -185,6 +194,7 @@ export class InitialPlayerHand extends Component {
                 </div>
                 <div className={styles.tradePhaseButtonContainer}>
                     {elements.button}
+                    {tichuButton}
                 </div>
             </div>            
         );

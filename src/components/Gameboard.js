@@ -51,6 +51,19 @@ export class Gameboard extends Component {
         gameRoundWinnerKey: ''
     }
 
+    placeBet = (playerKey, bet) => {
+        let playerBets = {
+            player1: this.state.playerBets.player1,
+            player2: this.state.playerBets.player2,
+            player3: this.state.playerBets.player3,
+            player4: this.state.playerBets.player4
+        }
+        playerBets[playerKey] = bet;
+        this.setState({
+            playerBets: playerBets
+        });
+    }
+
     makeTrades = (playerKey, trades) => {
         let playerTrades = {
             player1: this.state.playerTrades.player1,
@@ -124,6 +137,7 @@ export class Gameboard extends Component {
                 style={styles[playerKeys[i]]}
                 actions={actions}
                 showOptions={!this.state.pendingDragonToBeGiven}
+                placeBet={this.placeBet}
                 playCards={this.playerPlayedCards}
                 passTurn={this.playerPassedTurn}
                 selectionMade={this.playerMadeMajongSelection}
@@ -143,12 +157,13 @@ export class Gameboard extends Component {
             pendingRequest: '',
             canBomb: false,
         }
-        for (let i = 0; i < playerKeys.length; i++) {
+        for (const key of playerKeys) {
             components.push(
-                <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
+                <PlayerHand key={key} id={key}
                 cards={[]}
-                style={styles[playerKeys[i]]}
+                style={styles[key]}
                 actions={actions}
+                placeBet={this.placeBet}
                 showOptions={false}/>
             );
         }
@@ -177,11 +192,13 @@ export class Gameboard extends Component {
 
     tradePhaseRender = () => {
         let playerComponents = [];
-        for (let i = 0; i < playerKeys.length; i++) {
+        for (const key of playerKeys) {
             playerComponents.push(
-                <InitialPlayerHand key={playerKeys[i]} id={playerKeys[i]}
-                cards={this.state.playerHands[playerKeys[i]]}
-                incomingCards={this.state.playerTrades[playerKeys[i]]}
+                <InitialPlayerHand key={key} id={key}
+                cards={this.state.playerHands[key]}
+                incomingCards={this.state.playerTrades[key]}
+                currentBet={this.state.playerBets[key]}
+                placeBet={this.placeBet}
                 sendCards={this.makeTrades}
                 receiveCards={this.tradeReceived}/>
             );

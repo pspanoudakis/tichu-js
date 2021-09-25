@@ -561,10 +561,9 @@ export class GameLogic {
     }
 
     static getPlayerPossibleActions(gameboard, playerIndex, majongIsPlayable, actions) {
-        if (gameboard.state.playerHands[playerKeys[playerIndex]].length === 14) {
-            if (gameboard.state.playerBets[playerKeys[playerIndex]] === gameBets.NONE) {
+        if (gameboard.state.playerHands[playerKeys[playerIndex]].length === 14 &&
+            gameboard.state.playerBets[playerKeys[playerIndex]] === gameBets.NONE) {
                 actions.canBetTichu = true;
-            }
         }
         if (actions.hasTurn) {
             actions.canPass = (gameboard.state.table.currentCards.length !== 0) &&

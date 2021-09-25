@@ -3,6 +3,7 @@ import { CardInfo, specialCards } from '../CardInfo';
 import { Card } from './Card';
 import { RequestSelectionBox } from './RequestSelectionBox';
 import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
+import { gameBets } from '../GameLogic';
 
 import * as styles from "../styles/Components.module.css"
 
@@ -35,6 +36,10 @@ export class PlayerHand extends Component {
 
     dropBomb = () => {
         this.props.dropBomb(this.props.id);
+    }
+
+    tichuBet = () => {
+        this.props.placeBet(this.props.id, gameBets.TICHU);
     }
 
     renderedMainBox = () => {
@@ -77,6 +82,7 @@ export class PlayerHand extends Component {
         let playCardsButton = '';
         let passButton = '';
         let bombButton = '';
+        let tichuButton = '';
         if (this.props.showOptions) {
             if (this.props.actions.hasTurn) {
                 if (this.hasSelectedCards()) {
@@ -94,11 +100,14 @@ export class PlayerHand extends Component {
             if (this.props.actions.canBomb) {
                 bombButton = <button onClick={this.dropBomb}>Bomb</button>
             }
+            if (this.props.actions.canBetTichu) {
+                tichuButton = <button onClick={this.tichuBet}>Tichu</button>
+            }
         }
         return (
             <div className={this.props.style}>
                 {this.renderedMainBox()}
-                {playCardsButton}{passButton}{bombButton}
+                {playCardsButton}{passButton}{bombButton}{tichuButton}
             </div>
         )
     }
