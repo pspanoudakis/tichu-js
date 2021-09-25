@@ -62,10 +62,10 @@ export class PlayerHand extends Component {
                 <div className={styles.playerCardList}>
                     {cardComponents}
                 </div>
-                {this.props.displaySelectionBox && this.props.cards.some(card => 
+                {this.props.actions.displaySelectionBox && this.props.cards.some(card => 
                 card.name === specialCards.MAJONG && card.isSelected)
                 ? <RequestSelectionBox requestMade={this.madeRequestSelection}/>
-                : this.props.pendingRequest}
+                : this.props.actions.pendingRequest}
                 { (selectedCards.length >= 5 && phoenix !== undefined && phoenix.isSelected) 
                 ? <PhoenixSelectionMenu phoenix={phoenix}></PhoenixSelectionMenu>
                 : ''}
@@ -78,7 +78,7 @@ export class PlayerHand extends Component {
         let passButton = '';
         let bombButton = '';
         if (this.props.showOptions) {
-            if (this.props.hasTurn) {
+            if (this.props.actions.hasTurn) {
                 if (this.hasSelectedCards()) {
                     playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
                 }
@@ -87,11 +87,11 @@ export class PlayerHand extends Component {
                                         Play Cards
                                         </button>;
                 }
-                if (this.props.canPass) {
+                if (this.props.actions.canPass) {
                     passButton = <button onClick={this.passTurn}>Pass</button>
                 }
             }
-            if (this.props.canBomb) {
+            if (this.props.actions.canBomb) {
                 bombButton = <button onClick={this.dropBomb}>Bomb</button>
             }
         }

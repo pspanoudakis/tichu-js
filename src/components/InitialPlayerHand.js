@@ -213,7 +213,7 @@ export class InitialPlayerHand extends Component {
                                     </button>;
             }
             else {
-                elements.button =   <button className={styles.disabledButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.inactiveButton} onClick={this.voidButton}>
                                         Received
                                     </button>;
             }
@@ -221,7 +221,7 @@ export class InitialPlayerHand extends Component {
         else {
             slotsArray = this.state.trades;
             if (this.state.tradesSent) {
-                elements.button =   <button className={styles.disabledButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.inactiveButton} onClick={this.voidButton}>
                                         Cards Sent
                                     </button>;
             }
@@ -232,13 +232,13 @@ export class InitialPlayerHand extends Component {
             }
         }
 
-        slotsArray.forEach(([player, card]) => {
+        slotsArray.forEach(([player, card], index) => {
             const cardStyle = {
                 width: '37.5%',
                 height: '55%'
             }
             elements.selectedCards.push(
-                <div className={styles.tradingCardSlot}>
+                <div key={index} className={styles.tradingCardSlot}>
                     <span>{player}</span>
                     {card !== undefined ?
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}

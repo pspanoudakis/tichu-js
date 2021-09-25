@@ -105,12 +105,12 @@
     width: 35%;
 }
 
-.disabledButton {
+.inactiveButton {
     width: 35%;
     opacity: 0.5;
 }
 
-.disabledButton:active {
+.inactiveButton:active {
     border-style: outset;
 }
 

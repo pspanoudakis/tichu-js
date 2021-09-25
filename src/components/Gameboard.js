@@ -3,7 +3,7 @@ import { PlayerHand } from './PlayerHand';
 import { InitialPlayerHand } from './InitialPlayerHand';
 import { Table } from './Table';
 import { Deck } from '../Deck';
-import { GameLogic, playerKeys } from '../GameLogic';
+import { GameLogic, playerKeys, gameBets } from '../GameLogic';
 
 import * as styles from "../styles/Components.module.css"
 
@@ -21,6 +21,12 @@ export class Gameboard extends Component {
             player2: [],
             player3: [],
             player4: []
+        },
+        playerBets: {
+            player1: gameBets.NONE,
+            player2: gameBets.NONE,
+            player3: gameBets.NONE,
+            player4: gameBets.NONE
         },
         sentTrades: 0,
         receivedTrades: 0,
@@ -104,21 +110,19 @@ export class Gameboard extends Component {
         let majongIsPlayable = GameLogic.majongIsPlayable(this);
         for (let i = 0; i < playerKeys.length; i++) {
             let actions = {
+                canBetTichu: false,
                 hasTurn: this.state.currentPlayerIndex === i,
                 canPass: false,
-                displayMajongRequestBox: false,
-                pendingRequestMessage: '',
-                canDropBomb: false,
+                displaySelectionBox: false,
+                pendingRequest: '',
+                canBomb: false,
             }
             GameLogic.getPlayerPossibleActions(this, i, majongIsPlayable, actions);
             components.push(
                 <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
                 cards={this.state.playerHands[playerKeys[i]]}
                 style={styles[playerKeys[i]]}
-                hasTurn={actions.hasTurn} canPass={actions.canPass}
-                displaySelectionBox={actions.displayMajongRequestBox}
-                pendingRequest={actions.pendingRequestMessage}
-                canBomb={actions.canDropBomb}
+                actions={actions}
                 showOptions={!this.state.pendingDragonToBeGiven}
                 playCards={this.playerPlayedCards}
                 passTurn={this.playerPassedTurn}
@@ -131,15 +135,20 @@ export class Gameboard extends Component {
 
     inactivePlayerComponents = () => {
         let components = [];
+        let actions = {
+            canBetTichu: false,
+            hasTurn: false,
+            canPass: false,
+            displaySelectionBox: false,
+            pendingRequest: '',
+            canBomb: false,
+        }
         for (let i = 0; i < playerKeys.length; i++) {
             components.push(
                 <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
                 cards={[]}
                 style={styles[playerKeys[i]]}
-                hasTurn={false} canPass={false}
-                displaySelectionBox={false}
-                pendingRequest={''}
-                canBomb={false}
+                actions={actions}
                 showOptions={false}/>
             );
         }

@@ -10,8 +10,8 @@ export class Scoreboard extends Component {
 
     expandedScores = () => {
         if (this.props.scores.length > 0) {
-            return this.props.scores.map(([team02, team13]) => 
-                <div className={styles.scoreboardEntry}>
+            return this.props.scores.map(([team02, team13], index) => 
+                <div key={index} className={styles.scoreboardEntry}>
                     <div className={styles.innerScore}>{team02}</div> 
                     <div className={styles.innerScore}>{team13}</div>
                 </div>

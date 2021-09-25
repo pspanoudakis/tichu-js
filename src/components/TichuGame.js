@@ -36,7 +36,6 @@ export class TichuGame extends Component {
     }
 
     render() {
-        console.log(this.state.previousGames);
         return (
             <div className={styles.gameContainer}>
                 <Scoreboard scores={this.state.previousGames}
