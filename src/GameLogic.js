@@ -1,5 +1,4 @@
-import {specialCards} from "./CardInfo";
-import {playerKeys} from "./components/Gameboard";
+import { specialCards } from "./CardInfo";
 import {
             cardCombinations,
             SingleCard,
@@ -10,6 +9,8 @@ import {
             Kenta,
             Bomb
         } from "./CardCombinations";
+
+export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
 export class GameLogic {
 
@@ -484,53 +485,47 @@ export class GameLogic {
             playerHands[key] = [];
         }
 
-        let i = 0, card, majongOwnerIndex;
+        let i = 0, card;
         while ((card = gameboard.state.deck.cards.pop()) !== undefined) {
-            if (card.key === specialCards.MAJONG) {
-                majongOwnerIndex = i;
-            }
             playerHands[playerKeys[i++]].push(card)
             i %= playerKeys.length;
         }
 
         gameboard.setState({
-            gameHasStarted: true,
-            playerHands: playerHands,
-            currentPlayerIndex: majongOwnerIndex
+            playerHands: playerHands
         });
     }
 
-    static testHandCards(gameboard) {
-        let playerHands = {};
-        for (const key of playerKeys) {
-            playerHands[key] = [];
-        }
-        let i = 0, card, majongOwnerIndex;
-        while ((card = gameboard.state.deck.cards.pop()) !== undefined) {
-            if (card.key === specialCards.MAJONG) {
-                majongOwnerIndex = i;
+    static makeCardTrades(gameboard) {
+        let playerHands = {
+            player1: [],
+            player2: [],
+            player3: [],
+            player4: [],
+        };
+        let majongOwnerIndex = -1;
+        playerKeys.forEach( (key, index) => {
+            for (const card of gameboard.state.playerHands[key]) {
+                if (!card.isSelected) {
+                    playerHands[key].push(card);
+                    if (card.name === specialCards.MAJONG) {
+                        majongOwnerIndex = index;
+                    }
+                }
             }
-            playerHands[playerKeys[i++]].push(card)
-            i %= playerKeys.length;
-        }
-
-        let count = 0;
-        for (const key of playerKeys) {
-            if (Bomb.getStrongestBomb(playerHands[key]) !== null ) {
-                count++;
+            for (const [,card] of gameboard.state.playerTrades[key]) {
+                playerHands[key].push(card)
+                if (card.name === specialCards.MAJONG) {
+                    majongOwnerIndex = index;
+                }
             }
-        }
-        if (count >= 2) {
-            gameboard.setState({
-                gameHasStarted: true,
-                playerHands: playerHands,
-                currentPlayerIndex: majongOwnerIndex
-            });
-            return true;
-        }
-        else {
-            return false;
-        }
+        });
+        
+        gameboard.setState({
+            playerHands: playerHands,
+            currentPlayerIndex: majongOwnerIndex,
+            sentTrades: 0
+        });
     }
 
     static getPlayerPossibleActions(gameboard, playerIndex, majongIsPlayable, actions) {

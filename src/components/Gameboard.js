@@ -1,12 +1,11 @@
-import React, {Component} from 'react';
-import {PlayerHand} from './PlayerHand';
-import {Table} from './Table';
-import {Deck} from '../Deck';
-import {GameLogic} from '../GameLogic';
+import { Component } from 'react';
+import { PlayerHand } from './PlayerHand';
+import { InitialPlayerHand } from './InitialPlayerHand';
+import { Table } from './Table';
+import { Deck } from '../Deck';
+import { GameLogic, playerKeys } from '../GameLogic';
 
 import * as styles from "../styles/Components.module.css"
-
-export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
 export class Gameboard extends Component {
     state = {
@@ -17,7 +16,15 @@ export class Gameboard extends Component {
             player3: [],
             player4: []
         },
-        gameHasStarted: false,
+        playerTrades: {
+            player1: [],
+            player2: [],
+            player3: [],
+            player4: []
+        },
+        sentTrades: 0,
+        receivedTrades: 0,
+        tradingPhaseCompleted: false,
         currentPlayerIndex: -1,
         pendingMajongRequest: '',
         pendingDragonToBeGiven: false,
@@ -36,6 +43,31 @@ export class Gameboard extends Component {
             player4: []
         },
         gameRoundWinnerKey: ''
+    }
+
+    makeTrades = (playerKey, trades) => {
+        let playerTrades = {
+            player1: this.state.playerTrades.player1,
+            player2: this.state.playerTrades.player2,
+            player3: this.state.playerTrades.player3,
+            player4: this.state.playerTrades.player4
+        }
+        trades.forEach( ([player, card]) => playerTrades[player].push([playerKey, card]) );
+        this.setState({
+            sentTrades: this.state.sentTrades + 1,
+            playerTrades: playerTrades
+        });
+    }
+
+    tradeReceived = (playerKey) => {
+        const total = this.state.receivedTrades + 1;
+        for (const [,card] of this.state.playerTrades[playerKey]) {
+            card.isSelected = false;
+        }
+        this.setState({
+            receivedTrades: total,
+            tradingPhaseCompleted: total === 4
+        })
     }
 
     bombStop = (playerKey) => {
@@ -65,12 +97,6 @@ export class Gameboard extends Component {
 
     handCards = () => {
         GameLogic.handCards(this);
-        /*
-        while (!GameLogic.testHandCards(this)) {
-            this.state.deck = new Deck();
-        }
-        */
-        //GameLogic.testHandCards(this)
     }
 
     playerComponents = () => {
@@ -120,8 +146,14 @@ export class Gameboard extends Component {
         return components;
     }
 
+    componentDidMount() {
+        if (!this.props.gameOver && this.state.currentPlayerIndex === -1) {
+            GameLogic.handCards(this);
+        }
+    }
+
     componentDidUpdate() {
-        if (this.state.gameHasStarted && GameLogic.mustEndGameRound(this)) {
+        if (this.state.tradingPhaseCompleted && GameLogic.mustEndGameRound(this)) {
             let points = {
                 team02: 0,
                 team13: 0
@@ -129,9 +161,39 @@ export class Gameboard extends Component {
             GameLogic.endGameRound(this, points);
             this.props.gameRoundEnded(points.team02, points.team13);
         }
+        else if (!this.state.tradingPhaseCompleted && this.state.sentTrades === 4) {
+            GameLogic.makeCardTrades(this);
+        }
     }
 
-    render() {
+    tradePhaseRender = () => {
+        let playerComponents = [];
+        for (let i = 0; i < playerKeys.length; i++) {
+            playerComponents.push(
+                <InitialPlayerHand key={playerKeys[i]} id={playerKeys[i]}
+                cards={this.state.playerHands[playerKeys[i]]}
+                incomingCards={this.state.playerTrades[playerKeys[i]]}
+                sendCards={this.makeTrades}
+                receiveCards={this.tradeReceived}/>
+            );
+        }
+        return (
+            <div className={styles.gameboardPreTradesStyle}>
+                <div className={styles.preTradesCol}>
+                    {playerComponents[1]}
+                </div>
+                <div className={styles.preTradesCol}>
+                    {playerComponents[0]}
+                    {playerComponents[2]}
+                </div>
+                <div className={styles.preTradesCol}>
+                    {playerComponents[3]}
+                </div>
+            </div>
+        );
+    }
+
+    inGameRender = () => {
         // The Table must be aware of the active players
         // for an upcoming dragon selection
         let activePlayers = [];
@@ -160,10 +222,14 @@ export class Gameboard extends Component {
                 </div>
                 {playerComponents[3]}
                 {playerComponents[2]}
-                {(!this.props.gameOver && this.state.currentPlayerIndex === -1)
-                ? <button onClick={this.handCards}>Hand Cards</button>
-                : ''}                                
             </div>
         );
+    }
+
+    render() {
+        if (!this.state.tradingPhaseCompleted && !this.props.gameOver) {
+            return this.tradePhaseRender();
+        }
+        return this.inGameRender();
     }
 }

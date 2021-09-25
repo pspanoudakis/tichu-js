@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {reversedCardKeys} from '../CardInfo';
+import { Component } from 'react';
+import { reversedCardKeys } from '../CardInfo';
 
 import * as styles from "../styles/Components.module.css"
 
