@@ -136,6 +136,7 @@ export class Gameboard extends Component {
                 cards={this.state.playerHands[playerKeys[i]]}
                 style={styles[playerKeys[i]]}
                 actions={actions}
+                currentBet={this.state.playerBets[playerKeys[i]]}
                 showOptions={!this.state.pendingDragonToBeGiven}
                 placeBet={this.placeBet}
                 playCards={this.playerPlayedCards}
@@ -163,6 +164,7 @@ export class Gameboard extends Component {
                 cards={[]}
                 style={styles[key]}
                 actions={actions}
+                currentBet={gameBets.NONE}
                 placeBet={this.placeBet}
                 showOptions={false}/>
             );

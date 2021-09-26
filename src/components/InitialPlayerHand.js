@@ -111,6 +111,25 @@ export class InitialPlayerHand extends Component {
         }
     }
 
+    getBetMessageElement = () => {
+        switch (this.props.currentBet) {
+            case gameBets.TICHU:
+                return (
+                    <div className={styles.tichuBetMessage}>
+                        Tichu
+                    </div>
+                );
+            case gameBets.GRAND_TICHU:
+                return (
+                    <div className={styles.grandTichuBetMessage}>
+                        Grand Tichu
+                    </div>
+                );
+            default:
+                return <span></span>;
+        }
+    }
+
     preExpansionElements = () => {
         let cards = [];
         this.props.cards.slice(0,8).sort(CardInfo.compareCards).forEach((card) => {
@@ -128,6 +147,7 @@ export class InitialPlayerHand extends Component {
                 clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });
+        let betMessage = this.getBetMessageElement();
         let grandTichuButton = <span></span>;
         if (this.props.currentBet === gameBets.NONE) {
             grandTichuButton =  <button className={styles.tradePhaseButton} onClick={this.grandTichuBet}>
@@ -137,7 +157,10 @@ export class InitialPlayerHand extends Component {
 
         return (
             <div className={styles.preTradePlayerBox}>
-                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.playerInfo}>
+                    <span className={styles.playerIDSpan}>{this.props.id}</span>
+                    {betMessage}
+                </div>
                 <div className={styles.preTradeCardList}>
                     {cards}
                 </div>
@@ -176,6 +199,7 @@ export class InitialPlayerHand extends Component {
         });
 
         this.createInnerElements(elements);
+        let betMessage = this.getBetMessageElement();
         let tichuButton = <span></span>;
         if (this.props.currentBet === gameBets.NONE) {
             tichuButton =   <button className={styles.tradePhaseButton} onClick={this.tichuBet}>
@@ -185,7 +209,10 @@ export class InitialPlayerHand extends Component {
 
         return (
             <div className={styles.preTradePlayerBox}>
-                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.playerInfo}>
+                    <span className={styles.playerIDSpan}>{this.props.id}</span>
+                    {betMessage}
+                </div>
                 <div className={styles.preTradeCardList}>
                     {elements.nonSelectedCards}
                 </div>

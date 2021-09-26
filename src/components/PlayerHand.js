@@ -42,6 +42,25 @@ export class PlayerHand extends Component {
         this.props.placeBet(this.props.id, gameBets.TICHU);
     }
 
+    getBetMessageElement = () => {
+        switch (this.props.currentBet) {
+            case gameBets.TICHU:
+                return (
+                    <div className={styles.tichuBetMessage}>
+                        Tichu
+                    </div>
+                );
+            case gameBets.GRAND_TICHU:
+                return (
+                    <div className={styles.grandTichuBetMessage}>
+                        Grand Tichu
+                    </div>
+                );
+            default:
+                return <span></span>;
+        }
+    }
+
     renderedMainBox = () => {
         let cardComponents = []
         this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
@@ -49,9 +68,9 @@ export class PlayerHand extends Component {
                 zindex: index.toString(),
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
-                bottom: (card.isSelected ? '30%' : '20%'),
-                width: '12%',
-                height: '54%'
+                bottom: (card.isSelected ? '25%' : '15%'),
+                width: '11.5%',
+                height: '61%'
             }
             cardComponents.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
@@ -61,9 +80,13 @@ export class PlayerHand extends Component {
         });
         const phoenix = this.props.cards.find(card => card.name === specialCards.PHOENIX);
         const selectedCards = this.props.cards.filter(card => card.isSelected);
+        const betMessage = this.getBetMessageElement();
         return (
             <div className={styles.playerBox}>
-                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.playerInfo}>
+                    <span className={styles.playerIDSpan}>{this.props.id}</span>
+                    {betMessage}
+                </div>
                 <div className={styles.playerCardList}>
                     {cardComponents}
                 </div>
