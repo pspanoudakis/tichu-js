@@ -1,7 +1,7 @@
 import { Component } from "react";
 import { CardInfo } from "../CardInfo";
 import { Card } from "./Card";
-import { playerKeys } from "../GameLogic";
+import { playerKeys, gameBets } from "../GameLogic";
 
 import * as styles from "../styles/Components.module.css"
 
@@ -16,7 +16,6 @@ export class InitialPlayerHand extends Component {
         cardsExpanded: false,
         tradesSent: false,
         tradesReceived: false,
-        grandTichuBet: false,
         /**
          * 0: left opponent, 1: teammate, 2: right opponent
          * */
@@ -37,7 +36,11 @@ export class InitialPlayerHand extends Component {
     }
 
     grandTichuBet = () => {
-        this.props.grandTichuBet(this.props.id);
+        this.props.placeBet(this.props.id, gameBets.GRAND_TICHU);
+    }
+
+    tichuBet = () => {
+        this.props.placeBet(this.props.id, gameBets.TICHU);
     }
 
     expandCards = () => {
@@ -108,6 +111,25 @@ export class InitialPlayerHand extends Component {
         }
     }
 
+    getBetMessageElement = () => {
+        switch (this.props.currentBet) {
+            case gameBets.TICHU:
+                return (
+                    <div className={styles.tichuBetMessage}>
+                        Tichu
+                    </div>
+                );
+            case gameBets.GRAND_TICHU:
+                return (
+                    <div className={styles.grandTichuBetMessage}>
+                        Grand Tichu
+                    </div>
+                );
+            default:
+                return <span></span>;
+        }
+    }
+
     preExpansionElements = () => {
         let cards = [];
         this.props.cards.slice(0,8).sort(CardInfo.compareCards).forEach((card) => {
@@ -125,8 +147,9 @@ export class InitialPlayerHand extends Component {
                 clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });
+        let betMessage = this.getBetMessageElement();
         let grandTichuButton = <span></span>;
-        if (!this.state.grandTichuBet) {
+        if (this.props.currentBet === gameBets.NONE) {
             grandTichuButton =  <button className={styles.tradePhaseButton} onClick={this.grandTichuBet}>
                                     Grand Tichu
                                 </button>;
@@ -134,7 +157,10 @@ export class InitialPlayerHand extends Component {
 
         return (
             <div className={styles.preTradePlayerBox}>
-                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.playerInfo}>
+                    <span className={styles.playerIDSpan}>{this.props.id}</span>
+                    {betMessage}
+                </div>
                 <div className={styles.preTradeCardList}>
                     {cards}
                 </div>
@@ -173,10 +199,20 @@ export class InitialPlayerHand extends Component {
         });
 
         this.createInnerElements(elements);
+        let betMessage = this.getBetMessageElement();
+        let tichuButton = <span></span>;
+        if (this.props.currentBet === gameBets.NONE) {
+            tichuButton =   <button className={styles.tradePhaseButton} onClick={this.tichuBet}>
+                                Tichu
+                            </button>;
+        }
 
         return (
             <div className={styles.preTradePlayerBox}>
-                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.playerInfo}>
+                    <span className={styles.playerIDSpan}>{this.props.id}</span>
+                    {betMessage}
+                </div>
                 <div className={styles.preTradeCardList}>
                     {elements.nonSelectedCards}
                 </div>
@@ -185,6 +221,7 @@ export class InitialPlayerHand extends Component {
                 </div>
                 <div className={styles.tradePhaseButtonContainer}>
                     {elements.button}
+                    {tichuButton}
                 </div>
             </div>            
         );
@@ -213,7 +250,7 @@ export class InitialPlayerHand extends Component {
                                     </button>;
             }
             else {
-                elements.button =   <button className={styles.disabledButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.inactiveButton} onClick={this.voidButton}>
                                         Received
                                     </button>;
             }
@@ -221,7 +258,7 @@ export class InitialPlayerHand extends Component {
         else {
             slotsArray = this.state.trades;
             if (this.state.tradesSent) {
-                elements.button =   <button className={styles.disabledButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.inactiveButton} onClick={this.voidButton}>
                                         Cards Sent
                                     </button>;
             }
@@ -232,13 +269,13 @@ export class InitialPlayerHand extends Component {
             }
         }
 
-        slotsArray.forEach(([player, card]) => {
+        slotsArray.forEach(([player, card], index) => {
             const cardStyle = {
                 width: '37.5%',
                 height: '55%'
             }
             elements.selectedCards.push(
-                <div className={styles.tradingCardSlot}>
+                <div key={index} className={styles.tradingCardSlot}>
                     <span>{player}</span>
                     {card !== undefined ?
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}

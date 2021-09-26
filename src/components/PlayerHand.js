@@ -3,6 +3,7 @@ import { CardInfo, specialCards } from '../CardInfo';
 import { Card } from './Card';
 import { RequestSelectionBox } from './RequestSelectionBox';
 import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
+import { gameBets } from '../GameLogic';
 
 import * as styles from "../styles/Components.module.css"
 
@@ -37,6 +38,29 @@ export class PlayerHand extends Component {
         this.props.dropBomb(this.props.id);
     }
 
+    tichuBet = () => {
+        this.props.placeBet(this.props.id, gameBets.TICHU);
+    }
+
+    getBetMessageElement = () => {
+        switch (this.props.currentBet) {
+            case gameBets.TICHU:
+                return (
+                    <div className={styles.tichuBetMessage}>
+                        Tichu
+                    </div>
+                );
+            case gameBets.GRAND_TICHU:
+                return (
+                    <div className={styles.grandTichuBetMessage}>
+                        Grand Tichu
+                    </div>
+                );
+            default:
+                return <span></span>;
+        }
+    }
+
     renderedMainBox = () => {
         let cardComponents = []
         this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
@@ -44,9 +68,9 @@ export class PlayerHand extends Component {
                 zindex: index.toString(),
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
-                bottom: (card.isSelected ? '30%' : '20%'),
-                width: '12%',
-                height: '54%'
+                bottom: (card.isSelected ? '25%' : '15%'),
+                width: '11.5%',
+                height: '61%'
             }
             cardComponents.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
@@ -56,16 +80,20 @@ export class PlayerHand extends Component {
         });
         const phoenix = this.props.cards.find(card => card.name === specialCards.PHOENIX);
         const selectedCards = this.props.cards.filter(card => card.isSelected);
+        const betMessage = this.getBetMessageElement();
         return (
             <div className={styles.playerBox}>
-                <span className={styles.playerIDSpan}>{this.props.id}</span>
+                <div className={styles.playerInfo}>
+                    <span className={styles.playerIDSpan}>{this.props.id}</span>
+                    {betMessage}
+                </div>
                 <div className={styles.playerCardList}>
                     {cardComponents}
                 </div>
-                {this.props.displaySelectionBox && this.props.cards.some(card => 
+                {this.props.actions.displaySelectionBox && this.props.cards.some(card => 
                 card.name === specialCards.MAJONG && card.isSelected)
                 ? <RequestSelectionBox requestMade={this.madeRequestSelection}/>
-                : this.props.pendingRequest}
+                : this.props.actions.pendingRequest}
                 { (selectedCards.length >= 5 && phoenix !== undefined && phoenix.isSelected) 
                 ? <PhoenixSelectionMenu phoenix={phoenix}></PhoenixSelectionMenu>
                 : ''}
@@ -77,8 +105,9 @@ export class PlayerHand extends Component {
         let playCardsButton = '';
         let passButton = '';
         let bombButton = '';
+        let tichuButton = '';
         if (this.props.showOptions) {
-            if (this.props.hasTurn) {
+            if (this.props.actions.hasTurn) {
                 if (this.hasSelectedCards()) {
                     playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
                 }
@@ -87,18 +116,21 @@ export class PlayerHand extends Component {
                                         Play Cards
                                         </button>;
                 }
-                if (this.props.canPass) {
+                if (this.props.actions.canPass) {
                     passButton = <button onClick={this.passTurn}>Pass</button>
                 }
             }
-            if (this.props.canBomb) {
+            if (this.props.actions.canBomb) {
                 bombButton = <button onClick={this.dropBomb}>Bomb</button>
+            }
+            if (this.props.actions.canBetTichu) {
+                tichuButton = <button onClick={this.tichuBet}>Tichu</button>
             }
         }
         return (
             <div className={this.props.style}>
                 {this.renderedMainBox()}
-                {playCardsButton}{passButton}{bombButton}
+                {playCardsButton}{passButton}{bombButton}{tichuButton}
             </div>
         )
     }

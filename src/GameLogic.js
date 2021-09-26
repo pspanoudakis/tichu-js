@@ -12,6 +12,12 @@ import {
 
 export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
+export const gameBets = {
+    NONE: 0,
+    TICHU: 100,
+    GRAND_TICHU: 200
+}
+
 export class GameLogic {
 
     static gameShouldEnd(gameState) {
@@ -39,14 +45,20 @@ export class GameLogic {
             player3: [],
             player4: []
         };
+        const winnerKey = gameboard.state.gameRoundWinnerKey;
         playerKeys.forEach( (key, index) => {
-            if (gameboard.state.table.currentCardsOwnerIndex === key) {
-                playerHeaps[key] = Array.from(gameboard.state.table.currentCards);
+            if (gameboard.state.table.currentCardsOwnerIndex === index) {
+                if (gameboard.state.table.currentCards[0].name !== specialCards.DRAGON) {
+                    playerHeaps[key].push(...gameboard.state.table.currentCards,
+                                          ...gameboard.state.table.previousCards);
+                }
             }
             if (gameboard.state.playerHands[key].length > 0) {
-                for (const card of gameboard.state.playerHeaps[key]) {
-                    playerHeaps[gameboard.state.gameRoundWinnerKey].push(card);
+                if (gameboard.state.table.currentCards[0].name === specialCards.DRAGON) {
+                    playerHeaps[winnerKey].push(...gameboard.state.table.currentCards,
+                                                ...gameboard.state.table.previousCards);
                 }
+                playerHeaps[winnerKey].push(...playerHeaps[key], ...gameboard.state.playerHeaps[key]);
                 if (index % 2 === 0) {
                     points.team13 += GameLogic.evaluatePoints(gameboard.state.playerHands[key]);
                 }
@@ -70,6 +82,24 @@ export class GameLogic {
         } );
     }
 
+    static evaluatePlayerBets(gameboard, points) {
+        playerKeys.forEach((playerKey, index) => {
+            let contribution = 0;
+            if (gameboard.state.gameRoundWinnerKey === playerKey) {
+                contribution += gameboard.state.playerBets[playerKey];
+            }
+            else {
+                contribution -= gameboard.state.playerBets[playerKey];
+            }
+            if (index % 2 === 0) {
+                points.team02 += contribution;
+            }
+            else {
+                points.team13 += contribution;
+            }
+        });
+    }
+
     static endGameRound(gameboard, points) {
         window.alert('Round Ended');
 
@@ -87,6 +117,7 @@ export class GameLogic {
         else {
             GameLogic.evaluateTeamPoints(gameboard, points);
         }
+        GameLogic.evaluatePlayerBets(gameboard, points);
     }
 
     static majongIsPlayable(gameboard) {
@@ -460,19 +491,20 @@ export class GameLogic {
     static dragonGiven(gameboard, selectedPlayerKey) {
         // New current player is already set
         let newState = {
-            pendingDragonToBeGiven: false
+            pendingDragonToBeGiven: false,
+            playerHeaps: {}
         }
-        newState.playerHeaps = {}
         for (let i = 0; i < playerKeys.length; i++) {
             newState.playerHeaps[playerKeys[i]] = gameboard.state.playerHeaps[playerKeys[i]];
             if (playerKeys[i] === selectedPlayerKey) {
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.previousCards);
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.currentCards);
-                newState.table = {};
-                newState.table.previousCards = [];
-                newState.table.currentCards = [];
-                newState.table.currentCardsOwnerIndex = -1;
-                newState.table.requestedCardName = gameboard.state.table.requestedCardName;
+                newState.table = {
+                    previousCards: [],
+                    currentCards: [],
+                    currentCardsOwnerIndex: -1,
+                    requestedCardName: gameboard.state.table.requestedCardName
+                };
                 //console.log(newState.playerHeaps[playerKeys[i]]);
             }
         }
@@ -529,6 +561,10 @@ export class GameLogic {
     }
 
     static getPlayerPossibleActions(gameboard, playerIndex, majongIsPlayable, actions) {
+        if (gameboard.state.playerHands[playerKeys[playerIndex]].length === 14 &&
+            gameboard.state.playerBets[playerKeys[playerIndex]] === gameBets.NONE) {
+                actions.canBetTichu = true;
+        }
         if (actions.hasTurn) {
             actions.canPass = (gameboard.state.table.currentCards.length !== 0) &&
                         (!gameboard.state.pendingBombToBePlayed) &&
@@ -537,20 +573,20 @@ export class GameLogic {
                 let majong = gameboard.state.playerHands[playerKeys[playerIndex]].find(
                     card => card.name === specialCards.MAJONG);
                 let pendingRequest = gameboard.state.pendingMajongRequest !== '';                    
-                actions.displayMajongRequestBox = majong !== undefined && !pendingRequest && majongIsPlayable
+                actions.displaySelectionBox = majong !== undefined && !pendingRequest && majongIsPlayable
                                                   && !gameboard.state.pendingBombToBePlayed;
                 if (pendingRequest) {
-                    actions.pendingRequestMessage = 'Requested: ' + gameboard.state.pendingMajongRequest;
+                    actions.pendingRequest = 'Requested: ' + gameboard.state.pendingMajongRequest;
                 }
             }
         }
         const bomb = Bomb.getStrongestBomb(gameboard.state.playerHands[playerKeys[playerIndex]]);
         if (bomb !== null) {
-            actions.canDropBomb = gameboard.state.pendingMajongRequest === ''
+            actions.canBomb = gameboard.state.pendingMajongRequest === ''
                                   && !gameboard.state.pendingBombToBePlayed;
-            if (actions.canDropBomb && gameboard.state.table.combination !== undefined &&
+            if (actions.canBomb && gameboard.state.table.combination !== undefined &&
                 gameboard.state.table.combination.combination === cardCombinations.BOMB) {
-                actions.canDropBomb = Bomb.compareBombs(gameboard.state.table.combination, bomb) < 0;
+                actions.canBomb = Bomb.compareBombs(gameboard.state.table.combination, bomb) < 0;
             }
         }
     }

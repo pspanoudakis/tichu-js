@@ -1,6 +1,6 @@
 .playerBox {
     display: grid;
-    grid-template-rows: 2.5% 80% 8.75% 8.75%;
+    grid-template-rows: 10% 70% 8.75% 8.75%;
     grid-template-columns: 100%;
     width: 100%;
     height: 90%;
@@ -10,6 +10,12 @@
     display: flex;
     height: 100%;
     position: relative;
+}
+
+.playerInfo {
+    display: flex;
+    flex-direction: row;
+    column-gap: 2%;
 }
 
 .player1 .player2 .player3 .player4 {
@@ -105,12 +111,12 @@
     width: 35%;
 }
 
-.disabledButton {
+.inactiveButton {
     width: 35%;
     opacity: 0.5;
 }
 
-.disabledButton:active {
+.inactiveButton:active {
     border-style: outset;
 }
 
@@ -236,4 +242,16 @@
     row-gap: 2%;
     grid-template-columns: 100%;
     grid-template-rows: 10% 90%;
+}
+
+.tichuBetMessage {
+    color: goldenrod;
+    border: 1px solid goldenrod;
+    padding: 0% 1%;
+}
+
+.grandTichuBetMessage {
+    color: rgb(173, 2, 2);
+    border: 1px solid rgb(173, 2, 2);
+    padding: 0% 1%;
 }
