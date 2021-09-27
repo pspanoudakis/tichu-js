@@ -341,6 +341,9 @@ export class FullHouse extends CardCombination {
             let hasPhoenix = false;
             for (const card of cards) {
                 if (card.name === specialCards.PHOENIX) {
+                    if (card.tempName === "") {
+                        return null;
+                    }
                     hasPhoenix = true;
                     if (cardOccurences[card.tempName] === undefined) {
                         cardOccurences[card.tempName] = 0;
@@ -354,13 +357,12 @@ export class FullHouse extends CardCombination {
                     cardOccurences[card.name]++;
                 }
             }
-            const distinctCards = Object.entries(cardOccurences);
-            if ( distinctCards.length === 2 || (distinctCards.length === 3 && hasPhoenix) ) {
-                let temp = ['', '', ''];
-                for (const [cardName, times] of distinctCards) {
-                    temp[times - 1] = cardName;
+            const distinctCards = Object.keys(cardOccurences);
+            if (distinctCards.length === 2) {
+                if (cardOccurences[distinctCards[0]] === 3) {
+                    return new FullHouse(distinctCards[0], 3, distinctCards[1], 2);
                 }
-                return new FullHouse(temp[2], 3, temp[1], 2);
+                return new FullHouse(distinctCards[1], 3, distinctCards[0], 2);
             }
         }
         return null;
