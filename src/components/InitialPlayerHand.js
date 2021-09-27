@@ -2,6 +2,7 @@ import { Component } from "react";
 import { CardInfo } from "../CardInfo";
 import { Card } from "./Card";
 import { playerKeys, gameBets } from "../GameLogic";
+import { voidAction, voidButton } from "../void";
 
 import * as styles from "../styles/Components.module.css"
 
@@ -29,10 +30,6 @@ export class InitialPlayerHand extends Component {
             left: this.selfIndex > 0 ? this.selfIndex - 1 : 3,
             right: (this.selfIndex + 1) % 4
         }
-    }
-
-    voidButton = (event) => {
-        event.preventDefault();
     }
 
     grandTichuBet = () => {
@@ -250,7 +247,7 @@ export class InitialPlayerHand extends Component {
                                     </button>;
             }
             else {
-                elements.button =   <button className={styles.inactiveButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.inactiveButton} onClick={voidButton}>
                                         Received
                                     </button>;
             }
@@ -258,7 +255,7 @@ export class InitialPlayerHand extends Component {
         else {
             slotsArray = this.state.trades;
             if (this.state.tradesSent) {
-                elements.button =   <button className={styles.inactiveButton} onClick={this.voidButton}>
+                elements.button =   <button className={styles.inactiveButton} onClick={voidButton}>
                                         Cards Sent
                                     </button>;
             }
@@ -280,7 +277,7 @@ export class InitialPlayerHand extends Component {
                     {card !== undefined ?
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
                         alt={card.alt} selected={card.isSelected} 
-                        clickCallback={!this.state.tradesSent ? this.cardClicked : this.voidButton}
+                        clickCallback={!this.state.tradesSent ? this.cardClicked : voidAction}
                         style={cardStyle}/> :
                         <span></span>
                     }

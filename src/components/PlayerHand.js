@@ -4,13 +4,11 @@ import { Card } from './Card';
 import { RequestSelectionBox } from './RequestSelectionBox';
 import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
 import { gameBets } from '../GameLogic';
+import { voidButton } from '../void';
 
 import * as styles from "../styles/Components.module.css"
 
 export class PlayerHand extends Component {
-    voidButton = (event) => {
-        event.preventDefault();
-    }
 
     hasSelectedCards = () => {
         return this.props.cards.find(card => card.isSelected === true) !== undefined;
@@ -112,7 +110,7 @@ export class PlayerHand extends Component {
                     playCardsButton = <button onClick={this.playCards}>Play Cards</button>;
                 }
                 else {
-                    playCardsButton =   <button className={styles.disabledButton} onClick={this.voidButton}>
+                    playCardsButton =   <button className={styles.disabledButton} onClick={voidButton}>
                                         Play Cards
                                         </button>;
                 }

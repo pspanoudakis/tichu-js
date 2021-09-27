@@ -2,11 +2,11 @@ import { Component } from 'react';
 import { specialCards } from '../CardInfo';
 import { cardImages } from '../CardResources';
 import { Card } from './Card';
+import { voidAction } from '../void';
 
 import * as styles from "../styles/Components.module.css"
 
 export class Table extends Component {
-    void() {}
 
     dragonGiven = (event) => {
         this.props.dragonGiven(event.target.id)
@@ -60,7 +60,7 @@ export class Table extends Component {
                         }
                         return (
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                        alt={card.alt} selected={true} clickCallback={this.void}
+                        alt={card.alt} selected={true} clickCallback={voidAction}
                         style={cardStyle}/>
                         );
                     })}
@@ -68,7 +68,7 @@ export class Table extends Component {
                 <div className={styles.dragonSelection}>
                     <Card key={specialCards.DRAGON} id={specialCards.DRAGON}
                     cardImg={cardImages.dragon} alt={specialCards.DRAGON}
-                    selected={true} clickCallback={this.void} style={dragonStyle}/>
+                    selected={true} clickCallback={voidAction} style={dragonStyle}/>
                     {buttonText1 !== ''
                     ? <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
                     className={styles.selection1}>
