@@ -338,13 +338,11 @@ export class FullHouse extends CardCombination {
     static create(cards) {
         if (cards.length === 5) {
             let cardOccurences = {};
-            let hasPhoenix = false;
             for (const card of cards) {
                 if (card.name === specialCards.PHOENIX) {
                     if (card.tempName === "") {
                         return null;
                     }
-                    hasPhoenix = true;
                     if (cardOccurences[card.tempName] === undefined) {
                         cardOccurences[card.tempName] = 0;
                     }
