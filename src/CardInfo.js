@@ -18,18 +18,20 @@ letterValues.set('A', 14);
 let _normalCards_ = new Map();
 (function initializeNormalCards() {
     for (let i = 2; i <= 10; i++) {
-        let currentInfo = {};
+        let currentInfo = {
+            value: i
+        };
         for (const color of cardColorValues) {
             currentInfo[color] = cardImages[color + '_' + i.toString()];
-            currentInfo['value'] = i;
         }
         _normalCards_.set(i.toString(), currentInfo);
     }
     for (const [letter, value] of letterValues.entries()) {
-        let currentInfo = {};
+        let currentInfo = {
+            value: value
+        };
         for (const color of cardColorValues) {
             currentInfo[color] = cardImages[color + '_' + letter];
-            currentInfo['value'] = value;
         }
         _normalCards_.set(letter, currentInfo);
     }

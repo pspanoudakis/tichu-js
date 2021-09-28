@@ -74,8 +74,11 @@ export class SingleCard extends CardCombination {
         }
         return new SingleCard(cards[0]);
     }
-    compare(other) {
+    compareCombination(other) {
         return CardCombination.basicCompare(this, other);
+    }
+    compare(cards, requested) {
+        return CardCombination.basicCompare(this, SingleCard.getStrongestRequested(cards, requested));
     }
 }
 
@@ -109,11 +112,11 @@ export class CardCouple extends CardCombination {
         }
         return new CardCouple(cards[0].value);
     }
-    compare(other) {
-        return CardCouple.compare(this, other)
+    compareCombination(other) {
+        return CardCombination.basicCompare(this, other);
     }
-    static compare(a, b) {
-        return CardCombination.basicCompare(a, b);
+    compare(cards, requested) {
+        return CardCombination.basicCompare(this, CardCouple.getStrongestRequested(cards, requested));
     }
 }
 
@@ -141,8 +144,11 @@ export class Triplet extends CardCombination {
         }
         return new Triplet(filteredCards[0].value);
     }
-    compare(other) {
+    compareCombination(other) {
         return CardCombination.basicCompare(this, other);
+    }
+    compare(cards, requested) {
+        return CardCombination.basicCompare(this, Triplet.getStrongestRequested(cards, requested));
     }
 }
 
@@ -235,8 +241,11 @@ export class Steps extends CardCombination {
         }
         return null;
     }
-    compare(other) {
+    compareCombination(other) {
         return CardCombination.altCompare(this, other);
+    }
+    compare(cards, requested, length) {
+        return CardCombination.altCompare(this, Steps.getStrongestRequested(cards, requested, length));
     }
 }
 
@@ -307,8 +316,11 @@ export class Kenta extends CardCombination {
         }
         return null;
     }
-    compare(other) {
+    compareCombination(other) {
         return CardCombination.altCompare(this, other);
+    }
+    compare(cards, requested, length) {
+        return CardCombination.altCompare(this, Kenta.getStrongestRequested(cards, requested, length));
     }
 }
 
@@ -326,10 +338,11 @@ export class FullHouse extends CardCombination {
     static create(cards) {
         if (cards.length === 5) {
             let cardOccurences = {};
-            let hasPhoenix = false;
             for (const card of cards) {
                 if (card.name === specialCards.PHOENIX) {
-                    hasPhoenix = true;
+                    if (card.tempName === "") {
+                        return null;
+                    }
                     if (cardOccurences[card.tempName] === undefined) {
                         cardOccurences[card.tempName] = 0;
                     }
@@ -342,19 +355,21 @@ export class FullHouse extends CardCombination {
                     cardOccurences[card.name]++;
                 }
             }
-            const distinctCards = Object.entries(cardOccurences);
-            if ( distinctCards.length === 2 || (distinctCards.length === 3 && hasPhoenix) ) {
-                let temp = ['', '', ''];
-                for (const [cardName, times] of distinctCards) {
-                    temp[times - 1] = cardName;
+            const distinctCards = Object.keys(cardOccurences);
+            if (distinctCards.length === 2) {
+                if (cardOccurences[distinctCards[0]] === 3) {
+                    return new FullHouse(distinctCards[0], 3, distinctCards[1], 2);
                 }
-                return new FullHouse(temp[2], 3, temp[1], 2);
+                return new FullHouse(distinctCards[1], 3, distinctCards[0], 2);
             }
         }
         return null;
     }
-    compare(other) {
+    compareCombination(other) {
         return CardCombination.basicCompare(this, other);
+    }
+    compare(cards, requested) {
+        return CardCombination.basicCompare(this, FullHouse.getStrongestRequested(cards, requested));
     }
     static getStrongestRequested(cards, requestedCard) {
         if (cards.length >= 5) {
@@ -390,49 +405,49 @@ export class FullHouse extends CardCombination {
             else {
                 requestedOccurences = Math.min(requestedOccurences, 3);
             }
-            return strongestRequestedFullHouse(
+            return FullHouse.strongestRequestedFullHouse(
                 cardOccurences, requestedCard, requestedOccurences, phoenixUsed
             );
         }
         return null;
     }
-}
 
-function strongestRequestedFullHouse(cardOccurences, requestedCard, requestedOccurences, phoenixUsed) {
-    const requestedValue = normalCards.get(requestedCard).value;
-    if (requestedOccurences === 3) {
-        let eligible = undefined;
-        for (const [cardName, occurences] of Array.from(cardOccurences)) {
-            if (cardName !== requestedCard) {
-                const value = normalCards.get(cardName).value;
-                if (occurences >= 3 || (occurences === 2 && !phoenixUsed)) {
-                    if (value > requestedValue) {
+    static strongestRequestedFullHouse(cardOccurences, requestedCard, requestedOccurences, phoenixUsed) {
+        const requestedValue = normalCards.get(requestedCard).value;
+        if (requestedOccurences === 3) {
+            let eligible = undefined;
+            for (const [cardName, occurences] of Array.from(cardOccurences)) {
+                if (cardName !== requestedCard) {
+                    const value = normalCards.get(cardName).value;
+                    if (occurences >= 3 || (occurences === 2 && !phoenixUsed)) {
+                        if (value > requestedValue) {
+                            return new FullHouse(cardName, 3, requestedCard, 2);
+                        }
+                    }
+                    else if ( occurences === 2 || !phoenixUsed ) {
+                        eligible = cardName;
+                    }
+                }
+            }
+            if (eligible !== undefined) {
+                return new FullHouse(eligible, 2, requestedCard, 3);
+            }
+        }
+        else {
+            for (const [cardName, occurences] of Array.from(cardOccurences)) {
+                if (cardName !== requestedCard) {
+                    if ((occurences >= 3) || (occurences === 2 && !phoenixUsed)) {
+                        const value = normalCards.get(cardName).value;
+                        if (value < requestedValue && !phoenixUsed) {
+                            return new FullHouse(cardName, 2, requestedCard, 3);
+                        }
                         return new FullHouse(cardName, 3, requestedCard, 2);
                     }
                 }
-                else if ( occurences === 2 || !phoenixUsed ) {
-                    eligible = cardName;
-                }
             }
         }
-        if (eligible !== undefined) {
-            return new FullHouse(eligible, 2, requestedCard, 3);
-        }
+        return null;
     }
-    else {
-        for (const [cardName, occurences] of Array.from(cardOccurences)) {
-            if (cardName !== requestedCard) {
-                if ((occurences >= 3) || (occurences === 2 && !phoenixUsed)) {
-                    const value = normalCards.get(cardName).value;
-                    if (value < requestedValue && !phoenixUsed) {
-                        return new FullHouse(cardName, 2, requestedCard, 3);
-                    }
-                    return new FullHouse(cardName, 3, requestedCard, 2);
-                }
-            }
-        }
-    }
-    return null;
 }
 
 export class Bomb extends CardCombination{

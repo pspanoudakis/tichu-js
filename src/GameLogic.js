@@ -134,7 +134,7 @@ export class GameLogic {
                 return true;
             }
             if (selectedCombination.combination === tableCombination.combination) {
-                return tableCombination.compare(selectedCombination) < 0;
+                return tableCombination.compareCombination(selectedCombination) < 0;
             }
             return false;
         }
@@ -152,41 +152,17 @@ export class GameLogic {
                         }
                     return true;
                 case cardCombinations.SINGLE:
-                    if (tableCombination.compare(
-                        SingleCard.getStrongestRequested(playerCards, requestedCard) ) < 0) {
-                            return false;
-                    }
-                    break;
                 case cardCombinations.COUPLE:
-                    if (tableCombination.compare(
-                        CardCouple.getStrongestRequested(playerCards, requestedCard) ) < 0) {
-                            return false;
-                    }
-                    break;
                 case cardCombinations.TRIPLET:
-                    if (tableCombination.compare(
-                        Triplet.getStrongestRequested(playerCards, requestedCard) ) < 0) {
-                            return false;
-                    }
-                    break;
                 case cardCombinations.FULLHOUSE:
-                    if (tableCombination.compare(
-                        FullHouse.getStrongestRequested(playerCards, requestedCard) ) < 0) {
-                            return false;
+                    if (tableCombination.compare(playerCards, requestedCard) < 0) {
+                        return false;
                     }
                     break;
                 case cardCombinations.STEPS:
-                    if (tableCombination.compare(
-                        Steps.getStrongestRequested(playerCards, requestedCard,
-                        tableCombination.length) ) < 0) {
-                            return false;
-                    }
-                    break;
                 case cardCombinations.KENTA:
-                    if (tableCombination.compare(
-                        Kenta.getStrongestRequested(playerCards, requestedCard,
-                        tableCombination.length) ) < 0) {
-                            return false;
+                    if (tableCombination.compare(playerCards, requestedCard, tableCombination.length) < 0) {
+                        return false;
                     }
                     break;
                 default:
@@ -255,53 +231,21 @@ export class GameLogic {
                 case cardCombinations.BOMB:
                     return true;
                 case cardCombinations.SINGLE:
-                    if (tableCombination.compare(
-                        SingleCard.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( !selectedCards.some(card => card.name === requestedCard)) {
-                                return false;
-                            }
-                    }
-                    break;
                 case cardCombinations.COUPLE:
-                    if (tableCombination.compare(
-                        CardCouple.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( !selectedCards.some(card => card.name === requestedCard)) {
-                                return false;
-                            }
-                    }
-                    break;
                 case cardCombinations.TRIPLET:
-                    if (tableCombination.compare(
-                        Triplet.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( !selectedCards.some(card => card.name === requestedCard)) {
-                                return false;
-                            }
-                    }
-                    break;
                 case cardCombinations.FULLHOUSE:
-                    if (tableCombination.compare(
-                        FullHouse.getStrongestRequested(allCards, requestedCard) ) < 0) {
-                            if ( !selectedCards.some(card => card.name === requestedCard)) {
-                                return false;
-                            }
+                    if (tableCombination.compare(allCards, requestedCard) < 0) {
+                        if ( !selectedCards.some(card => card.name === requestedCard)) {
+                            return false;
+                        }
                     }
                     break;
                 case cardCombinations.STEPS:
-                    if (tableCombination.compare(
-                        Steps.getStrongestRequested(allCards, requestedCard,
-                        tableCombination.length) ) < 0) {
-                            if ( !selectedCards.some(card => card.name === requestedCard)) {
-                                return false;
-                            }
-                    }
-                    break;
                 case cardCombinations.KENTA:
-                    if (tableCombination.compare(
-                        Kenta.getStrongestRequested(allCards, requestedCard,
-                        tableCombination.length) ) < 0) {
-                            if ( !selectedCards.some(card => card.name === requestedCard)) {
-                                return false;
-                            }
+                    if (tableCombination.compare(allCards, requestedCard, tableCombination.length) < 0) {
+                        if ( !selectedCards.some(card => card.name === requestedCard)) {
+                            return false;
+                        }
                     }
                     break;
                 default:
@@ -436,19 +380,14 @@ export class GameLogic {
             gameboard.state.table.requestedCardName, currentPlayerHand)) {
             let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
             let newState = {};
-            let endedRound = false;
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
                 if (nextPlayerIndex === gameboard.state.table.currentCardsOwnerIndex) {
                     GameLogic.endRound(gameboard, newState, nextPlayerIndex);
-                    endedRound = true;
                 }
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
             }
             if (nextPlayerIndex === gameboard.state.table.currentCardsOwnerIndex) {
                 GameLogic.endRound(gameboard, newState, nextPlayerIndex);
-                if (endedRound) {
-                    window.alert('End round twice bug');
-                }
             }
             newState.currentPlayerIndex = nextPlayerIndex;
             gameboard.setState(newState);
