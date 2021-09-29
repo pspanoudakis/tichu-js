@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { normalCards, reversedCardKeys } from '../CardInfo';
+import { getNormalCardInfo, reversedCardKeys } from '../CardInfo';
 
 import * as styles from "../styles/Components.module.css"
 
@@ -18,7 +18,7 @@ export class PhoenixSelectionMenu extends Component {
         }
         else {
             this.props.phoenix.tempName = event.target.value;
-            this.props.phoenix.tempValue = normalCards.get(event.target.value).value;
+            this.props.phoenix.tempValue = getNormalCardInfo(event.target.value).value;
             this.setState({
                 selection: event.target.value
             });

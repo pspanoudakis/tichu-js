@@ -1,10 +1,11 @@
 import {
             cardColorValues,
             normalCardKeys,
-            normalCards,
             specialCards,
             specialCardNames,
-            CardInfo
+            CardInfo,
+            PhoenixCard,
+            getNormalCardInfo
         } from "./CardInfo";
 
 interface CardColorOccurencesMap {
@@ -70,11 +71,11 @@ export class CardCombination {
 
 export class SingleCard extends CardCombination {
     constructor(card: CardInfo) {
-        if (card.name !== specialCards.PHOENIX) {
-            super(cardCombinations.SINGLE, 1, card.value);
+        if (card instanceof PhoenixCard) {
+            super(cardCombinations.SINGLE, 1, card.tempValue);
         }
         else {
-            super(cardCombinations.SINGLE, 1, card.tempValue);
+            super(cardCombinations.SINGLE, 1, card.value);
         }          
     }
     static getStrongestRequested(cards: Array<CardInfo>, requested: string) {
@@ -104,7 +105,7 @@ export class CardCouple extends CardCombination {
         let targetCards = cards.filter(card => card.name === requestedCard);
         if (targetCards.length >= 2 || 
             (targetCards.length === 1 && hasPhoenix)) {
-                return new CardCouple(normalCards.get(requestedCard).value);
+                return new CardCouple(getNormalCardInfo(requestedCard).value);
         }
         return null;
     }
@@ -142,7 +143,7 @@ export class Triplet extends CardCombination {
         let targetCards = cards.filter(card => card.name === requestedCard);
         if (targetCards.length >= 3 || 
             (targetCards.length === 2 && hasPhoenix)) {
-                return new Triplet(normalCards.get(requestedCard).value);
+                return new Triplet(getNormalCardInfo(requestedCard).value);
         }
         return null;
     }
@@ -206,7 +207,7 @@ export class Steps extends CardCombination {
                         else { break; }
                     }
                     if (i < lowIndex) {
-                        return new Steps(normalCards.get(normalCardKeys[highIndex]).value, length);
+                        return new Steps(getNormalCardInfo(normalCardKeys[highIndex]).value, length);
                     }
                     highIndex = i - 1;
                     lowIndex = highIndex - length + 1;
@@ -297,7 +298,7 @@ export class Kenta extends CardCombination {
                         }
                     }
                     if (i < lowIndex) {
-                        return new Kenta(normalCards.get(normalCardKeys[highIndex]).value, length);
+                        return new Kenta(getNormalCardInfo(normalCardKeys[highIndex]).value, length);
                     }
                     highIndex = i - 1;
                     lowIndex = highIndex - length + 1;
@@ -310,14 +311,14 @@ export class Kenta extends CardCombination {
         if (cards.length > 4) {
             let phoenix = cards.find(card => card.name === specialCards.PHOENIX);
             let topValue = cards[0].value;
-            if (phoenix !== undefined) {
+            if (phoenix instanceof PhoenixCard) {
                 topValue = Math.max(phoenix.tempValue, topValue);
             }
             let expectedValue = topValue + 1;
             for (const card of cards) {
                 expectedValue--;
                 if (card.value !== expectedValue && card !== phoenix) {
-                    if (phoenix === undefined || phoenix.tempValue !== expectedValue
+                    if (!(phoenix instanceof PhoenixCard) || phoenix.tempValue !== expectedValue
                         || card.value !== phoenix.tempValue - 1) {
 
                         return null;
@@ -341,10 +342,10 @@ export class FullHouse extends CardCombination {
     constructor(cardA: string, timesA: number, cardB: string, timesB: number) {
         let value;
         if (timesA > timesB){
-            value = normalCards.get(cardA).value;
+            value = getNormalCardInfo(cardA).value;
         }
         else {
-            value = normalCards.get(cardB).value;
+            value = getNormalCardInfo(cardB).value;
         }
         super(cardCombinations.FULLHOUSE, 5, value);
     }
@@ -352,7 +353,7 @@ export class FullHouse extends CardCombination {
         if (cards.length === 5) {
             let cardOccurences: CardNameOccurencesMap = {};
             for (const card of cards) {
-                if (card.name === specialCards.PHOENIX) {
+                if (card instanceof PhoenixCard) {
                     if (card.tempName === "") {
                         return null;
                     }
@@ -427,12 +428,12 @@ export class FullHouse extends CardCombination {
 
     static strongestRequestedFullHouse( cardOccurences: Map<string, number>, requestedCard: string,
                                         requestedOccurences: number, phoenixUsed: boolean ) {
-        const requestedValue = normalCards.get(requestedCard).value;
+        const requestedValue = getNormalCardInfo(requestedCard).value;
         if (requestedOccurences === 3) {
             let eligible = undefined;
             for (const [cardName, occurences] of Array.from(cardOccurences)) {
                 if (cardName !== requestedCard) {
-                    const value = normalCards.get(cardName).value;
+                    const value = getNormalCardInfo(cardName).value;
                     if (occurences >= 3 || (occurences === 2 && !phoenixUsed)) {
                         if (value > requestedValue) {
                             return new FullHouse(cardName, 3, requestedCard, 2);
@@ -451,7 +452,7 @@ export class FullHouse extends CardCombination {
             for (const [cardName, occurences] of Array.from(cardOccurences)) {
                 if (cardName !== requestedCard) {
                     if ((occurences >= 3) || (occurences === 2 && !phoenixUsed)) {
-                        const value = normalCards.get(cardName).value;
+                        const value = getNormalCardInfo(cardName).value;
                         if (value < requestedValue && !phoenixUsed) {
                             return new FullHouse(cardName, 2, requestedCard, 3);
                         }
@@ -468,8 +469,8 @@ export class Bomb extends CardCombination{
     color: string;
 
     constructor(upperCard: string, lowerCard: string, color='') {
-        const topValue = normalCards.get(upperCard).value;
-        const lower = normalCards.get(lowerCard).value;
+        const topValue = getNormalCardInfo(upperCard).value;
+        const lower = getNormalCardInfo(lowerCard).value;
         const length = topValue - lower + 1;
         super(cardCombinations.BOMB, length > 1 ? length : 4, topValue);
         this.color = color;

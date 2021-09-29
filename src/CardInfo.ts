@@ -45,9 +45,17 @@ function initializeNormalCards() {
     return normalCards;
 }
 
-export const normalCards = initializeNormalCards();
+const normalCards = initializeNormalCards();
 export const normalCardKeys = Array.from(normalCards.keys());
 export const reversedCardKeys = Array.from(normalCardKeys).reverse();
+
+export function getNormalCardInfo(cardName: string) {
+    const info = normalCards.get(cardName);
+    if (info === undefined) {
+        throw new UnknownCardNameError(cardName);
+    }
+    return info;
+}
 
 export const specialCards = {
     DOGS: 'Dogs',
@@ -67,30 +75,26 @@ export class CardInfo {
     key: string;
     cardImg: string | undefined;
     alt: string;
-    tempName: string;
-    tempValue: number;
 
     constructor(name: string, color = '') {
-        this.tempValue = 0;
         switch (name) {
             case specialCards.DOGS:
-                this.cardImg = cardImages.get(specialCards.DOGS);
+                this.cardImg = cardImages.get('dogs');
                 this.alt = specialCards.DOGS;
                 this.value = 0;
                 break;
             case specialCards.PHOENIX:
-                this.cardImg = cardImages.get(specialCards.PHOENIX);
+                this.cardImg = cardImages.get('phoenix');
                 this.alt = specialCards.PHOENIX;
                 this.value = 0.5;
-                this.tempValue = 0.5;
                 break;
             case specialCards.MAJONG:
-                this.cardImg = cardImages.get(specialCards.MAJONG);
+                this.cardImg = cardImages.get('majong');
                 this.alt = specialCards.MAJONG;
                 this.value = 1;
                 break;
             case specialCards.DRAGON:
-                this.cardImg = cardImages.get(specialCards.DRAGON);
+                this.cardImg = cardImages.get('dragon');
                 this.alt = specialCards.DRAGON;
                 this.value = 20;
                 break;
@@ -108,7 +112,6 @@ export class CardInfo {
                 break;
         }
         this.name = name;
-        this.tempName = '';
         this.isSelected = false;
         this.key = this.alt;
         this.color = color;
@@ -118,3 +121,20 @@ export class CardInfo {
         return b.value - a.value;
     }
 };
+
+export class PhoenixCard extends CardInfo {
+    tempValue: number;
+    tempName: string;
+    
+    constructor() {
+        super(specialCards.PHOENIX);
+        this.tempName = '';
+        this.tempValue = 0.5;
+    }
+}
+
+class UnknownCardNameError extends Error {
+    constructor(unknownName: string) {
+        super(`Unknown Card Name: ${unknownName}`);
+    }
+}
