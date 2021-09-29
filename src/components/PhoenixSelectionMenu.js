@@ -25,6 +25,11 @@ export class PhoenixSelectionMenu extends Component {
         }
     }
 
+    componentWillUnmount() {
+        this.props.phoenix.tempName = '';
+        this.props.phoenix.tempValue = 0.5;
+    }
+
     render() {
         return (
             <div className={styles.phoenixSelectionContainer}>

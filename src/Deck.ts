@@ -1,4 +1,4 @@
-import { cardColors, CardInfo, specialCards } from "./CardInfo";
+import { cardColors, CardInfo, PhoenixCard, specialCards } from "./CardInfo";
 
 /**
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
@@ -26,7 +26,7 @@ export class Deck {
     constructor() {
         this.cards = [];
         this.cards.push(new CardInfo(specialCards.DOGS));
-        this.cards.push(new CardInfo(specialCards.PHOENIX));
+        this.cards.push(new PhoenixCard());
         this.cards.push(new CardInfo(specialCards.MAJONG));
         this.cards.push(new CardInfo(specialCards.DRAGON));
         for (let i = 2; i <= 10; i++) {

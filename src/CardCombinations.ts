@@ -583,7 +583,7 @@ export class Bomb extends CardCombination{
         }
         if (strongestBomb === null) {
             const [, targetColors] = cardColorsArray[targetIndex];
-            if (Object.values(targetColors).every(hasColor => hasColor === true)) {
+            if (Array.from(targetColors.values()).every(hasColor => hasColor === true)) {
                 strongestBomb = new Bomb(requested, requested);
             }
         }
@@ -648,7 +648,7 @@ export class Bomb extends CardCombination{
         if (strongestBomb === null) {
             for (let i = cardGroupArray.length - 1; i >= 0; i--) {
                 const [name, colors] = cardGroupArray[i];
-                if (!Object.values(colors).includes(false)) {
+                if (!Array.from(colors.values()).includes(false)) {
                     // we have a bomb
                     let bomb = new Bomb(name, name);
                     // We iterate over the cards starting from the strongest,
