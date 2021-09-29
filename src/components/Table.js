@@ -67,7 +67,7 @@ export class Table extends Component {
                 </div> :
                 <div className={styles.dragonSelection}>
                     <Card key={specialCards.DRAGON} id={specialCards.DRAGON}
-                    cardImg={cardImages.dragon} alt={specialCards.DRAGON}
+                    cardImg={cardImages.get('dragon')} alt={specialCards.DRAGON}
                     selected={true} clickCallback={voidAction} style={dragonStyle}/>
                     {buttonText1 !== ''
                     ? <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
