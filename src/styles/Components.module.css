@@ -12,6 +12,7 @@
 }
 
 .playerInfo {
+    padding-top: 1%;
     display: flex;
     flex-direction: row;
     column-gap: 2%;
@@ -98,6 +99,7 @@
     height: 95%;
     display: flex;
     column-gap: 0.25%;
+    justify-content: center;
     flex-direction: row;
     overflow: hidden;
 }
@@ -130,6 +132,7 @@
     grid-template-columns: 32.5% 32.5% 32.5%;
     grid-column-gap: 1%;
     grid-row-gap: 1%;
+    justify-content: center;
     overflow: hidden;
 }
 .tableStyle {
@@ -252,6 +255,8 @@
 }
 
 .tichuBetMessage {
+    display: flex;
+    flex-direction: column;
     color: goldenrod;
     border: 1px solid goldenrod;
     padding: 0% 1%;
