@@ -30,7 +30,7 @@ export const cardCombinations = {
     BOMB: 'Bomb'
 }
 
-export class CardCombination {
+export abstract class CardCombination {
     combination: string;
     length: number;
     value: any;
@@ -67,6 +67,8 @@ export class CardCombination {
         }
         return a.value - b.value;
     }
+    abstract compareCombination(other: CardCombination | null): number;
+    abstract compare(cards: Array<CardInfo>, requested: string, length?: number): number;
 }
 
 export class SingleCard extends CardCombination {
@@ -88,7 +90,7 @@ export class SingleCard extends CardCombination {
         }
         return new SingleCard(cards[0]);
     }
-    compareCombination(other: SingleCard) {
+    compareCombination(other: SingleCard | null) {
         return CardCombination.basicCompare(this, other);
     }
     compare(cards: Array<CardInfo>, requested: string) {
@@ -126,7 +128,7 @@ export class CardCouple extends CardCombination {
         }
         return new CardCouple(cards[0].value);
     }
-    compareCombination(other: CardCouple) {
+    compareCombination(other: CardCouple | null) {
         return CardCombination.basicCompare(this, other);
     }
     compare(cards: Array<CardInfo>, requested: string) {
@@ -158,7 +160,7 @@ export class Triplet extends CardCombination {
         }
         return new Triplet(filteredCards[0].value);
     }
-    compareCombination(other: Triplet) {
+    compareCombination(other: Triplet | null) {
         return CardCombination.basicCompare(this, other);
     }
     compare(cards: Array<CardInfo>, requested: string) {
@@ -255,7 +257,7 @@ export class Steps extends CardCombination {
         }
         return null;
     }
-    compareCombination(other: Steps) {
+    compareCombination(other: Steps | null) {
         return CardCombination.altCompare(this, other);
     }
     compare(cards: Array<CardInfo>, requested: string, length: number) {
@@ -330,7 +332,7 @@ export class Kenta extends CardCombination {
         }
         return null;
     }
-    compareCombination(other: Kenta) {
+    compareCombination(other: Kenta | null) {
         return CardCombination.altCompare(this, other);
     }
     compare(cards: Array<CardInfo>, requested: string, length: number) {
@@ -379,7 +381,7 @@ export class FullHouse extends CardCombination {
         }
         return null;
     }
-    compareCombination(other: FullHouse) {
+    compareCombination(other: FullHouse | null) {
         return CardCombination.basicCompare(this, other);
     }
     compare(cards: Array<CardInfo>, requested: string) {
@@ -504,7 +506,7 @@ export class Bomb extends CardCombination{
         }
     }
 
-    compare(other: Bomb) {
+    compareCombination(other: Bomb | null) {
         return Bomb.compareBombs(this, other);
     }
 
@@ -659,5 +661,9 @@ export class Bomb extends CardCombination{
             }
         }
         return strongestBomb;
+    }
+
+    compare(cards: Array<CardInfo>, requested: string, length: number) {
+        return -1;
     }
 }

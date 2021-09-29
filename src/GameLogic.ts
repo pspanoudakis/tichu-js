@@ -1,5 +1,6 @@
-import { specialCards } from "./CardInfo";
+import { CardInfo, PhoenixCard, specialCards } from "./CardInfo";
 import {
+            CardCombination,
             cardCombinations,
             SingleCard,
             CardCouple,
@@ -9,6 +10,7 @@ import {
             Kenta,
             Bomb
         } from "./CardCombinations";
+import { Deck } from "./Deck";
 
 export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
@@ -18,15 +20,100 @@ export const gameBets = {
     GRAND_TICHU: 200
 }
 
+interface GameState {
+    previousGames: Array<[number, number]>,
+    team02TotalPoints: number,
+    team13TotalPoints: number,
+    winningScore: number,
+    gameOver: boolean
+}
+
+interface PlayerCards {
+    [playerKey: string]: Array<CardInfo>
+}
+
+interface TeamsPoints {
+    team02: number,
+    team13: number
+}
+
+interface GameboardState {
+    deck: Deck;
+    playerHands: PlayerCards;
+    playerHeaps: PlayerCards;
+    playerTrades: {
+        [playerKey: string]: Array<[string, CardInfo]>
+    };
+    playerBets: {
+        [playerKey: string]: number
+    };
+    sentTrades: number;
+    receivedTrades: number;
+    tradingPhaseCompleted: boolean;
+    currentPlayerIndex: number;
+    pendingMajongRequest: string;
+    pendingDragonToBeGiven: boolean;
+    pendingBombToBePlayed: boolean;
+    table: {
+        previousCards: Array<CardInfo>,
+        currentCards: Array<CardInfo>,
+        combination: CardCombination | undefined,
+        currentCardsOwnerIndex: number,
+        requestedCardName: string
+    };
+    gameRoundWinnerKey: string;
+}
+interface NewGameboardState {
+    playerHands?: PlayerCards;
+    playerHeaps?: PlayerCards;
+    playerTrades?: {
+        [playerKey: string]: Array<CardInfo>
+    };
+    playerBets?: {
+        [playerKey: string]: number
+    };
+    sentTrades?: number;
+    currentPlayerIndex?: number;
+    pendingMajongRequest?: string;
+    pendingDragonToBeGiven?: boolean;
+    pendingBombToBePlayed?: boolean;
+    table?: {
+        previousCards: Array<CardInfo>,
+        currentCards: Array<CardInfo>,
+        combination: CardCombination | undefined,
+        currentCardsOwnerIndex: number,
+        requestedCardName: string
+    };
+    gameRoundWinnerKey?: string;
+}
+
+interface GameboardComponent {
+    state: GameboardState;
+    setState: (newState: Object) => void
+}
+
+interface PlayerPossibleActions {
+    canBetTichu: boolean,
+    hasTurn: boolean,
+    canPass: boolean,
+    displaySelectionBox: boolean,
+    pendingRequest: string,
+    canBomb: boolean,
+}
+
+interface RequestedCardObject {
+    card: string
+}
+
 export class GameLogic {
 
-    static gameShouldEnd(gameState) {
+    static gameShouldEnd(gameState: GameState) {
         return (gameState.winningScore === 0 ||
                 gameState.team02TotalPoints >= gameState.winningScore ||
                 gameState.team13TotalPoints >= gameState.winningScore);
     }
 
-    static mustEndGameRound(gameboard) {
+    static mustEndGameRound(gameboard: GameboardComponent) {
         if (gameboard.state.playerHands[playerKeys[0]].length === 0 &&
             gameboard.state.playerHands[playerKeys[2]].length === 0) {
                 return true;
@@ -38,8 +125,8 @@ export class GameLogic {
         return false;
     }
 
-    static evaluateTeamPoints(gameboard, points) {
-        let playerHeaps = {
+    static evaluateTeamPoints(gameboard: GameboardComponent, points: TeamsPoints) {
+        let playerHeaps: PlayerCards = {
             player1: [],
             player2: [],
             player3: [],
@@ -82,7 +169,7 @@ export class GameLogic {
         } );
     }
 
-    static evaluatePlayerBets(gameboard, points) {
+    static evaluatePlayerBets(gameboard: GameboardComponent, points: TeamsPoints) {
         playerKeys.forEach((playerKey, index) => {
             let contribution = 0;
             if (gameboard.state.gameRoundWinnerKey === playerKey) {
@@ -100,11 +187,11 @@ export class GameLogic {
         });
     }
 
-    static endGameRound(gameboard, points) {
+    static endGameRound(gameboard: GameboardComponent, points: TeamsPoints) {
         window.alert('Round Ended');
 
         let activePlayers = playerKeys.reduce( (active, key) => {
-            return active + (gameboard.state.playerHands[key].length > 0);
+            return active + (gameboard.state.playerHands[key].length > 0 ? 1 : 0);
         }, 0);
         if (activePlayers > 1) {
             if (playerKeys.indexOf(gameboard.state.gameRoundWinnerKey) % 2 === 0) {
@@ -120,15 +207,15 @@ export class GameLogic {
         GameLogic.evaluatePlayerBets(gameboard, points);
     }
 
-    static majongIsPlayable(gameboard) {
+    static majongIsPlayable(gameboard: GameboardComponent) {
         return gameboard.state.table.currentCards.length === 0 || 
         gameboard.state.table.currentCards[0].name === specialCards.PHOENIX;
     }
 
-    static isPlayable(tableCombination, selectedCombination) {
+    static isPlayable(tableCombination: CardCombination | undefined, selectedCombination: CardCombination) {
         if (tableCombination !== undefined) {
-            if (selectedCombination.combination === cardCombinations.BOMB) {
-                if (tableCombination.combination === cardCombinations.BOMB) {
+            if (selectedCombination instanceof Bomb) {
+                if (tableCombination instanceof Bomb) {
                     return Bomb.compareBombs(selectedCombination, tableCombination) > 0;
                 }
                 return true;
@@ -141,12 +228,12 @@ export class GameLogic {
         return true;
     }
 
-    static canPassTurn(tableCombination, requestedCard, playerCards) {
+    static canPassTurn(tableCombination: CardCombination | undefined, requestedCard: string, playerCards: Array<CardInfo>) {
         if (requestedCard === "") { return true; }
         if (tableCombination !== undefined) {
             switch(tableCombination.combination) {
                 case cardCombinations.BOMB:
-                    if (tableCombination.compare(
+                    if (tableCombination.compareCombination(
                         Bomb.getStrongestRequested(playerCards, requestedCard)) < 0 ) {
                             return false;
                         }
@@ -175,11 +262,11 @@ export class GameLogic {
         }
     }
 
-    static createCombination(cards, tableCards) {
+    static createCombination(cards: Array<CardInfo>, tableCards: Array<CardInfo>) {
         let combination = null;
         switch (cards.length) {
             case 1:
-                if (cards[0].name === specialCards.PHOENIX) {
+                if (cards[0] instanceof PhoenixCard) {
                     if (tableCards.length > 0) {
                         if (tableCards[0].name !== specialCards.DRAGON) {
                             cards[0].tempValue = tableCards[0].value + 0.5;
@@ -214,7 +301,8 @@ export class GameLogic {
         return combination;
     }
 
-    static isMajongCompliant(requestedCard, tableCombination, allCards, combination, selectedCards) {
+    static isMajongCompliant(requestedCard: string, tableCombination: CardCombination | undefined,
+                             allCards: Array<CardInfo>, combination: CardCombination, selectedCards: Array<CardInfo>) {
         if (combination.combination === cardCombinations.BOMB) { return true; }
         if (tableCombination === undefined) {
             // See if there is *any* valid combination with the requested card
@@ -255,7 +343,7 @@ export class GameLogic {
         }
     }
 
-    static satisfyRequestIfPossible(requestObject, selectedCards) {
+    static satisfyRequestIfPossible(requestObject: RequestedCardObject, selectedCards: Array<CardInfo>) {
         if (requestObject.card !== "") {
             if (selectedCards.some(card => card.name === requestObject.card)) {
                 requestObject.card = "";
@@ -263,11 +351,11 @@ export class GameLogic {
         }
     }
 
-    static playCards(gameboard, playerKey) {
+    static playCards(gameboard: GameboardComponent, playerKey: string) {
         let normalCheck = true;
         let selectedCards = [];
         let allPlayerCards = [];
-        let playerHands = {};
+        let playerHands: PlayerCards = {};
         let requestedCard = gameboard.state.table.requestedCardName;
         let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
         let gameRoundWinnerKey = gameboard.state.gameRoundWinnerKey;
@@ -301,14 +389,14 @@ export class GameLogic {
                 }
             }
             else if (gameboard.state.pendingBombToBePlayed) {
-                if (combination.combination !== cardCombinations.BOMB) {
+                if (!(combination instanceof Bomb)) {
                     window.alert("A bomb must be played");
                     return;
                 }
                 else {
                     const tableCombination = gameboard.state.table.combination;
                     if ( tableCombination !== undefined && 
-                         tableCombination.combination === cardCombinations.BOMB) {
+                         tableCombination instanceof Bomb) {
                         if (Bomb.compareBombs(tableCombination, combination) >= 0) {
                             window.alert("The selected combination cannot be played");
                             return;
@@ -341,7 +429,7 @@ export class GameLogic {
                     return;
                 }
             }
-            let requestObject = { card: requestedCard };
+            let requestObject: RequestedCardObject = { card: requestedCard };
             if (gameboard.state.pendingMajongRequest === '') {
                 GameLogic.satisfyRequestIfPossible(requestObject, selectedCards);
             }
@@ -373,13 +461,13 @@ export class GameLogic {
         }
     }
 
-    static passTurn(gameboard) {
+    static passTurn(gameboard: GameboardComponent) {
         const currentPlayerKey = playerKeys[gameboard.state.currentPlayerIndex];
         const currentPlayerHand = gameboard.state.playerHands[currentPlayerKey];
         if (GameLogic.canPassTurn(gameboard.state.table.combination,
             gameboard.state.table.requestedCardName, currentPlayerHand)) {
             let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
-            let newState = {};
+            let newState: NewGameboardState = {};
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
                 if (nextPlayerIndex === gameboard.state.table.currentCardsOwnerIndex) {
                     GameLogic.endRound(gameboard, newState, nextPlayerIndex);
@@ -397,7 +485,7 @@ export class GameLogic {
         }        
     }
 
-    static endRound(gameboard, newState, cardsOwnerIndex) {
+    static endRound(gameboard: GameboardComponent, newState: NewGameboardState, cardsOwnerIndex: number) {
         // Preparing for new round
         if (gameboard.state.table.currentCards[0].name === specialCards.DRAGON) {
             GameLogic.giveDragon(gameboard, cardsOwnerIndex);
@@ -409,27 +497,28 @@ export class GameLogic {
             if (i === cardsOwnerIndex) {
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.previousCards);
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.currentCards);
-                newState.table = {};
-                newState.table.previousCards = [];
-                newState.table.currentCards = [];
-                newState.table.combination = undefined;
-                newState.table.currentCardsOwnerIndex = -1;
-                newState.table.requestedCardName = gameboard.state.table.requestedCardName;
+                newState.table = {
+                    previousCards: [],
+                    currentCards: [],
+                    currentCardsOwnerIndex: -1,
+                    requestedCardName: gameboard.state.table.requestedCardName,
+                    combination: undefined
+                };
                 //console.log(newState.playerHeaps[playerKeys[i]]);
             }
         }
     }
 
-    static giveDragon(gameboard, cardsOwnerIndex) {
+    static giveDragon(gameboard: GameboardComponent, cardsOwnerIndex: number) {
         gameboard.setState({
             currentPlayerIndex: cardsOwnerIndex,
             pendingDragonToBeGiven: true
         });
     }
 
-    static dragonGiven(gameboard, selectedPlayerKey) {
+    static dragonGiven(gameboard: GameboardComponent, selectedPlayerKey: string) {
         // New current player is already set
-        let newState = {
+        let newState: NewGameboardState = {
             pendingDragonToBeGiven: false,
             playerHeaps: {}
         }
@@ -442,7 +531,8 @@ export class GameLogic {
                     previousCards: [],
                     currentCards: [],
                     currentCardsOwnerIndex: -1,
-                    requestedCardName: gameboard.state.table.requestedCardName
+                    requestedCardName: gameboard.state.table.requestedCardName,
+                    combination: undefined
                 };
                 //console.log(newState.playerHeaps[playerKeys[i]]);
             }
@@ -450,8 +540,8 @@ export class GameLogic {
         gameboard.setState(newState);
     }
 
-    static handCards(gameboard) {
-        let playerHands = {};
+    static handCards(gameboard: GameboardComponent) {
+        let playerHands: PlayerCards = {};
         for (const key of playerKeys) {
             playerHands[key] = [];
         }
@@ -467,8 +557,8 @@ export class GameLogic {
         });
     }
 
-    static makeCardTrades(gameboard) {
-        let playerHands = {
+    static makeCardTrades(gameboard: GameboardComponent) {
+        let playerHands: PlayerCards = {
             player1: [],
             player2: [],
             player3: [],
@@ -499,7 +589,8 @@ export class GameLogic {
         });
     }
 
-    static getPlayerPossibleActions(gameboard, playerIndex, majongIsPlayable, actions) {
+    static getPlayerPossibleActions(gameboard: GameboardComponent, playerIndex: number,
+                                    majongIsPlayable: boolean, actions: PlayerPossibleActions) {
         if (gameboard.state.playerHands[playerKeys[playerIndex]].length === 14 &&
             gameboard.state.playerBets[playerKeys[playerIndex]] === gameBets.NONE) {
                 actions.canBetTichu = true;
@@ -530,7 +621,7 @@ export class GameLogic {
         }
     }
 
-    static evaluatePoints(cards) {
+    static evaluatePoints(cards: Array<CardInfo>) {
         let points = 0;
         for (const card of cards) {
             switch (card.name) {
