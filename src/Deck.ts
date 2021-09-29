@@ -3,7 +3,7 @@ import { cardColors, CardInfo, specialCards } from "./CardInfo";
 /**
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
  */
-function shuffle(array) {
+function shuffle(array: Array<any>) {
     var currentIndex = array.length,  randomIndex;
   
     // While there remain elements to shuffle...
@@ -22,6 +22,7 @@ function shuffle(array) {
 }
 
 export class Deck {
+    cards: Array<CardInfo>
     constructor() {
         this.cards = [];
         this.cards.push(new CardInfo(specialCards.DOGS));
