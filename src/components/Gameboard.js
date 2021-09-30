@@ -38,7 +38,7 @@ export class Gameboard extends Component {
         table: {
             previousCards: [],
             currentCards: [],
-            combination: undefined,
+            combination: null,
             currentCardsOwnerIndex: -1,
             requestedCardName: ''
         },

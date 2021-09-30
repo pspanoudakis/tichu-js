@@ -57,7 +57,7 @@ interface GameboardState {
     table: {
         previousCards: Array<CardInfo>,
         currentCards: Array<CardInfo>,
-        combination: CardCombination | undefined,
+        combination: CardCombination | null,
         currentCardsOwnerIndex: number,
         requestedCardName: string
     };
@@ -80,7 +80,7 @@ interface NewGameboardState {
     table?: {
         previousCards: Array<CardInfo>,
         currentCards: Array<CardInfo>,
-        combination: CardCombination | undefined,
+        combination: CardCombination | null,
         currentCardsOwnerIndex: number,
         requestedCardName: string
     };
@@ -89,7 +89,7 @@ interface NewGameboardState {
 
 interface GameboardComponent {
     state: GameboardState;
-    setState: (newState: Object) => void
+    setState: (newState: NewGameboardState) => void
 }
 
 interface PlayerPossibleActions {
@@ -212,8 +212,8 @@ export class GameLogic {
         gameboard.state.table.currentCards[0].name === specialCards.PHOENIX;
     }
 
-    static isPlayable(tableCombination: CardCombination | undefined, selectedCombination: CardCombination) {
-        if (tableCombination !== undefined) {
+    static isPlayable(tableCombination: CardCombination | null, selectedCombination: CardCombination) {
+        if (tableCombination !== null) {
             if (selectedCombination instanceof Bomb) {
                 if (tableCombination instanceof Bomb) {
                     return Bomb.compareBombs(selectedCombination, tableCombination) > 0;
@@ -228,9 +228,9 @@ export class GameLogic {
         return true;
     }
 
-    static canPassTurn(tableCombination: CardCombination | undefined, requestedCard: string, playerCards: Array<CardInfo>) {
+    static canPassTurn(tableCombination: CardCombination | null, requestedCard: string, playerCards: Array<CardInfo>) {
         if (requestedCard === "") { return true; }
-        if (tableCombination !== undefined) {
+        if (tableCombination !== null) {
             switch(tableCombination.combination) {
                 case cardCombinations.BOMB:
                     if (tableCombination.compareCombination(
@@ -301,10 +301,10 @@ export class GameLogic {
         return combination;
     }
 
-    static isMajongCompliant(requestedCard: string, tableCombination: CardCombination | undefined,
+    static isMajongCompliant(requestedCard: string, tableCombination: CardCombination | null,
                              allCards: Array<CardInfo>, combination: CardCombination, selectedCards: Array<CardInfo>) {
         if (combination.combination === cardCombinations.BOMB) { return true; }
-        if (tableCombination === undefined) {
+        if (tableCombination === null) {
             // See if there is *any* valid combination with the requested card
             if (SingleCard.getStrongestRequested(allCards, requestedCard) !== null) {
                 if (SingleCard.getStrongestRequested(selectedCards, requestedCard) !== null) {
@@ -352,7 +352,6 @@ export class GameLogic {
     }
 
     static playCards(gameboard: GameboardComponent, playerKey: string) {
-        let normalCheck = true;
         let selectedCards = [];
         let allPlayerCards = [];
         let playerHands: PlayerCards = {};
@@ -387,6 +386,10 @@ export class GameLogic {
                 else {
                     requestedCard = gameboard.state.pendingMajongRequest;
                 }
+                if ( !GameLogic.isPlayable(gameboard.state.table.combination, combination) ) {
+                    window.alert("This combination cannot be played");
+                    return;
+                }
             }
             else if (gameboard.state.pendingBombToBePlayed) {
                 if (!(combination instanceof Bomb)) {
@@ -395,7 +398,7 @@ export class GameLogic {
                 }
                 else {
                     const tableCombination = gameboard.state.table.combination;
-                    if ( tableCombination !== undefined && 
+                    if ( tableCombination !== null && 
                          tableCombination instanceof Bomb) {
                         if (Bomb.compareBombs(tableCombination, combination) >= 0) {
                             window.alert("The selected combination cannot be played");
@@ -404,7 +407,6 @@ export class GameLogic {
                     }
                     
                 }
-                normalCheck = false;
             }
             else if (gameboard.state.table.requestedCardName !== '') {
                 if ( !GameLogic.isMajongCompliant(gameboard.state.table.requestedCardName,
@@ -412,18 +414,21 @@ export class GameLogic {
                     window.alert("A combination which contains the requested card is required.");
                     return;
                 }
+                if ( !GameLogic.isPlayable(gameboard.state.table.combination, combination) ) {
+                    window.alert("This combination cannot be played");
+                    return;
+                }
             }
             else if (selectedCards.some(card => card.name === specialCards.DOGS)) {
-                if (gameboard.state.table.combination !== undefined) {
+                if (gameboard.state.table.combination !== null) {
                     window.alert("Dogs cannot be played on top of other cards.");
                     return;
                 }
-                normalCheck = false;
                 nextPlayerIndex = (gameboard.state.currentPlayerIndex + 2) % 4;
                 selectedCards = [];
-                combination = undefined;
+                combination = null;
             }
-            if (normalCheck) {
+            else {
                 if ( !GameLogic.isPlayable(gameboard.state.table.combination, combination) ) {
                     window.alert("This combination cannot be played");
                     return;
@@ -502,7 +507,7 @@ export class GameLogic {
                     currentCards: [],
                     currentCardsOwnerIndex: -1,
                     requestedCardName: gameboard.state.table.requestedCardName,
-                    combination: undefined
+                    combination: null
                 };
                 //console.log(newState.playerHeaps[playerKeys[i]]);
             }
@@ -519,9 +524,9 @@ export class GameLogic {
     static dragonGiven(gameboard: GameboardComponent, selectedPlayerKey: string) {
         // New current player is already set
         let newState: NewGameboardState = {
-            pendingDragonToBeGiven: false,
-            playerHeaps: {}
+            pendingDragonToBeGiven: false
         }
+        newState.playerHeaps = {}
         for (let i = 0; i < playerKeys.length; i++) {
             newState.playerHeaps[playerKeys[i]] = gameboard.state.playerHeaps[playerKeys[i]];
             if (playerKeys[i] === selectedPlayerKey) {
@@ -532,7 +537,7 @@ export class GameLogic {
                     currentCards: [],
                     currentCardsOwnerIndex: -1,
                     requestedCardName: gameboard.state.table.requestedCardName,
-                    combination: undefined
+                    combination: null
                 };
                 //console.log(newState.playerHeaps[playerKeys[i]]);
             }
@@ -614,8 +619,8 @@ export class GameLogic {
         if (bomb !== null) {
             actions.canBomb = gameboard.state.pendingMajongRequest === ''
                                   && !gameboard.state.pendingBombToBePlayed;
-            if (actions.canBomb && gameboard.state.table.combination !== undefined &&
-                gameboard.state.table.combination.combination === cardCombinations.BOMB) {
+            if (actions.canBomb && gameboard.state.table.combination !== null &&
+                gameboard.state.table.combination instanceof Bomb) {
                 actions.canBomb = Bomb.compareBombs(gameboard.state.table.combination, bomb) < 0;
             }
         }
