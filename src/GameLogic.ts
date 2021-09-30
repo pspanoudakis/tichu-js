@@ -8,7 +8,8 @@ import {
             FullHouse,
             Steps,
             Kenta,
-            Bomb
+            Bomb,
+            UnexpectedCombinationType
         } from "./CardCombinations";
 import { Deck } from "./Deck";
 
@@ -233,10 +234,9 @@ export class GameLogic {
         if (tableCombination !== null) {
             switch(tableCombination.combination) {
                 case cardCombinations.BOMB:
-                    if (tableCombination.compareCombination(
-                        Bomb.getStrongestRequested(playerCards, requestedCard)) < 0 ) {
-                            return false;
-                        }
+                    if (tableCombination.compare(playerCards, requestedCard) < 0) {
+                        return false;
+                    }
                     return true;
                 case cardCombinations.SINGLE:
                 case cardCombinations.COUPLE:
@@ -253,7 +253,7 @@ export class GameLogic {
                     }
                     break;
                 default:
-                    return false;
+                    throw new UnexpectedCombinationType(tableCombination.combination);
             }
             return Bomb.getStrongestRequested(playerCards, requestedCard) === null;
         }
@@ -263,7 +263,7 @@ export class GameLogic {
     }
 
     static createCombination(cards: Array<CardInfo>, tableCards: Array<CardInfo>) {
-        let combination = null;
+        let combination: CardCombination | null = null;
         switch (cards.length) {
             case 1:
                 if (cards[0] instanceof PhoenixCard) {
@@ -352,24 +352,25 @@ export class GameLogic {
     }
 
     static playCards(gameboard: GameboardComponent, playerKey: string) {
+        let newState: NewGameboardState = {};
+        newState.playerHands = {};
+        newState.gameRoundWinnerKey = gameboard.state.gameRoundWinnerKey;
         let selectedCards = [];
         let allPlayerCards = [];
-        let playerHands: PlayerCards = {};
         let requestedCard = gameboard.state.table.requestedCardName;
         let nextPlayerIndex = (gameboard.state.currentPlayerIndex + 1) % 4;
-        let gameRoundWinnerKey = gameboard.state.gameRoundWinnerKey;
         for (const key of playerKeys) {
             if (playerKey !== key) {
-                playerHands[key] = gameboard.state.playerHands[key];
+                newState.playerHands[key] = gameboard.state.playerHands[key];
             }
             else {
-                playerHands[playerKey] = [];
+                newState.playerHands[playerKey] = [];
                 for (const card of gameboard.state.playerHands[key]) {
                     if (card.isSelected) {
                         selectedCards.push(card);
                     }
                     else {
-                        playerHands[playerKey].push(card);
+                        newState.playerHands[playerKey].push(card);
                     }
                     allPlayerCards.push(card);
                 }
@@ -441,25 +442,22 @@ export class GameLogic {
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
             }
-            if (gameRoundWinnerKey === '' && playerHands[playerKey].length === 0) {
+            if (newState.gameRoundWinnerKey === '' && newState.playerHands[playerKey].length === 0) {
                 //console.log(`Winner: ${playerKey}`);
-                gameRoundWinnerKey = playerKey;
+                newState.gameRoundWinnerKey = playerKey;
             }
-            gameboard.setState({
-                playerHands: playerHands,
-                currentPlayerIndex: nextPlayerIndex,
-                pendingMajongRequest: '',
-                pendingDragonToBeGiven: false,
-                pendingBombToBePlayed: false,
-                table: {
-                    previousCards: gameboard.state.table.previousCards.concat(gameboard.state.table.currentCards),
-                    currentCards: selectedCards,
-                    combination: combination,
-                    currentCardsOwnerIndex: gameboard.state.currentPlayerIndex,
-                    requestedCardName: requestObject.card
-                },
-                gameRoundWinnerKey: gameRoundWinnerKey
-            });
+            newState.table = {
+                previousCards: gameboard.state.table.previousCards.concat(gameboard.state.table.currentCards),
+                currentCards: selectedCards,
+                combination: combination,
+                currentCardsOwnerIndex: gameboard.state.currentPlayerIndex,
+                requestedCardName: requestObject.card
+            }
+            newState.currentPlayerIndex = nextPlayerIndex;
+            newState.pendingDragonToBeGiven = false;
+            newState.pendingBombToBePlayed = false;
+            newState.pendingMajongRequest = '';
+            gameboard.setState(newState);
         }
         else {
             window.alert('Invalid card combination');

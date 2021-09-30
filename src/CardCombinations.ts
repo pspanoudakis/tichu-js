@@ -271,7 +271,7 @@ export class Kenta extends CardCombination {
     }
     static getStrongestRequested(cards: Array<CardInfo>, requested: string, length: number) {
         if (cards.length >= length) {
-            let cardOccurences = new Map();
+            let cardOccurences: Map<string, number> = new Map();
             let phoenixUsed = true;
             for (const card of cards) {
                 if ( !specialCardNames.includes(card.name) ) {
@@ -281,7 +281,7 @@ export class Kenta extends CardCombination {
                     }
                     cardOccurences.set(card.name, occurences + 1);
                 }
-                else {
+                else if (phoenixUsed) {
                     phoenixUsed = !(card.name === specialCards.PHOENIX);
                 }
             }
@@ -663,7 +663,13 @@ export class Bomb extends CardCombination{
         return strongestBomb;
     }
 
-    compare(cards: Array<CardInfo>, requested: string, length: number) {
-        return -1;
+    compare(cards: Array<CardInfo>, requested: string) {
+        return Bomb.compareBombs(this, Bomb.getStrongestRequested(cards, requested))
+    }
+}
+
+export class UnexpectedCombinationType extends Error {
+    constructor(type: any) {
+        super(`Unexpected combination type: '${type}'`);
     }
 }
