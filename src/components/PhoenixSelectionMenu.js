@@ -21,13 +21,15 @@ export class PhoenixSelectionMenu extends Component {
             this.props.phoenix.tempValue = getNormalCardInfo(event.target.value).value;
             this.setState({
                 selection: event.target.value
-            });
+            }, this.props.valueSelected());
+            
         }
     }
 
     componentWillUnmount() {
         this.props.phoenix.tempName = '';
         this.props.phoenix.tempValue = 0.5;
+        this.props.valueSelected();
     }
 
     render() {

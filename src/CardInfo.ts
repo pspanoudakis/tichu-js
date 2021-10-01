@@ -118,7 +118,15 @@ export class CardInfo {
     };
 
     static compareCards(a: CardInfo, b: CardInfo) {
-        return b.value - a.value;
+        let valueA = a.value;
+        let valueB = b.value;
+        if (a instanceof PhoenixCard) {
+            valueA = a.tempValue;
+        }
+        else if (b instanceof PhoenixCard) {
+            valueB = b.tempValue;
+        }
+        return valueB - valueA;
     }
 };
 
