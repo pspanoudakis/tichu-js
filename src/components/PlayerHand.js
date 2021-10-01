@@ -17,7 +17,11 @@ export class PlayerHand extends Component {
     cardClicked = (key) => {
         let target = this.props.cards.find(card => card.key === key);
         target.isSelected = !target.isSelected;
-        this.setState({});
+        this.forceUpdate()
+    }
+
+    phoenixValueSelected = () => {
+        this.forceUpdate()
     }
 
     madeRequestSelection = (cardName) => {
@@ -66,6 +70,8 @@ export class PlayerHand extends Component {
                 zindex: index.toString(),
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
+                // Maybe place each card in a div, and toggle the distance inside it,
+                // so no need to update the whole PlayerHand for each click, but just the specific card.
                 bottom: (card.isSelected ? '25%' : '15%'),
                 width: '11.5%',
                 height: '61%'
@@ -94,7 +100,7 @@ export class PlayerHand extends Component {
                     ? <RequestSelectionBox requestMade={this.madeRequestSelection}/>
                     : this.props.actions.pendingRequest}
                     { (selectedCards.length >= 5 && phoenix !== undefined && phoenix.isSelected) 
-                    ? <PhoenixSelectionMenu phoenix={phoenix}></PhoenixSelectionMenu>
+                    ? <PhoenixSelectionMenu phoenix={phoenix} valueSelected={this.phoenixValueSelected}/>
                     : ''}
                 </div>
             </div>            

@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { normalCards, reversedCardKeys } from '../CardInfo';
+import { getNormalCardInfo, reversedCardKeys } from '../CardInfo';
 
 import * as styles from "../styles/Components.module.css"
 
@@ -18,11 +18,18 @@ export class PhoenixSelectionMenu extends Component {
         }
         else {
             this.props.phoenix.tempName = event.target.value;
-            this.props.phoenix.tempValue = normalCards.get(event.target.value).value;
+            this.props.phoenix.tempValue = getNormalCardInfo(event.target.value).value;
             this.setState({
                 selection: event.target.value
-            });
+            }, this.props.valueSelected());
+            
         }
+    }
+
+    componentWillUnmount() {
+        this.props.phoenix.tempName = '';
+        this.props.phoenix.tempValue = 0.5;
+        this.props.valueSelected();
     }
 
     render() {
@@ -35,7 +42,7 @@ export class PhoenixSelectionMenu extends Component {
                     </select>
                 </label>
                 </form>
-                <span>
+                <span style={{paddingLeft: '1%'}}>
                     {this.props.selection === "" ? "" : `Selected: ${this.state.selection}`}
                 </span>
             </div>            

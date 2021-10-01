@@ -61,7 +61,7 @@ import black_A from './res/black_A.png'
 
 import cardBackground from './res/background.png'
 
-export const cardImages = {
+const _cardImages_ = {
     majong,
     phoenix,
     dogs,
@@ -125,3 +125,5 @@ export const cardImages = {
     
     cardBackground
 }
+
+export const cardImages: Map<string, string> = new Map(Object.entries(_cardImages_));
