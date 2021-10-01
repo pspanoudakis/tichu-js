@@ -42,7 +42,7 @@ export class PhoenixSelectionMenu extends Component {
                     </select>
                 </label>
                 </form>
-                <span>
+                <span style={{paddingLeft: '1%'}}>
                     {this.props.selection === "" ? "" : `Selected: ${this.state.selection}`}
                 </span>
             </div>            
