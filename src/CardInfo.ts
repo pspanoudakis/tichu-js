@@ -81,7 +81,7 @@ export class CardInfo {
             case specialCards.DOGS:
                 this.cardImg = cardImages.get('dogs');
                 this.alt = specialCards.DOGS;
-                this.value = 0;
+                this.value = -2;
                 break;
             case specialCards.PHOENIX:
                 this.cardImg = cardImages.get('phoenix');

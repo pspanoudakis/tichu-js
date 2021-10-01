@@ -16,6 +16,9 @@ interface CardNameOccurencesMap {
     [cardName: string]: number;
 }
 
+/** Helper function for some `CardCombination` subclasses methods.
+ * @returns `true` if `target` is between [`a`, `b`], else `false`.
+ */
 function isBetween(target: number, a: number, b: number) {
     return target >= a && target <= b;
 }
@@ -30,16 +33,28 @@ export const cardCombinations = {
     BOMB: 'Bomb'
 }
 
+/**
+ * Represents a **valid** combination of 1 or more cards.
+ */
 export abstract class CardCombination {
+    
+    /** The combination type (see {@link cardCombinations}) */
     combination: string;
+    /** The number of cards in the combination */
     length: number;
+    /** The value of the top card in the combination */
     value: any;
 
+    /** Creates a `CardCombination` with the given information. */
     constructor(combination: string, len: number, val: any) {
         this.combination = combination;
         this.length = len;
         this.value = val;
     }
+    /** 
+     * Compares the provided combinations (used for constant length combination types).
+     * @returns `0` if their values are equal, `> 0` if a > b, else `< 0`.
+     */
     static basicCompare(a: CardCombination | null, b: CardCombination | null) {
         if (a === b) {
             return 0;
@@ -52,6 +67,12 @@ export abstract class CardCombination {
         }
         return a.value - b.value;
     }
+    /** 
+     * Compares the provided combinations (used for variant length combination types).
+     * 
+     * @returns `0` if their values are equal or their lengths are different,
+     * `> 0` if a > b, else `< 0`.
+     */
     static altCompare(a: CardCombination | null, b: CardCombination | null) {
         if (a === b) {
             return 0;
@@ -67,10 +88,26 @@ export abstract class CardCombination {
         }
         return a.value - b.value;
     }
+    /** 
+     * Compares `this` to another possible combination. 
+     * @returns `0` if they are equal or incomparable, `> 0` if `this` is stronger, else `< 0`.
+     */
     abstract compareCombination(other: CardCombination | null): number;
+    /** Compares `this` to the strongest possible, same type combination which contains
+     * the requested card and has the given length (if specified),
+     * that can be created from the given cards.
+     * @returns `0` if they are equal or incomparable, `> 0` if `this` is stronger, else `< 0`.
+     * 
+     * @param cards The cards available to create the other combination.
+     * @param requested The name of the card that must be present in the combination.
+     * @param length If specified, the created combination must have this length.
+     */
     abstract compare(cards: Array<CardInfo>, requested: string, length?: number): number;
 }
 
+/**
+ * Represents a combination with just one card (no restrictions).
+ */
 export class SingleCard extends CardCombination {
     constructor(card: CardInfo) {
         if (card instanceof PhoenixCard) {
@@ -84,6 +121,13 @@ export class SingleCard extends CardCombination {
         const target = cards.find(card => card.name === requested);
         return (target !== undefined) ? new SingleCard(target) : null;
     }
+
+    /**
+     * Attempts to create a `SingleCard` combination from the given cards.
+     * @param cards The given cards. All of them are included in the combination.
+     * @returns The `SingleCard` combination that is created using the given cards,
+     * or `null` if such combination cannot be created.
+     */
     static create(cards: Array<CardInfo>) {
         if (cards.length !== 1) {
             return null;
@@ -98,6 +142,10 @@ export class SingleCard extends CardCombination {
     }
 }
 
+/** 
+ * Represents a combination of 2 cards with the same value.
+ * No {@link specialCards} apart from the Phoenix may participate.
+*/
 export class CardCouple extends CardCombination {
     constructor(cardValue: number) {
         super(cardCombinations.COUPLE, 2, cardValue);
@@ -111,6 +159,12 @@ export class CardCouple extends CardCombination {
         }
         return null;
     }
+    /**
+     * Attempts to create a `CardCouple` combination from the given cards.
+     * @param cards The given cards. All of them are included in the combination.
+     * @returns The `CardCouple` combination that is created using the given cards,
+     * or `null` if such combination cannot be created.
+     */
     static create(cards: Array<CardInfo>) {
         if (cards.length !== 2) {
             return null;
@@ -136,6 +190,10 @@ export class CardCouple extends CardCombination {
     }
 }
 
+/** 
+ * Represents a combination of 3 cards with the same value.
+ * No {@link specialCards} apart from the Phoenix may participate.
+ */
 export class Triplet extends CardCombination {
     constructor(cardValue: number) {
         super(cardCombinations.TRIPLET, 3, cardValue);
@@ -149,6 +207,12 @@ export class Triplet extends CardCombination {
         }
         return null;
     }
+    /**
+     * Attempts to create a `Triplet` combination from the given cards.
+     * @param cards The given cards. All of them are included in the combination.
+     * @returns The `Triplet` combination that is created using the given cards,
+     * or `null` if such combination cannot be created.
+     */
     static create(cards: Array<CardInfo>) {
         if (cards.length !== 3) {
             return null;
@@ -168,6 +232,11 @@ export class Triplet extends CardCombination {
     }
 }
 
+
+/**
+ * Represents a combination of 2 or more consecutive card couples (2 cards with the same value).
+ * No {@link specialCards} apart from the Phoenix may participate.
+ */
 export class Steps extends CardCombination {
 
     constructor(topValue: number, length: number) {
@@ -218,6 +287,12 @@ export class Steps extends CardCombination {
         }
         return null;
     }
+    /**
+     * Attempts to create a `Steps` combination from the given cards.
+     * @param cards The given cards. All of them are included in the combination.
+     * @returns The `Steps` combination that is created using the given cards,
+     * or `null` if such combination cannot be created.
+     */
     static create(cards: Array<CardInfo>) {        
         if (cards.length >= 4 && cards.length % 2 === 0) {
             let cardOccurences: Map<number, number> = new Map();
@@ -265,6 +340,10 @@ export class Steps extends CardCombination {
     }
 }
 
+/**
+ * Represents a combination of 5 or more consecutive value cards.
+ * No {@link specialCards} apart from the Majong and the Phoenix may participate.
+ */
 export class Kenta extends CardCombination {
     constructor(topValue: number, length: number) {
         super(cardCombinations.KENTA, length, topValue);
@@ -309,6 +388,12 @@ export class Kenta extends CardCombination {
         }
         return null;
     }
+    /**
+     * Attempts to create a `Kenta` combination from the given cards.
+     * @param cards The given cards. All of them are included in the combination.
+     * @returns The `Kenta` combination that is created using the given cards,
+     * or `null` if such combination cannot be created.
+     */
     static create(cards: Array<CardInfo>) {
         if (cards.length > 4) {
             let phoenix = cards.find(card => card.name === specialCards.PHOENIX);
@@ -340,10 +425,20 @@ export class Kenta extends CardCombination {
     }
 }
 
+/**
+ * Represents a combination of a {@link Triplet} and a {@link CardCouple}.
+ * No {@link specialCards} apart from the Phoenix may participate.
+ */
 export class FullHouse extends CardCombination {
     constructor(mainCard: string) {
         super(cardCombinations.FULLHOUSE, 5, getNormalCardInfo(mainCard).value);
     }
+    /**
+     * Attempts to create a `FullHouse` combination from the given cards.
+     * @param cards The given cards. All of them are included in the combination.
+     * @returns The `FullHouse` combination that is created using the given cards,
+     * or `null` if such combination cannot be created.
+     */
     static create(cards: Array<CardInfo>) {
         if (cards.length === 5) {
             let cardOccurences: CardNameOccurencesMap = {};
@@ -460,6 +555,11 @@ export class FullHouse extends CardCombination {
     }
 }
 
+/**
+ * Represents a combination of either 4 same value cards,
+ * or 5+ consecutive value cards of the same color.
+ * No {@link specialCards} may participate.
+ */
 export class Bomb extends CardCombination{
     color: string;
 
@@ -471,6 +571,12 @@ export class Bomb extends CardCombination{
         this.color = color;
     }
 
+    /**
+     * Attempts to create a `Bomb` combination from the given cards.
+     * @param cards The given cards. All of them are included in the combination.
+     * @returns The `Bomb` combination that is created using the given cards,
+     * or `null` if such combination cannot be created.
+     */
     static createBomb(cards: Array<CardInfo>) {
         if (cards.length > 4) {
             // Kenta bomb
@@ -661,6 +767,9 @@ export class Bomb extends CardCombination{
     }
 }
 
+/**
+ * Signals that an unexpected combination type was found (if thrown, this is a bug).
+ */
 export class UnexpectedCombinationType extends Error {
     constructor(type: any) {
         super(`Unexpected combination type: '${type}'`);
