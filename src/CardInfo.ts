@@ -60,20 +60,35 @@ export function getNormalCardInfo(cardName: string) {
 export const specialCards = {
     DOGS: 'Dogs',
     PHOENIX: 'Phoenix',
-    MAJONG: 'Majong',
+    MAHJONG: 'Mahjong',
     DRAGON: 'Dragon'
 };
 
 export const specialCardNames = Object.values(specialCards);
 
+/**
+ * Represents a specific Card, along with its information.
+ */
 export class CardInfo {
 
+    /** Game logic related information */
+
+    /** The card 'title' (letter, number or special name). */
     name: string;
+    /** The value of the card. */
     value: number;
-    isSelected: boolean;
+    /** The value of the card (see {@link cardColors}) */
     color: string | '';
+
+    /** UI related information */
+
+    /** Indicated whether the card is currently selected or not. */
+    isSelected: boolean;
+    /** The unique key of the card */
     key: string;
+    /** The card image path */
     cardImg: string | undefined;
+    /** Alternative text to display if the image is not found */
     alt: string;
 
     constructor(name: string, color = '') {
@@ -81,6 +96,8 @@ export class CardInfo {
             case specialCards.DOGS:
                 this.cardImg = cardImages.get('dogs');
                 this.alt = specialCards.DOGS;
+                /** By the book, Dogs card has zero value, but this tweak
+                 * simplifies the combination logic. */
                 this.value = -2;
                 break;
             case specialCards.PHOENIX:
@@ -88,9 +105,9 @@ export class CardInfo {
                 this.alt = specialCards.PHOENIX;
                 this.value = 0.5;
                 break;
-            case specialCards.MAJONG:
-                this.cardImg = cardImages.get('majong');
-                this.alt = specialCards.MAJONG;
+            case specialCards.MAHJONG:
+                this.cardImg = cardImages.get('mahjong');
+                this.alt = specialCards.MAHJONG;
                 this.value = 1;
                 break;
             case specialCards.DRAGON:
@@ -99,7 +116,7 @@ export class CardInfo {
                 this.value = 20;
                 break;
             default:
-                // normal card, color is not null
+                // normal card, color must have been given
                 let cardNameInfo = normalCards.get(name);
                 if (cardNameInfo !== undefined) {
                     this.cardImg = cardNameInfo.colorImgs.get(color);
@@ -107,7 +124,7 @@ export class CardInfo {
                     this.value = cardNameInfo.value;
                 }
                 else {
-                    throw new Error('Unexpected card name');
+                    throw new UnknownCardNameError(name);
                 }
                 break;
         }
@@ -117,6 +134,13 @@ export class CardInfo {
         this.color = color;
     };
 
+    /**
+     * Compares the given cards (their values).
+     * 
+     * If one of the given cards is the Phoenix, its temp value will be evaluated.
+     * 
+     * @returns `0` if they are equal, `> 0` if a > b, else `< 0`.
+     */
     static compareCards(a: CardInfo, b: CardInfo) {
         let valueA = a.value;
         let valueB = b.value;
@@ -130,6 +154,13 @@ export class CardInfo {
     }
 };
 
+/**
+ * Represents the Phoenix special card.
+ * 
+ * The Phoenix may be used as a replacement to a normal card, so it has
+ * extra slots to store the information of the card it replaces.
+ * It may not be used to replace a card with specific color.
+ */
 export class PhoenixCard extends CardInfo {
     tempValue: number;
     tempName: string;
@@ -141,6 +172,9 @@ export class PhoenixCard extends CardInfo {
     }
 }
 
+/**
+ * Signals that an unknown card name was found (if thrown, this is a bug).
+ */
 class UnknownCardNameError extends Error {
     constructor(unknownName: string) {
         super(`Unknown Card Name: ${unknownName}`);

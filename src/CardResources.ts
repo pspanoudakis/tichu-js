@@ -1,4 +1,4 @@
-import majong from './res/majong.png'
+import mahjong from './res/mahjong.png'
 import phoenix from './res/phoenix.png'
 import dogs from './res/dogs.png'
 import dragon from './res/dragon.png'
@@ -62,7 +62,7 @@ import black_A from './res/black_A.png'
 import cardBackground from './res/background.png'
 
 const _cardImages_ = {
-    majong,
+    mahjong,
     phoenix,
     dogs,
     dragon,

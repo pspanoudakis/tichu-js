@@ -32,7 +32,7 @@ export class Gameboard extends Component {
         receivedTrades: 0,
         tradingPhaseCompleted: false,
         currentPlayerIndex: -1,
-        pendingMajongRequest: '',
+        pendingMahjongRequest: '',
         pendingDragonToBeGiven: false,
         pendingBombToBePlayed: false,
         table: {
@@ -104,9 +104,9 @@ export class Gameboard extends Component {
         GameLogic.passTurn(this);
     }
 
-    playerMadeMajongSelection = (cardName) => {
+    playerMadeMahjongSelection = (cardName) => {
         this.setState({
-            pendingMajongRequest: cardName
+            pendingMahjongRequest: cardName
         });
     }
 
@@ -120,7 +120,7 @@ export class Gameboard extends Component {
 
     playerComponents = () => {
         let components = [];
-        let majongIsPlayable = GameLogic.majongIsPlayable(this);
+        let mahjongIsPlayable = GameLogic.mahjongIsPlayable(this);
         for (let i = 0; i < playerKeys.length; i++) {
             let actions = {
                 canBetTichu: false,
@@ -130,7 +130,7 @@ export class Gameboard extends Component {
                 pendingRequest: '',
                 canBomb: false,
             }
-            GameLogic.getPlayerPossibleActions(this, i, majongIsPlayable, actions);
+            GameLogic.getPlayerPossibleActions(this, i, mahjongIsPlayable, actions);
             components.push(
                 <PlayerHand key={playerKeys[i]} id={playerKeys[i]}
                 cards={this.state.playerHands[playerKeys[i]]}
@@ -141,7 +141,7 @@ export class Gameboard extends Component {
                 placeBet={this.placeBet}
                 playCards={this.playerPlayedCards}
                 passTurn={this.playerPassedTurn}
-                selectionMade={this.playerMadeMajongSelection}
+                selectionMade={this.playerMadeMahjongSelection}
                 dropBomb={this.bombStop}/>
             );
         }

@@ -96,7 +96,7 @@ export class PlayerHand extends Component {
                 </div>
                 <div className={styles.selectionsContainer}>
                     {this.props.actions.displaySelectionBox && this.props.cards.some(card => 
-                    card.name === specialCards.MAJONG && card.isSelected)
+                    card.name === specialCards.MAHJONG && card.isSelected)
                     ? <RequestSelectionBox requestMade={this.madeRequestSelection}/>
                     : this.props.actions.pendingRequest}
                     { (selectedCards.length >= 5 && phoenix !== undefined && phoenix.isSelected) 

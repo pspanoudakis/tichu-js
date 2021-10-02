@@ -8,6 +8,8 @@ import {
             getNormalCardInfo
         } from "./CardInfo";
 
+/** Helper interfaces for combination methods */
+
 interface CardColorOccurencesMap {
     [cardName: string]: Map<string, boolean>;
 } 
@@ -23,14 +25,15 @@ function isBetween(target: number, a: number, b: number) {
     return target >= a && target <= b;
 }
 
-export const cardCombinations = {
-    KENTA: 'Kenta',
-    FULLHOUSE: 'FullHouse',
-    STEPS: 'Steps',
-    TRIPLET: 'Triplet',
-    COUPLE: 'Couple',
-    SINGLE: 'Single',
-    BOMB: 'Bomb'
+/** Possible card combination types. */
+export enum cardCombinations {
+    KENTA = 'Kenta',
+    FULLHOUSE = 'FullHouse',
+    STEPS = 'Steps',
+    TRIPLET = 'Triplet',
+    COUPLE = 'Couple',
+    SINGLE = 'Single',
+    BOMB = 'Bomb'
 }
 
 /**
@@ -93,7 +96,8 @@ export abstract class CardCombination {
      * @returns `0` if they are equal or incomparable, `> 0` if `this` is stronger, else `< 0`.
      */
     abstract compareCombination(other: CardCombination | null): number;
-    /** Compares `this` to the strongest possible, same type combination which contains
+    /**
+     * Compares `this` to the strongest possible, same type combination which contains
      * the requested card and has the given length (if specified),
      * that can be created from the given cards.
      * @returns `0` if they are equal or incomparable, `> 0` if `this` is stronger, else `< 0`.
@@ -117,6 +121,16 @@ export class SingleCard extends CardCombination {
             super(cardCombinations.SINGLE, 1, card.value);
         }          
     }
+
+    /**
+     * Attempts to find the strongest `SingleCard` that can be created from
+     * the given cards, which includes the requested card.
+     * Essentially, it will be found if this card exists in the array.
+     * 
+     * @param cards The given cards.
+     * @param requested The name of the requested card to include in the combination.
+     * @returns The `SingleCard` combination, or `null` if it was not found.
+     */
     static getStrongestRequested(cards: Array<CardInfo>, requested: string) {
         const target = cards.find(card => card.name === requested);
         return (target !== undefined) ? new SingleCard(target) : null;
@@ -150,6 +164,16 @@ export class CardCouple extends CardCombination {
     constructor(cardValue: number) {
         super(cardCombinations.COUPLE, 2, cardValue);
     }
+    /**
+     * Attempts to find the strongest `CardCouple` that can be created from
+     * the given cards, which includes the requested card.
+     * Essentially, it will be found if a `CardCouple` containing this card
+     * can be created.
+     * 
+     * @param cards The given cards.
+     * @param requested The name of the requested card to include in the combination.
+     * @returns The `CardCouple` combination, or `null` if it was not found.
+     */
     static getStrongestRequested(cards: Array<CardInfo>, requestedCard: string) {
         let hasPhoenix = cards.some(card => card.name === specialCards.PHOENIX);
         let targetCards = cards.filter(card => card.name === requestedCard);
@@ -198,6 +222,16 @@ export class Triplet extends CardCombination {
     constructor(cardValue: number) {
         super(cardCombinations.TRIPLET, 3, cardValue);
     }
+    /**
+     * Attempts to find the strongest `Triplet` that can be created from
+     * the given cards, which includes the requested card.
+     * Essentially, it will be found if a `Triplet` containing this card
+     * can be created.
+     * 
+     * @param cards The given cards.
+     * @param requested The name of the requested card to include in the combination.
+     * @returns The `Triplet` combination, or `null` if it was not found.
+     */
     static getStrongestRequested(cards: Array<CardInfo>, requestedCard: string) {
         let hasPhoenix = cards.some(card => card.name === specialCards.PHOENIX);
         let targetCards = cards.filter(card => card.name === requestedCard);
@@ -242,6 +276,14 @@ export class Steps extends CardCombination {
     constructor(topValue: number, length: number) {
         super(cardCombinations.STEPS, length, topValue);
     }
+    /**
+     * Attempts to find the strongest `Steps` combination that can be created from
+     * the given cards, which includes the requested card and has the requested length.
+     * 
+     * @param cards The given cards.
+     * @param requested The name of the requested card to include in the combination.
+     * @returns The `Steps` combination, or `null` if it was not found.
+     */
     static getStrongestRequested(cards: Array<CardInfo>, requested: string, length: number) {
         if (cards.length >= length) {
             let cardOccurences: Map<string, number> = new Map();
@@ -342,12 +384,20 @@ export class Steps extends CardCombination {
 
 /**
  * Represents a combination of 5 or more consecutive value cards.
- * No {@link specialCards} apart from the Majong and the Phoenix may participate.
+ * No {@link specialCards} apart from the Mahjong and the Phoenix may participate.
  */
 export class Kenta extends CardCombination {
     constructor(topValue: number, length: number) {
         super(cardCombinations.KENTA, length, topValue);
     }
+    /**
+     * Attempts to find the strongest `Kenta` combination that can be created from
+     * the given cards, which includes the requested card and has the requested length.
+     * 
+     * @param cards The given cards.
+     * @param requested The name of the requested card to include in the combination.
+     * @returns The `Kenta` combination, or `null` if it was not found.
+     */
     static getStrongestRequested(cards: Array<CardInfo>, requested: string, length: number) {
         if (cards.length >= length) {
             let cardOccurences: Map<string, number> = new Map();
@@ -475,6 +525,14 @@ export class FullHouse extends CardCombination {
     compare(cards: Array<CardInfo>, requested: string) {
         return CardCombination.basicCompare(this, FullHouse.getStrongestRequested(cards, requested));
     }
+    /**
+     * Attempts to find the strongest `FullHouse` combination that can be created from
+     * the given cards, which includes the requested card.
+     * 
+     * @param cards The given cards.
+     * @param requested The name of the requested card to include in the combination.
+     * @returns The `FullHouse` combination, or `null` if it was not found.
+     */
     static getStrongestRequested(cards: Array<CardInfo>, requestedCard: string) {
         if (cards.length >= 5) {
             let phoenixUsed = true;
@@ -605,11 +663,19 @@ export class Bomb extends CardCombination{
         }
     }
 
+    /** 
+     * Compares the given `Bomb` combinations.
+     * @returns `0` if they are equal, `> 0` if a > b, else `< 0`.
+     */
     static compareBombs(a: Bomb | null, b: Bomb | null) {
         if (a === b) { return 0; }
         if (a === null) { return -1; }
         if (b === null) { return 1; }
 
+        /**
+         * Bombs are the only case where different length combinations can be compared
+         * (the one with the bigger length is stronger)
+         */
         if (a.length !== b.length) {
             return a.length - b.length;
         }
@@ -624,6 +690,14 @@ export class Bomb extends CardCombination{
         return Bomb.compareBombs(this, Bomb.getStrongestRequested(cards, requested))
     }
 
+    /**
+     * Attempts to find the strongest `Bomb` combination that can be created from
+     * the given cards, which includes the requested card.
+     * 
+     * @param cards The given cards.
+     * @param requested The name of the requested card to include in the combination.
+     * @returns The `Bomb` combination, or `null` if it was not found.
+     */
     static getStrongestRequested(cards: Array<CardInfo>, requested: string) {
         let strongestBomb = null;
 
@@ -695,6 +769,12 @@ export class Bomb extends CardCombination{
         return strongestBomb;
     }
 
+    /**
+     * Attempts to find the strongest `Bomb` combination that can be created from
+     * the given cards.
+     * 
+     * @returns The strongest `Bomb` combination, or `null` if there isn't one.
+     */
     static getStrongestBomb(cards: Array<CardInfo>) {
         let strongestBomb = null;
 

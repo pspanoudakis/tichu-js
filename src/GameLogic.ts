@@ -52,7 +52,7 @@ interface GameboardState {
     receivedTrades: number;
     tradingPhaseCompleted: boolean;
     currentPlayerIndex: number;
-    pendingMajongRequest: string;
+    pendingMahjongRequest: string;
     pendingDragonToBeGiven: boolean;
     pendingBombToBePlayed: boolean;
     table: {
@@ -75,7 +75,7 @@ interface NewGameboardState {
     };
     sentTrades?: number;
     currentPlayerIndex?: number;
-    pendingMajongRequest?: string;
+    pendingMahjongRequest?: string;
     pendingDragonToBeGiven?: boolean;
     pendingBombToBePlayed?: boolean;
     table?: {
@@ -208,7 +208,7 @@ export class GameLogic {
         GameLogic.evaluatePlayerBets(gameboard, points);
     }
 
-    static majongIsPlayable(gameboard: GameboardComponent) {
+    static mahjongIsPlayable(gameboard: GameboardComponent) {
         return gameboard.state.table.currentCards.length === 0 || 
         gameboard.state.table.currentCards[0].name === specialCards.PHOENIX;
     }
@@ -301,7 +301,7 @@ export class GameLogic {
         return combination;
     }
 
-    static isMajongCompliant(requestedCard: string, tableCombination: CardCombination | null,
+    static isMahjongCompliant(requestedCard: string, tableCombination: CardCombination | null,
                              allCards: Array<CardInfo>, combination: CardCombination, selectedCards: Array<CardInfo>) {
         if (combination.combination === cardCombinations.BOMB) { return true; }
         if (tableCombination === null) {
@@ -378,14 +378,14 @@ export class GameLogic {
         }
         let combination = GameLogic.createCombination(selectedCards, gameboard.state.table.currentCards);
         if (combination !== null) {
-            if (gameboard.state.pendingMajongRequest !== '') {
-                // If there is a pending majong request, the player must play the Majong
-                if (!selectedCards.some(card => card.name === specialCards.MAJONG)) {
-                    window.alert("The Majong must be played after a Majong request");
+            if (gameboard.state.pendingMahjongRequest !== '') {
+                // If there is a pending mahjong request, the player must play the Mahjong
+                if (!selectedCards.some(card => card.name === specialCards.MAHJONG)) {
+                    window.alert("The Mahjong must be played after a Mahjong request");
                     return;
                 }
                 else {
-                    requestedCard = gameboard.state.pendingMajongRequest;
+                    requestedCard = gameboard.state.pendingMahjongRequest;
                 }
                 if ( !GameLogic.isPlayable(gameboard.state.table.combination, combination) ) {
                     window.alert("This combination cannot be played");
@@ -410,7 +410,7 @@ export class GameLogic {
                 }
             }
             else if (gameboard.state.table.requestedCardName !== '') {
-                if ( !GameLogic.isMajongCompliant(gameboard.state.table.requestedCardName,
+                if ( !GameLogic.isMahjongCompliant(gameboard.state.table.requestedCardName,
                      gameboard.state.table.combination, allPlayerCards, combination, selectedCards)) {
                     window.alert("A combination which contains the requested card is required.");
                     return;
@@ -436,7 +436,7 @@ export class GameLogic {
                 }
             }
             let requestObject: RequestedCardObject = { card: requestedCard };
-            if (gameboard.state.pendingMajongRequest === '') {
+            if (gameboard.state.pendingMahjongRequest === '') {
                 GameLogic.satisfyRequestIfPossible(requestObject, selectedCards);
             }
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
@@ -456,7 +456,7 @@ export class GameLogic {
             newState.currentPlayerIndex = nextPlayerIndex;
             newState.pendingDragonToBeGiven = false;
             newState.pendingBombToBePlayed = false;
-            newState.pendingMajongRequest = '';
+            newState.pendingMahjongRequest = '';
             gameboard.setState(newState);
         }
         else {
@@ -567,33 +567,33 @@ export class GameLogic {
             player3: [],
             player4: [],
         };
-        let majongOwnerIndex = -1;
+        let mahjongOwnerIndex = -1;
         playerKeys.forEach( (key, index) => {
             for (const card of gameboard.state.playerHands[key]) {
                 if (!card.isSelected) {
                     playerHands[key].push(card);
-                    if (card.name === specialCards.MAJONG) {
-                        majongOwnerIndex = index;
+                    if (card.name === specialCards.MAHJONG) {
+                        mahjongOwnerIndex = index;
                     }
                 }
             }
             for (const [,card] of gameboard.state.playerTrades[key]) {
                 playerHands[key].push(card)
-                if (card.name === specialCards.MAJONG) {
-                    majongOwnerIndex = index;
+                if (card.name === specialCards.MAHJONG) {
+                    mahjongOwnerIndex = index;
                 }
             }
         });
         
         gameboard.setState({
             playerHands: playerHands,
-            currentPlayerIndex: majongOwnerIndex,
+            currentPlayerIndex: mahjongOwnerIndex,
             sentTrades: 0
         });
     }
 
     static getPlayerPossibleActions(gameboard: GameboardComponent, playerIndex: number,
-                                    majongIsPlayable: boolean, actions: PlayerPossibleActions) {
+                                    mahjongIsPlayable: boolean, actions: PlayerPossibleActions) {
         if (gameboard.state.playerHands[playerKeys[playerIndex]].length === 14 &&
             gameboard.state.playerBets[playerKeys[playerIndex]] === gameBets.NONE) {
                 actions.canBetTichu = true;
@@ -601,21 +601,21 @@ export class GameLogic {
         if (actions.hasTurn) {
             actions.canPass = (gameboard.state.table.currentCards.length !== 0) &&
                         (!gameboard.state.pendingBombToBePlayed) &&
-                        (gameboard.state.pendingMajongRequest === '');
+                        (gameboard.state.pendingMahjongRequest === '');
             if (!gameboard.state.pendingDragonToBeGiven) {
-                let majong = gameboard.state.playerHands[playerKeys[playerIndex]].find(
-                    card => card.name === specialCards.MAJONG);
-                let pendingRequest = gameboard.state.pendingMajongRequest !== '';                    
-                actions.displaySelectionBox = majong !== undefined && !pendingRequest && majongIsPlayable
+                let mahjong = gameboard.state.playerHands[playerKeys[playerIndex]].find(
+                    card => card.name === specialCards.MAHJONG);
+                let pendingRequest = gameboard.state.pendingMahjongRequest !== '';                    
+                actions.displaySelectionBox = mahjong !== undefined && !pendingRequest && mahjongIsPlayable
                                                   && !gameboard.state.pendingBombToBePlayed;
                 if (pendingRequest) {
-                    actions.pendingRequest = 'Requested: ' + gameboard.state.pendingMajongRequest;
+                    actions.pendingRequest = 'Requested: ' + gameboard.state.pendingMahjongRequest;
                 }
             }
         }
         const bomb = Bomb.getStrongestBomb(gameboard.state.playerHands[playerKeys[playerIndex]]);
         if (bomb !== null) {
-            actions.canBomb = gameboard.state.pendingMajongRequest === ''
+            actions.canBomb = gameboard.state.pendingMahjongRequest === ''
                                   && !gameboard.state.pendingBombToBePlayed;
             if (actions.canBomb && gameboard.state.table.combination !== null &&
                 gameboard.state.table.combination instanceof Bomb) {
