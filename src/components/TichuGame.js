@@ -16,7 +16,8 @@ export class TichuGame extends Component {
         previousGames: [],
         team02TotalPoints: 0,
         team13TotalPoints: 0,
-        winningScore: 0,
+        // TODO: make this selectable
+        winningScore: 500,
         gameOver: false
     }
 

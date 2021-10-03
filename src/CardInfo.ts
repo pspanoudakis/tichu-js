@@ -1,5 +1,14 @@
 import { cardImages } from "./CardResources";
 
+/** Helper interface to easily find the value and the image path for each different card. */
+interface SpecificCardInfo {
+    /** The value of a specific normal card title. */
+    value: number;
+    /** A map with the image path for each color of this card title. */
+    colorImgs: Map<string, string | undefined>;
+}
+
+/** Possible card colors. */
 export const cardColors = {
     BLACK: 'black',
     RED: 'red',
@@ -7,31 +16,34 @@ export const cardColors = {
     GREEN: 'green'
 }
 
+// Storing color values here since they are widely used by the app.
 export const cardColorValues = Object.values(cardColors);
 
+/** Each letter card title is mapped to its value here. */
 let letterValues: Map<string, number> = new Map();
 letterValues.set('J', 11);
 letterValues.set('Q', 12);
 letterValues.set('K', 13);
 letterValues.set('A', 14);
 
-interface SpecificCardInfo {
-    value: number;
-    colorImgs: Map<string, string | undefined>;
-}
-
+/** Initializes the {@link normalCards} object. */
 function initializeNormalCards() {
-    let normalCards: Map<string, SpecificCardInfo> = new Map();
+    let _normalCards_: Map<string, SpecificCardInfo> = new Map();
+    // Map all numeric card titles first
     for (let i = 2; i <= 10; i++) {
+        // Map this title to its value
         let currentInfo: SpecificCardInfo = {
             value: i,
             colorImgs: new Map()
         };
+        // Map each color of this card title to its image path
         for (const color of cardColorValues) {
             currentInfo.colorImgs.set(color, cardImages.get(color + '_' + i.toString()));
         }
-        normalCards.set(i.toString(), currentInfo);
+        // Store
+        _normalCards_.set(i.toString(), currentInfo);
     }
+    /** Same for letter card titles, use values from {@link letterValues} */
     for (const [letter, value] of Array.from(letterValues.entries())) {
         let currentInfo: SpecificCardInfo = {
             value: value,
@@ -40,15 +52,21 @@ function initializeNormalCards() {
         for (const color of cardColorValues) {
             currentInfo.colorImgs.set(color, cardImages.get(color + '_' + letter));
         }
-        normalCards.set(letter, currentInfo);
+        _normalCards_.set(letter, currentInfo);
     }
-    return normalCards;
+    return _normalCards_;
 }
 
+/** Maps normal card titles to {@link SpecificCardInfo} objects. */
 const normalCards = initializeNormalCards();
 export const normalCardKeys = Array.from(normalCards.keys());
 export const reversedCardKeys = Array.from(normalCardKeys).reverse();
 
+/** 
+ * Returns the {@link SpecificCardInfo} object for this card title.
+ * 
+ * Raises a {@link UnknownCardNameError} if an object was not found for this title.
+ */
 export function getNormalCardInfo(cardName: string) {
     const info = normalCards.get(cardName);
     if (info === undefined) {
@@ -57,13 +75,13 @@ export function getNormalCardInfo(cardName: string) {
     return info;
 }
 
+/** Special card titles. */
 export const specialCards = {
     DOGS: 'Dogs',
     PHOENIX: 'Phoenix',
     MAHJONG: 'Mahjong',
     DRAGON: 'Dragon'
 };
-
 export const specialCardNames = Object.values(specialCards);
 
 /**

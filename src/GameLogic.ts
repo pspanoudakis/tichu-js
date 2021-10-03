@@ -15,11 +15,14 @@ import { Deck } from "./Deck";
 
 export const playerKeys = ['player1', 'player2', 'player3', 'player4'];
 
-export const gameBets = {
-    NONE: 0,
-    TICHU: 100,
-    GRAND_TICHU: 200
+/** Possible player bet points */
+export enum gameBets {
+    NONE = 0,
+    TICHU = 100,
+    GRAND_TICHU = 200
 }
+
+/** Helper interfaces for Game Logic methods */
 
 interface GameState {
     previousGames: Array<[number, number]>,
@@ -106,6 +109,10 @@ interface RequestedCardObject {
     card: string
 }
 
+/**
+ * Contains several game logic related routines that modify
+ * the Gameboard UI component state when needed.
+ */
 export class GameLogic {
 
     static gameShouldEnd(gameState: GameState) {
