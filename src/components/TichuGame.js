@@ -5,6 +5,7 @@ import { GameLogic } from "../GameLogic";
 import { WinScoreSelector } from "./WinScoreSelector";
 
 import * as styles from "../styles/Components.module.css"
+import tichuLogo from "../res/tichu_logo.png"
 
 export class TichuGame extends Component {
 
@@ -56,6 +57,11 @@ export class TichuGame extends Component {
                 </div>
             );
         }
-        return <WinScoreSelector makeSelection={this.setWinningScore}/>;
+        return (
+            <div className={styles.enteringSceneContainer}>
+                <img src={tichuLogo} alt={"Oops, let's pretend this is the logo :("}/>
+                <WinScoreSelector makeSelection={this.setWinningScore}/>
+            </div>
+        );
     }
 }
