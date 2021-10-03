@@ -267,3 +267,16 @@
     border: 1px solid rgb(173, 2, 2);
     padding: 0% 1%;
 }
+
+.winScoreSelector {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.scoreSelectionForm {
+    padding-top: 1%;
+}

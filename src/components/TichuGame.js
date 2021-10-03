@@ -1,9 +1,10 @@
 import { Component } from "react";
 import { Gameboard } from "./Gameboard";
 import { Scoreboard } from "./Scoreboard";
+import { GameLogic } from "../GameLogic";
+import { WinningScoreSelector } from "./WinningScoreSelector";
 
 import * as styles from "../styles/Components.module.css"
-import { GameLogic } from "../GameLogic";
 
 export class TichuGame extends Component {
 
@@ -16,9 +17,16 @@ export class TichuGame extends Component {
         previousGames: [],
         team02TotalPoints: 0,
         team13TotalPoints: 0,
-        // TODO: make this selectable
-        winningScore: 500,
+        winningScore: 0,
+        winScoreSelected: false,
         gameOver: false
+    }
+
+    setWinningScore = (score) => {
+        this.setState({
+            winningScore: score,
+            winScoreSelected: true
+        });
     }
 
     updateScore = (team02, team13) => {
@@ -37,14 +45,17 @@ export class TichuGame extends Component {
     }
 
     render() {
-        return (
-            <div className={styles.gameContainer}>
-                <Scoreboard scores={this.state.previousGames}
-                current={[this.state.team02TotalPoints, this.state.team13TotalPoints]}/>
-
-                <Gameboard key={this.state.previousGames.length.toString()}
-                gameRoundEnded={this.updateScore} gameOver={this.state.gameOver}/>
-            </div>
-        );
+        if (this.state.winScoreSelected) {
+            return (
+                <div className={styles.gameContainer}>
+                    <Scoreboard scores={this.state.previousGames}
+                    current={[this.state.team02TotalPoints, this.state.team13TotalPoints]}/>
+    
+                    <Gameboard key={this.state.previousGames.length.toString()}
+                    gameRoundEnded={this.updateScore} gameOver={this.state.gameOver}/>
+                </div>
+            );
+        }
+        return <WinningScoreSelector makeSelection={this.setWinningScore}/>;
     }
 }
