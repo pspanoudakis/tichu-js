@@ -2,7 +2,7 @@ import { Component } from "react";
 import { Gameboard } from "./Gameboard";
 import { Scoreboard } from "./Scoreboard";
 import { GameLogic } from "../GameLogic";
-import { WinningScoreSelector } from "./WinningScoreSelector";
+import { WinScoreSelector } from "./WinScoreSelector";
 
 import * as styles from "../styles/Components.module.css"
 
@@ -56,6 +56,6 @@ export class TichuGame extends Component {
                 </div>
             );
         }
-        return <WinningScoreSelector makeSelection={this.setWinningScore}/>;
+        return <WinScoreSelector makeSelection={this.setWinningScore}/>;
     }
 }
