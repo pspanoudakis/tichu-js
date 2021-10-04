@@ -323,19 +323,15 @@ export class GameLogic {
                 if (cards[0] instanceof PhoenixCard) {
                     if (tableCards.length > 0) {
                         if (tableCards[0].name !== specialCards.DRAGON) {
-                            cards[0].tempValue = tableCards[0].value + 0.5;
+                            combination = new SingleCard(tableCards[0].value + 0.5);
                         }
                     }
                     else {
-                        cards[0].tempValue = 1.5;
+                        combination = new SingleCard(1.5);
                     }
-                    combination = SingleCard.create(cards);
-                    // Not very elegant, but we must avoid side effects
-                    // in case the combination is not played
-                    cards[0].tempValue = 0.5;
                 }
                 else {
-                    combination = SingleCard.create(cards);
+                    combination = new SingleCard(cards[0].value);
                 }
                 break;
             case 2:
