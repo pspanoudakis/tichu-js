@@ -115,13 +115,21 @@ interface RequestedCardObject {
  */
 export class GameLogic {
 
+    /**
+     * Returns `true` if the game should end because the winning score
+     * has been reached, `false` otherwise.
+     */
     static gameShouldEnd(gameState: GameState) {
         return (gameState.winningScore === 0 ||
                 gameState.team02TotalPoints >= gameState.winningScore ||
                 gameState.team13TotalPoints >= gameState.winningScore);
     }
 
+    /**
+     * Returns `true` if the current game round must end, `false` otherwise.
+     */
     static mustEndGameRound(gameboard: GameboardComponent) {
+        // End the round if both players of a team have no cards left
         if (gameboard.state.playerHands[playerKeys[0]].length === 0 &&
             gameboard.state.playerHands[playerKeys[2]].length === 0) {
                 return true;
@@ -133,6 +141,12 @@ export class GameLogic {
         return false;
     }
 
+    /**
+     * Evaluates each team's points from the collected cards of each player.
+     * @param gameboard: The Gameboard component.
+     * @param points: A {@link TeamsPoints} object, with a slot to store each
+     * team's points.
+     */
     static evaluateTeamPoints(gameboard: GameboardComponent, points: TeamsPoints) {
         let playerHeaps: PlayerCards = {
             player1: [],
@@ -177,13 +191,21 @@ export class GameLogic {
         } );
     }
 
+    /**
+     * Evaluates each team's points after taking the player bets into account.
+     * @param gameboard The Gameboard component.
+     * @param points A {@link TeamsPoints} object, with a slot to store each
+     * team's points.
+     */
     static evaluatePlayerBets(gameboard: GameboardComponent, points: TeamsPoints) {
         playerKeys.forEach((playerKey, index) => {
             let contribution = 0;
             if (gameboard.state.gameRoundWinnerKey === playerKey) {
+                // Add the round winner's bet points
                 contribution += gameboard.state.playerBets[playerKey];
             }
             else {
+                // For all other players, decrease their teams' points by their bet points.
                 contribution -= gameboard.state.playerBets[playerKey];
             }
             if (index % 2 === 0) {
@@ -195,6 +217,12 @@ export class GameLogic {
         });
     }
 
+    /**
+     * Ends the current game round, and stores the updated team points.
+     * @param gameboard The Gameboard component.
+     * @param points A {@link TeamsPoints} object, with a slot to store each
+     * team's points.
+     */
     static endGameRound(gameboard: GameboardComponent, points: TeamsPoints) {
         window.alert('Round Ended');
 
@@ -202,6 +230,8 @@ export class GameLogic {
             return active + (gameboard.state.playerHands[key].length > 0 ? 1 : 0);
         }, 0);
         if (activePlayers > 1) {
+            // More than 2 players are still active, but the round must end,
+            // so one team has a clear round win:
             if (playerKeys.indexOf(gameboard.state.gameRoundWinnerKey) % 2 === 0) {
                 points.team02 += 200;
             }
@@ -210,16 +240,26 @@ export class GameLogic {
             }
         }
         else {
+            // No clear round win, so evaluate the points based on each player's collected cards
             GameLogic.evaluateTeamPoints(gameboard, points);
         }
+        // Take the player bets into account as well
         GameLogic.evaluatePlayerBets(gameboard, points);
     }
 
+    /** 
+     * Returns `true` if the Mahjong can be played, `false` otherwise.
+     */
     static mahjongIsPlayable(gameboard: GameboardComponent) {
-        return gameboard.state.table.currentCards.length === 0 || 
-        gameboard.state.table.currentCards[0].name === specialCards.PHOENIX;
+        return gameboard.state.table.currentCards.length === 0;
     }
 
+    /**
+     * Returns `true` if the target combination can be played on top of the current
+     * table combination.
+     * @param tableCombination The current table combination (`null` if there isn't one).
+     * @param selectedCombination The target combination to be examed.
+     */
     static isPlayable(tableCombination: CardCombination | null, selectedCombination: CardCombination) {
         if (tableCombination !== null) {
             if (selectedCombination instanceof Bomb) {
@@ -236,6 +276,13 @@ export class GameLogic {
         return true;
     }
 
+    /**
+     * Returns `true` if the player with the specified cards can pass, based on the
+     * requested card and the current table combination.
+     * @param tableCombination The current table combination.
+     * @param requestedCard The requested card name.
+     * @param playerCards The player's cards.
+     */
     static canPassTurn(tableCombination: CardCombination | null, requestedCard: string, playerCards: Array<CardInfo>) {
         if (requestedCard === "") { return true; }
         if (tableCombination !== null) {
@@ -282,8 +329,14 @@ export class GameLogic {
                     else {
                         cards[0].tempValue = 1.5;
                     }
+                    combination = SingleCard.create(cards);
+                    // Not very elegant, but we must avoid side effects
+                    // in case the combination is not played
+                    cards[0].tempValue = 0.5;
                 }
-                combination = SingleCard.create(cards);
+                else {
+                    combination = SingleCard.create(cards);
+                }
                 break;
             case 2:
                 combination = CardCouple.create(cards);
@@ -313,10 +366,8 @@ export class GameLogic {
         if (combination.combination === cardCombinations.BOMB) { return true; }
         if (tableCombination === null) {
             // See if there is *any* valid combination with the requested card
-            if (SingleCard.getStrongestRequested(allCards, requestedCard) !== null) {
-                if (SingleCard.getStrongestRequested(selectedCards, requestedCard) !== null) {
-                    return true;
-                }
+            if (SingleCard.getStrongestRequested(selectedCards, requestedCard) === null &&
+                SingleCard.getStrongestRequested(allCards, requestedCard) !== null) {
                 return false;
             }
             return true;
@@ -631,6 +682,9 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Returns the total points of the specified cards.
+     */
     static evaluatePoints(cards: Array<CardInfo>) {
         let points = 0;
         for (const card of cards) {
