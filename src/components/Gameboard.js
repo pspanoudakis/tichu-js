@@ -114,10 +114,6 @@ export class Gameboard extends Component {
         GameLogic.playCards(this, playerKey);
     }
 
-    handCards = () => {
-        GameLogic.handCards(this);
-    }
-
     playerComponents = () => {
         let components = [];
         let mahjongIsPlayable = GameLogic.mahjongIsPlayable(this);

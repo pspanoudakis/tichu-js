@@ -36,11 +36,11 @@ export class PhoenixSelectionMenu extends Component {
         return (
             <div className={styles.phoenixSelectionContainer}>
                 <form>
-                <label>
-                    <select value={this.state.selection} onChange={this.storeSelection}>
-                    {options}
-                    </select>
-                </label>
+                    <label>
+                        <select value={this.state.selection} onChange={this.storeSelection}>
+                        {options}
+                        </select>
+                    </label>
                 </form>
                 <span style={{paddingLeft: '1%'}}>
                     {this.props.selection === "" ? "" : `Selected: ${this.state.selection}`}

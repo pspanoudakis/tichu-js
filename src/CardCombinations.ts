@@ -113,13 +113,8 @@ export abstract class CardCombination {
  * Represents a combination with just one card (no restrictions).
  */
 export class SingleCard extends CardCombination {
-    constructor(card: CardInfo) {
-        if (card instanceof PhoenixCard) {
-            super(cardCombinations.SINGLE, 1, card.tempValue);
-        }
-        else {
-            super(cardCombinations.SINGLE, 1, card.value);
-        }          
+    constructor(cardValue: number) {
+        super(cardCombinations.SINGLE, 1, cardValue);
     }
 
     /**
@@ -133,21 +128,9 @@ export class SingleCard extends CardCombination {
      */
     static getStrongestRequested(cards: Array<CardInfo>, requested: string) {
         const target = cards.find(card => card.name === requested);
-        return (target !== undefined) ? new SingleCard(target) : null;
+        return (target !== undefined) ? new SingleCard(target.value) : null;
     }
 
-    /**
-     * Attempts to create a `SingleCard` combination from the given cards.
-     * @param cards The given cards. All of them are included in the combination.
-     * @returns The `SingleCard` combination that is created using the given cards,
-     * or `null` if such combination cannot be created.
-     */
-    static create(cards: Array<CardInfo>) {
-        if (cards.length !== 1) {
-            return null;
-        }
-        return new SingleCard(cards[0]);
-    }
     compareCombination(other: SingleCard | null) {
         return CardCombination.basicCompare(this, other);
     }

@@ -115,13 +115,21 @@ interface RequestedCardObject {
  */
 export class GameLogic {
 
+    /**
+     * Returns `true` if the game should end because the winning score
+     * has been reached, `false` otherwise.
+     */
     static gameShouldEnd(gameState: GameState) {
         return (gameState.winningScore === 0 ||
                 gameState.team02TotalPoints >= gameState.winningScore ||
                 gameState.team13TotalPoints >= gameState.winningScore);
     }
 
+    /**
+     * Returns `true` if the current game round must end, `false` otherwise.
+     */
     static mustEndGameRound(gameboard: GameboardComponent) {
+        // End the round if both players of a team have no cards left
         if (gameboard.state.playerHands[playerKeys[0]].length === 0 &&
             gameboard.state.playerHands[playerKeys[2]].length === 0) {
                 return true;
@@ -133,6 +141,12 @@ export class GameLogic {
         return false;
     }
 
+    /**
+     * Evaluates each team's points from the collected cards of each player.
+     * @param gameboard: The Gameboard component.
+     * @param points: A {@link TeamsPoints} object, with a slot to store each
+     * team's points.
+     */
     static evaluateTeamPoints(gameboard: GameboardComponent, points: TeamsPoints) {
         let playerHeaps: PlayerCards = {
             player1: [],
@@ -177,13 +191,21 @@ export class GameLogic {
         } );
     }
 
+    /**
+     * Evaluates each team's points after taking the player bets into account.
+     * @param gameboard The Gameboard component.
+     * @param points A {@link TeamsPoints} object, with a slot to store each
+     * team's points.
+     */
     static evaluatePlayerBets(gameboard: GameboardComponent, points: TeamsPoints) {
         playerKeys.forEach((playerKey, index) => {
             let contribution = 0;
             if (gameboard.state.gameRoundWinnerKey === playerKey) {
+                // Add the round winner's bet points
                 contribution += gameboard.state.playerBets[playerKey];
             }
             else {
+                // For all other players, decrease their teams' points by their bet points.
                 contribution -= gameboard.state.playerBets[playerKey];
             }
             if (index % 2 === 0) {
@@ -195,6 +217,12 @@ export class GameLogic {
         });
     }
 
+    /**
+     * Ends the current game round, and stores the updated team points.
+     * @param gameboard The Gameboard component.
+     * @param points A {@link TeamsPoints} object, with a slot to store each
+     * team's points.
+     */
     static endGameRound(gameboard: GameboardComponent, points: TeamsPoints) {
         window.alert('Round Ended');
 
@@ -202,6 +230,8 @@ export class GameLogic {
             return active + (gameboard.state.playerHands[key].length > 0 ? 1 : 0);
         }, 0);
         if (activePlayers > 1) {
+            // More than 2 players are still active, but the round must end,
+            // so one team has a clear round win:
             if (playerKeys.indexOf(gameboard.state.gameRoundWinnerKey) % 2 === 0) {
                 points.team02 += 200;
             }
@@ -210,16 +240,26 @@ export class GameLogic {
             }
         }
         else {
+            // No clear round win, so evaluate the points based on each player's collected cards
             GameLogic.evaluateTeamPoints(gameboard, points);
         }
+        // Take the player bets into account as well
         GameLogic.evaluatePlayerBets(gameboard, points);
     }
 
+    /** 
+     * Returns `true` if the Mahjong can be played, `false` otherwise.
+     */
     static mahjongIsPlayable(gameboard: GameboardComponent) {
-        return gameboard.state.table.currentCards.length === 0 || 
-        gameboard.state.table.currentCards[0].name === specialCards.PHOENIX;
+        return gameboard.state.table.currentCards.length === 0;
     }
 
+    /**
+     * Returns `true` if the target combination can be played on top of the current
+     * table combination.
+     * @param tableCombination The current table combination (`null` if there isn't one).
+     * @param selectedCombination The target combination to be examed.
+     */
     static isPlayable(tableCombination: CardCombination | null, selectedCombination: CardCombination) {
         if (tableCombination !== null) {
             if (selectedCombination instanceof Bomb) {
@@ -236,6 +276,13 @@ export class GameLogic {
         return true;
     }
 
+    /**
+     * Returns `true` if the player with the specified cards can pass, based on the
+     * requested card and the current table combination.
+     * @param tableCombination The current table combination.
+     * @param requestedCard The requested card name.
+     * @param playerCards The player's cards.
+     */
     static canPassTurn(tableCombination: CardCombination | null, requestedCard: string, playerCards: Array<CardInfo>) {
         if (requestedCard === "") { return true; }
         if (tableCombination !== null) {
@@ -269,6 +316,13 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Attempts to create a combination out of the given cards, to be played
+     * on top the specified table cards. Note that the created combination
+     * may not be stronger than the table one, and therefore will not be played after all.
+     * 
+     * @returns The created combination, or `null` if it cannot be created.
+     */
     static createCombination(cards: Array<CardInfo>, tableCards: Array<CardInfo>) {
         let combination: CardCombination | null = null;
         switch (cards.length) {
@@ -276,14 +330,18 @@ export class GameLogic {
                 if (cards[0] instanceof PhoenixCard) {
                     if (tableCards.length > 0) {
                         if (tableCards[0].name !== specialCards.DRAGON) {
-                            cards[0].tempValue = tableCards[0].value + 0.5;
+                            combination = new SingleCard(tableCards[0].value + 0.5);
                         }
+                        // The Phoenix cannot be played on top of the Dragon, so the
+                        // combination remains null
                     }
                     else {
-                        cards[0].tempValue = 1.5;
+                        combination = new SingleCard(1.5);
                     }
                 }
-                combination = SingleCard.create(cards);
+                else {
+                    combination = new SingleCard(cards[0].value);
+                }
                 break;
             case 2:
                 combination = CardCouple.create(cards);
@@ -308,15 +366,22 @@ export class GameLogic {
         return combination;
     }
 
+    /**
+     * Returns `true` if the currently selected combination complies with the Mahjong request,
+     * `false` otherwise.
+     * @param requestedCard The requested card name
+     * @param tableCombination The current on-table combination.
+     * @param allCards The target player's cards, **both** selected and non-selected.
+     * @param combination The combination that is created from the **selected** cards.
+     * @param selectedCards The selected cards.
+     */
     static isMahjongCompliant(requestedCard: string, tableCombination: CardCombination | null,
                              allCards: Array<CardInfo>, combination: CardCombination, selectedCards: Array<CardInfo>) {
         if (combination.combination === cardCombinations.BOMB) { return true; }
         if (tableCombination === null) {
             // See if there is *any* valid combination with the requested card
-            if (SingleCard.getStrongestRequested(allCards, requestedCard) !== null) {
-                if (SingleCard.getStrongestRequested(selectedCards, requestedCard) !== null) {
-                    return true;
-                }
+            if (SingleCard.getStrongestRequested(selectedCards, requestedCard) === null &&
+                SingleCard.getStrongestRequested(allCards, requestedCard) !== null) {
                 return false;
             }
             return true;
@@ -350,7 +415,13 @@ export class GameLogic {
         }
     }
 
-    static satisfyRequestIfPossible(requestObject: RequestedCardObject, selectedCards: Array<CardInfo>) {
+    /**
+     * Attempts to satisfy the Mahjong request using the selected cards.
+     * @param requestObject A {@link RequestedCardObject}. The `card` property will be set to `""`
+     * if the request is being satisfied be the cards.
+     * @param selectedCards The cards to be played.
+     */
+    static attemptToSatisfyRequest(requestObject: RequestedCardObject, selectedCards: Array<CardInfo>) {
         if (requestObject.card !== "") {
             if (selectedCards.some(card => card.name === requestObject.card)) {
                 requestObject.card = "";
@@ -444,7 +515,7 @@ export class GameLogic {
             }
             let requestObject: RequestedCardObject = { card: requestedCard };
             if (gameboard.state.pendingMahjongRequest === '') {
-                GameLogic.satisfyRequestIfPossible(requestObject, selectedCards);
+                GameLogic.attemptToSatisfyRequest(requestObject, selectedCards);
             }
             while (gameboard.state.playerHands[playerKeys[nextPlayerIndex]].length === 0) {
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
@@ -471,6 +542,13 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Called when the current player has chosen to pass.
+     * 
+     * If this is acceptable, the Gameboard state will be changed (it will be the next player's turn,
+     * and if the next player is the owner of the currently on-table cards, the round will end).
+     * Otherwise, an alert message will be displayed, and the current player will be forced to play.
+     */
     static passTurn(gameboard: GameboardComponent) {
         const currentPlayerKey = playerKeys[gameboard.state.currentPlayerIndex];
         const currentPlayerHand = gameboard.state.playerHands[currentPlayerKey];
@@ -495,6 +573,15 @@ export class GameLogic {
         }        
     }
 
+    /**
+     * If the current game round can end normally, sets the new Gameboard component state accordingly,
+     * or invokes a 
+     * 
+     * The currently on-table cards are handed to their owner (unless the Dragon is the top card,
+     * where the owner has to choose an active opponent to hand the cards to).
+     * @param newState 
+     * @param cardsOwnerIndex The players' array index of the on-table cards owner.
+     */
     static endRound(gameboard: GameboardComponent, newState: NewGameboardState, cardsOwnerIndex: number) {
         // Preparing for new round
         if (gameboard.state.table.currentCards[0].name === specialCards.DRAGON) {
@@ -519,6 +606,11 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Forces the on-table cards owner to choose an active opponent to hand the table cards to,
+     * by setting the Gameboard component state accordingly.
+     * @param cardsOwnerIndex The players' array index of the on-table cards owner.
+     */
     static giveDragon(gameboard: GameboardComponent, cardsOwnerIndex: number) {
         gameboard.setState({
             currentPlayerIndex: cardsOwnerIndex,
@@ -526,6 +618,14 @@ export class GameLogic {
         });
     }
 
+    /**
+     * Called when the on table cards owner has chosen an active opponent
+     * to hand the table cards to.
+     * 
+     * The on-table cards are given to the selected player, and a new game round begins
+     * after the Gameboard component state has been properly set.
+     * @param selectedPlayerKey The key of the selected active opponent.
+     */
     static dragonGiven(gameboard: GameboardComponent, selectedPlayerKey: string) {
         // New current player is already set
         let newState: NewGameboardState = {
@@ -537,19 +637,22 @@ export class GameLogic {
             if (playerKeys[i] === selectedPlayerKey) {
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.previousCards);
                 newState.playerHeaps[playerKeys[i]].push(...gameboard.state.table.currentCards);
-                newState.table = {
-                    previousCards: [],
-                    currentCards: [],
-                    currentCardsOwnerIndex: -1,
-                    requestedCardName: gameboard.state.table.requestedCardName,
-                    combination: null
-                };
                 //console.log(newState.playerHeaps[playerKeys[i]]);
             }
         }
+        newState.table = {
+            previousCards: [],
+            currentCards: [],
+            currentCardsOwnerIndex: -1,
+            requestedCardName: gameboard.state.table.requestedCardName,
+            combination: null
+        };
         gameboard.setState(newState);
     }
 
+    /**
+     * Hands the Deck cards to the players (in clock order).
+     */
     static handCards(gameboard: GameboardComponent) {
         let playerHands: PlayerCards = {};
         for (const key of playerKeys) {
@@ -567,6 +670,10 @@ export class GameLogic {
         });
     }
 
+    /**
+     * Performs the desired player card trades and sets the Gameboard
+     * component state accordingly.
+     */
     static makeCardTrades(gameboard: GameboardComponent) {
         let playerHands: PlayerCards = {
             player1: [],
@@ -599,6 +706,13 @@ export class GameLogic {
         });
     }
 
+    /**
+     * Evaluates the possible UI actions for the given player and stores them in the `actions` object.
+     * @param gameboard The gameboard UI component.
+     * @param playerIndex The players' array index of the target player.
+     * @param mahjongIsPlayable Indicates whether the Mahjong can be played.
+     * @param actions The `PlayerPossibleActions` object to store the actions.
+     */
     static getPlayerPossibleActions(gameboard: GameboardComponent, playerIndex: number,
                                     mahjongIsPlayable: boolean, actions: PlayerPossibleActions) {
         if (gameboard.state.playerHands[playerKeys[playerIndex]].length === 14 &&
@@ -631,6 +745,9 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Returns the total points of the specified cards.
+     */
     static evaluatePoints(cards: Array<CardInfo>) {
         let points = 0;
         for (const card of cards) {
