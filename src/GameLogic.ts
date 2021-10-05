@@ -429,6 +429,15 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Called when a player attempts to play some cards.
+     * 
+     * Performs all the necessary checks for the cards to be played. If they can be played,
+     * the Gameboard state will be set accordingly, otherwise they will be rejected
+     * and an alert message will be displayed to indicate the reason.
+     * @param gameboard The Gameboard UI component.
+     * @param playerKey The key of the player.
+     */
     static playCards(gameboard: GameboardComponent, playerKey: string) {
         let newState: NewGameboardState = {};
         newState.playerHands = {};
@@ -481,7 +490,6 @@ export class GameLogic {
                 nextPlayerIndex = (nextPlayerIndex + 1) % 4;
             }
             if (newState.gameRoundWinnerKey === '' && newState.playerHands[playerKey].length === 0) {
-                //console.log(`Winner: ${playerKey}`);
                 newState.gameRoundWinnerKey = playerKey;
             }
             GameLogic.setAfterPlayState(gameboard, selectedCards, newState, combination,
@@ -492,6 +500,16 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Creates the next card hands for all the players, provided that the current player
+     * will play his selected cards, and filters these cards.
+     * 
+     * @param gameboard The Gameboard UI component.
+     * @param newState The next Gameboard state where the next hands will be stored.
+     * @param allCurrentPlayerCards All the current player cards will be stored here.
+     * @param selectedCards The current player's **selected** cards will be stored here.
+     * @param currentPlayerKey The key of the current player.
+     */
     static filterNextPlayerHands(gameboard: GameboardComponent, newState: NewGameboardState,
                                  allCurrentPlayerCards: Array<CardInfo>, selectedCards: Array<CardInfo>,
                                  currentPlayerKey: string) {
@@ -517,6 +535,14 @@ export class GameLogic {
         }
     }
 
+    /**
+     * Performs all the checks that are demanded when there is a pending Mahjong request.
+     * Returns `true` if the checks are passed, `false` otherwise.
+     * 
+     * @param gameboard The Gameboard UI component.
+     * @param selectedCards The current player's selected cards.
+     * @param combination The combination to be played.
+     */
     static pendingMahjongRequestCheck(gameboard: GameboardComponent, selectedCards: Array<CardInfo>,
                                       combination: CardCombination) {
         // If there is a pending mahjong request, the player must play the Mahjong
@@ -531,6 +557,13 @@ export class GameLogic {
         return true;
     }
 
+    /**
+     * Performs all the checks that are demanded when there is a pending Bomb to be played.
+     * Returns `true` if the checks are passed, `false` otherwise.
+     * 
+     * @param gameboard The Gameboard UI component.
+     * @param combination The combination to be played.
+     */
     static pendingBombCheck(gameboard: GameboardComponent, combination: CardCombination) {
         if (combination instanceof Bomb) {
             const tableCombination = gameboard.state.table.combination;
@@ -549,6 +582,15 @@ export class GameLogic {
         return true;
     }
 
+    /**
+     * Performs all the checks that are demanded when there is an unsatisfied Mahjong request.
+     * Returns `true` if the checks are passed, `false` otherwise.
+     * 
+     * @param gameboard The Gameboard UI component.
+     * @param allPlayerCards All the current player's cards.
+     * @param selectedCards The current player's selected cards.
+     * @param combination The combination which is created by the selected cards.
+     */
     static requestedCardCheck(gameboard: GameboardComponent, allPlayerCards: Array<CardInfo>,
                               selectedCards: Array<CardInfo>, combination: CardCombination) {
         if ( !GameLogic.isMahjongCompliant(gameboard.state.table.requestedCardName,
@@ -563,6 +605,16 @@ export class GameLogic {
        return true;
     }
 
+    /**
+     * Sets the new Gameboard state, where a player has just played his cards.
+     * 
+     * @param gameboard The Gameboard UI component.
+     * @param selectedCards The cards that are being played.
+     * @param newState The next Gameboard state, which already has some properties set.
+     * @param combination The combination that is being played.
+     * @param nextPlayerIndex The players' array index of the next player.
+     * @param requestedCard The Mahjong requested card (after the cards have been played).
+     */
     static setAfterPlayState(gameboard: GameboardComponent, selectedCards: Array<CardInfo>,
                              newState: NewGameboardState, combination: CardCombination | null,
                              nextPlayerIndex: number, requestedCard: string) {
