@@ -467,20 +467,16 @@ export class GameLogic {
                     return;
                 }
             }
-            else if (selectedCards.some(card => card.name === specialCards.DOGS)) {
-                if (gameboard.state.table.combination !== null) {
-                    window.alert("Dogs cannot be played on top of other cards.");
-                    return;
-                }
-                nextPlayerIndex = (gameboard.state.currentPlayerIndex + 2) % 4;
-                selectedCards = [];
-                combination = null;
-            }
             else {
                 if ( !GameLogic.isPlayable(gameboard.state.table.combination, combination) ) {
                     window.alert("This combination cannot be played");
                     return;
                 }
+            }
+            if (selectedCards[0].name === specialCards.DOGS) {
+                nextPlayerIndex = (gameboard.state.currentPlayerIndex + 2) % 4;
+                selectedCards = [];
+                combination = null;
             }
             let requestObject: RequestedCardObject = { card: requestedCard };
             if (gameboard.state.pendingMahjongRequest === '') {
