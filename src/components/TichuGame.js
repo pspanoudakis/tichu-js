@@ -59,7 +59,8 @@ export class TichuGame extends Component {
         }
         return (
             <div className={styles.enteringSceneContainer}>
-                <img src={tichuLogo} alt={"Oops, let's pretend this is the logo :("}/>
+                <img src={tichuLogo} alt={"Oops, let's pretend this is the logo :("}
+                className={styles.gameLogo}/>
                 <WinScoreSelector makeSelection={this.setWinningScore}/>
             </div>
         );

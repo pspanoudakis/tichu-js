@@ -67,7 +67,6 @@ export class PlayerHand extends Component {
         let cardComponents = []
         this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
             const cardStyle = {
-                zindex: index.toString(),
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
                 // Maybe place each card in a div, and toggle the distance inside it,
