@@ -172,7 +172,7 @@ button {
 .selection1 {
     position: absolute;
     top: 0%;
-    left: 14%;
+    left: 34%;
     width: 15%;
     min-width: min-content;
     height: 100%;
@@ -180,7 +180,7 @@ button {
 .selection2 {
     position: absolute;
     top: 0%;
-    left: 30%;
+    left: 49%;
     width: 15%;
     min-width: min-content;
     height: 100%;
