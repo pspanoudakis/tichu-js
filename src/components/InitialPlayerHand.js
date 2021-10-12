@@ -138,7 +138,7 @@ export class InitialPlayerHand extends Component {
             }
             cards.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                alt={card.alt} selected={card.isSelected} 
+                alt={card.alt} selected={true}
                 clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });
@@ -185,7 +185,7 @@ export class InitialPlayerHand extends Component {
                 }
                 elements.nonSelectedCards.push(
                     <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                    alt={card.alt} selected={card.isSelected} 
+                    alt={card.alt} selected={true}
                     clickCallback={this.cardClicked} style={cardStyle}/>
                 );
             }
@@ -264,14 +264,14 @@ export class InitialPlayerHand extends Component {
 
         slotsArray.forEach(([player, card], index) => {
             const cardStyle = {
-                height: '55%'
+                height: '70%'
             }
             elements.selectedCards.push(
                 <div key={index} className={styles.tradingCardSlot}>
                     <span>{player}</span>
                     {card !== undefined ?
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                        alt={card.alt} selected={card.isSelected} 
+                        alt={card.alt} selected={true}
                         clickCallback={!this.state.tradesSent ? this.cardClicked : voidAction}
                         style={cardStyle}/> :
                         <span></span>
