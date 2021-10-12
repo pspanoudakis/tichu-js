@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import { cardImages } from '../CardResources';
 
 export class Card extends Component {
     clickDetected = (e) => {
@@ -9,7 +8,7 @@ export class Card extends Component {
     render() {
         let imgStyle = {};
         if (!this.props.selected) {
-            imgStyle.filter = 'brightness(55%) contrast(80%)';
+            imgStyle.filter = 'brightness(55%) contrast(85%)';
         }
 
         Object.assign(imgStyle, this.props.style);
