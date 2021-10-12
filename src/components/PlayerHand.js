@@ -67,18 +67,16 @@ export class PlayerHand extends Component {
         let cardComponents = []
         this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
             const cardStyle = {
-                zindex: index.toString(),
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
                 // Maybe place each card in a div, and toggle the distance inside it,
                 // so no need to update the whole PlayerHand for each click, but just the specific card.
                 bottom: (card.isSelected ? '25%' : '15%'),
-                width: '11.5%',
-                height: '61%'
+                height: '65%',
             }
             cardComponents.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                alt={card.alt} selected={card.isSelected} 
+                alt={card.alt} selected={card.isSelected}
                 clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });

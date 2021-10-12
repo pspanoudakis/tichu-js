@@ -60,11 +60,11 @@ export class Scoreboard extends Component {
                 {this.expandedScores()}
                 <div className={styles.scoreboardMainEntry}>
                     <span className={styles.mainScore}>
-                        <span style={{fontSize: 'large'}}>Team 1-3</span>
+                        <span style={{fontSize: '2vh'}}>Team 1-3</span>
                         {this.props.current[0]}
                     </span> 
                     <span className={styles.mainScore}>
-                        <span style={{fontSize: 'large'}}>Team 2-4</span>
+                        <span style={{fontSize: '2vh'}}>Team 2-4</span>
                         {this.props.current[1]}
                     </span>
                 </div>

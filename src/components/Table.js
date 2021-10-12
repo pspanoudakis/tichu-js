@@ -17,7 +17,6 @@ export class Table extends Component {
             position: 'absolute',
             top: '23%',
             left: '0%',
-            width: '12%',
             height: '48%'
         }
         
@@ -55,7 +54,6 @@ export class Table extends Component {
                             position: 'absolute',
                             bottom: '29%',
                             left: (index * 6.5).toString() + '%',
-                            width: '12%',
                             height: '48%'
                         }
                         return (

@@ -27,11 +27,12 @@ export const WinScoreSelector = (props) => {
             Select winning score:
             <form onSubmit={makeSelection} className={styles.scoreSelectionForm}>
                 <label>
-                    <select value={currentScoreSelection} onChange={changeSelection}>
+                    <select value={currentScoreSelection} onChange={changeSelection}
+                    style={{fontSize: '1.5vh'}}>
                         {options}
                     </select>
                 </label>
-                <input type="submit" value="Select"/>
+                <input type="submit" value="Select" style={{fontSize: '1.5vh'}}/>
             </form>
         </div>
     );

@@ -131,16 +131,14 @@ export class InitialPlayerHand extends Component {
         let cards = [];
         this.props.cards.slice(0,8).sort(CardInfo.compareCards).forEach((card) => {
             const cardStyle = {
-                zindex: cards.length.toString(),
                 position: 'absolute',
                 left: (cards.length * 6.5).toString() + '%',
                 bottom: '20%',
-                width: '11%',
                 height: '70%'
             }
             cards.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                alt={card.alt} selected={card.isSelected} 
+                alt={card.alt} selected={true}
                 clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });
@@ -180,16 +178,14 @@ export class InitialPlayerHand extends Component {
         this.props.cards.sort(CardInfo.compareCards).forEach((card) => {
             if (!card.isSelected) {
                 const cardStyle = {
-                    zindex: elements.nonSelectedCards.length.toString(),
                     position: 'absolute',
                     left: (elements.nonSelectedCards.length * 6.5).toString() + '%',
                     bottom: '20%',
-                    width: '11%',
                     height: '70%'
                 }
                 elements.nonSelectedCards.push(
                     <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                    alt={card.alt} selected={card.isSelected} 
+                    alt={card.alt} selected={true}
                     clickCallback={this.cardClicked} style={cardStyle}/>
                 );
             }
@@ -268,15 +264,14 @@ export class InitialPlayerHand extends Component {
 
         slotsArray.forEach(([player, card], index) => {
             const cardStyle = {
-                width: '37.5%',
-                height: '55%'
+                height: '70%'
             }
             elements.selectedCards.push(
                 <div key={index} className={styles.tradingCardSlot}>
                     <span>{player}</span>
                     {card !== undefined ?
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                        alt={card.alt} selected={card.isSelected} 
+                        alt={card.alt} selected={true}
                         clickCallback={!this.state.tradesSent ? this.cardClicked : voidAction}
                         style={cardStyle}/> :
                         <span></span>
