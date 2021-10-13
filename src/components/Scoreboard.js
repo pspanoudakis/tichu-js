@@ -30,31 +30,23 @@ export class Scoreboard extends Component {
 
     render() {
         const innerEntries = this.props.scores.length;
-        const mainStyles = [
-            {
-                width: '100%',
-                height: 100 + 50 * innerEntries + '%',
-                backgroundColor: 'rgb(80, 80, 80)',
-                transform: 'translateY(-' + 100/(1 + innerEntries/2) * innerEntries/2  + '%)',
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'visible',
-                zIndex: '1',
-                transition: '400ms',
-            },
-            {
-                width: '100%',
-                height: 100 + 50 * innerEntries + '%',
-                backgroundColor: 'rgb(80, 80, 80)',
-                transform: 'translateY(0%)',
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'visible',
-                zIndex: '1',
-                transition: '400ms',
-            }
+        const styleSkeleton = {
+            width: '100%',
+            height: 100 + 50 * innerEntries + '%',
+            backgroundColor: 'rgb(80, 80, 80)',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'visible',
+            zIndex: '1',
+            transition: '400ms',
+        }
+        let mainStyles = [
+            { transform: 'translateY(-' + 100/(1 + innerEntries/2) * innerEntries/2  + '%)' },
+            { transform: 'translateY(0%)' }
         ];
-
+        Object.assign(mainStyles[0], styleSkeleton);
+        Object.assign(mainStyles[1], styleSkeleton);
+        
         return (
             <div style={this.state.isExpanded ? mainStyles[1] : mainStyles[0]} onClick={this.toggleExpansion}>
                 {this.expandedScores()}

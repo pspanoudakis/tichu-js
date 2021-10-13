@@ -15,9 +15,9 @@ export class Table extends Component {
     render() {
         const dragonStyle = {
             position: 'absolute',
-            top: '23%',
+            bottom: '29%',
             left: '0%',
-            height: '48%'
+            height: '50%'
         }
         
         let buttonText1 = '', buttonText2 = '';
@@ -54,7 +54,7 @@ export class Table extends Component {
                             position: 'absolute',
                             bottom: '29%',
                             left: (index * 6.5).toString() + '%',
-                            height: '48%'
+                            height: '50%'
                         }
                         return (
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
