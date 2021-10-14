@@ -37,7 +37,8 @@ export class PhoenixSelectionMenu extends Component {
             <div className={styles.phoenixSelectionContainer}>
                 <form>
                     <label>
-                        <select value={this.state.selection} onChange={this.storeSelection}>
+                        <select value={this.state.selection} onChange={this.storeSelection}
+                        className={styles.phoenixSelectMenu}>
                         {options}
                         </select>
                     </label>

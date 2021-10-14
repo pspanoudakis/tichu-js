@@ -64,6 +64,7 @@ export class PlayerHand extends Component {
     }
 
     renderedMainBox = () => {
+        const unselectedEffectOff = !this.props.cards.some(card => card.isSelected);
         let cardComponents = []
         this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
             const cardStyle = {
@@ -76,7 +77,7 @@ export class PlayerHand extends Component {
             }
             cardComponents.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                alt={card.alt} selected={card.isSelected}
+                alt={card.alt} selected={unselectedEffectOff || card.isSelected}
                 clickCallback={this.cardClicked} style={cardStyle}/>
             );
         });

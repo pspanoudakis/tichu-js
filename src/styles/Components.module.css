@@ -169,6 +169,10 @@ button {
     flex-direction: row;
 }
 
+.phoenixSelectMenu {
+    font-size: 1.5vh;
+}
+
 .selection1 {
     position: absolute;
     top: 0%;
