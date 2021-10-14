@@ -65,20 +65,21 @@ export class PlayerHand extends Component {
 
     renderedMainBox = () => {
         const unselectedEffectOff = !this.props.cards.some(card => card.isSelected);
+        const movePct = unselectedEffectOff ? undefined : '15%'
         let cardComponents = []
         this.props.cards.sort(CardInfo.compareCards).forEach((card, index) => {
             const cardStyle = {
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
-                // Maybe place each card in a div, and toggle the distance inside it,
-                // so no need to update the whole PlayerHand for each click, but just the specific card.
-                bottom: (card.isSelected ? '25%' : '15%'),
+                //bottom: (card.isSelected ? '25%' : '15%'),
+                bottom: '15%',
+                transition: '85ms',
                 height: '65%',
             }
             cardComponents.push(
                 <Card key={card.key} id={card.key} cardImg={card.cardImg}
                 alt={card.alt} selected={unselectedEffectOff || card.isSelected}
-                clickCallback={this.cardClicked} style={cardStyle}/>
+                clickCallback={this.cardClicked} style={cardStyle} movePosition={movePct}/>
             );
         });
         const phoenix = this.props.cards.find(card => card.name === specialCards.PHOENIX);
