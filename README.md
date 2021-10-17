@@ -3,9 +3,16 @@
 A single-player simulation of the famous [Tichu card game](https://en.wikipedia.org/wiki/Tichu) which runs in the browser. \
 There are many rule variations. This particular implementation rules are described [here](http://www.gamecabinet.com/rules/Tichu.html).
 
-While this project started as a motive to learn JavaScript & ReactJS while also getting more familiar with basic HTML/CSS, it ended up being interesting on its own way, particularly during the card combinations logic implementation.
+While this project started as a motive to learn JavaScript & ReactJS while also getting more familiar with basic HTML/CSS,
+it ended up being interesting on its own way,
+particularly during the card combinations logic implementation.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Online deployment
+The game is currently deployed on [Netlify](https://www.netlify.com/), you can check it out
+[here](https://lucid-williams-1b1e7c.netlify.app/). 
+
 
 ## Local deployment
 - Node.js is required

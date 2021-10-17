@@ -58,15 +58,17 @@ export class Table extends Component {
                         }
                         return (
                         <Card key={card.key} id={card.key} cardImg={card.cardImg}
-                        alt={card.alt} selected={true} clickCallback={voidAction}
-                        style={cardStyle}/>
+                        alt={card.alt} selected={true} effectsOn={false}
+                        clickCallback={voidAction} style={cardStyle}/>
                         );
                     })}
                 </div> :
                 <div className={styles.dragonSelection}>
                     <Card key={specialCards.DRAGON} id={specialCards.DRAGON}
                     cardImg={cardImages.get('dragon')} alt={specialCards.DRAGON}
-                    selected={true} clickCallback={voidAction} style={dragonStyle}/>
+                    selected={true} effectsOn={false} clickCallback={voidAction}
+                    style={dragonStyle}/>
+                    
                     {buttonText1 !== ''
                     ? <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
                     className={styles.selection1}>
