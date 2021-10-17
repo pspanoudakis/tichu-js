@@ -71,7 +71,6 @@ export class PlayerHand extends Component {
             const cardStyle = {
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
-                //bottom: (card.isSelected ? '25%' : '15%'),
                 bottom: '15%',
                 transition: '85ms',
                 height: '65%',
