@@ -1,9 +1,12 @@
 # Tichu-JS
 
-A single-player simulation of the famous [Tichu card game](https://en.wikipedia.org/wiki/Tichu) which runs in the browser. \
-There are many rule variations. This particular implementation rules are described [here](http://www.gamecabinet.com/rules/Tichu.html).
+A single-player simulation of the famous [Tichu card game](https://en.wikipedia.org/wiki/Tichu)
+which runs in the browser. \
+There are many rule variations.
+This particular implementation rules are described [here](http://www.gamecabinet.com/rules/Tichu.html).
 
-While this project started as a motive to learn JavaScript & ReactJS while also getting more familiar with basic HTML/CSS,
+While this project started as a motive to learn JavaScript & ReactJS
+while also getting more familiar with basic HTML/CSS,
 it ended up being interesting on its own way,
 particularly during the card combinations logic implementation.
 
@@ -16,8 +19,8 @@ The game is currently deployed on [Netlify](https://www.netlify.com/), you can c
 
 ## Local deployment
 - Node.js is required
-- Pull the repository in your local machine
-- Run `npm install`
+- Clone the repository in your local machine
+- `npm install`
 - After the installation has been completed, run one of the scripts described below (in the project root directory):
 
 ## Available Scripts
@@ -49,11 +52,23 @@ The game is currently deployed on [Netlify](https://www.netlify.com/), you can c
 
     **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-    If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from the project.
+    If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time.
+    This command will remove the single build dependency from the project.
 
-    Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into the project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+    Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc)
+    right into the project so you have full control over them.
+    All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them.
+    At this point you’re on your own.
 
-    You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments,
+    and you shouldn’t feel obligated to use this feature.
+    However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+    
+## Project Structure
+- Game logic & class implementations in `src` directory
+- Component CSS stylesheets in `src/styles`
+- Images are placed in `src/res`
+- React component implementations in `src/components`
 
 ## Development & Testing
 - Developed in Windows 10 environment, using Visual Studio Code & Node.js 14.15.5,
