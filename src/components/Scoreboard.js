@@ -1,6 +1,7 @@
 import { Component } from "react";
 
 import * as styles from "../styles/Components.module.css"
+import { scoreboardMainEntryClass, scoreboardNormalEntryClass } from "./styleUtils";
 
 export class Scoreboard extends Component {
     
@@ -11,7 +12,7 @@ export class Scoreboard extends Component {
     expandedScores = () => {
         if (this.props.scores.length > 0) {
             return this.props.scores.map(([team02, team13], index) => 
-                <div key={index} className={styles.scoreboardEntry}>
+                <div key={index} className={scoreboardNormalEntryClass}>
                     <div className={styles.innerScore}>{team02}</div> 
                     <div className={styles.innerScore}>{team13}</div>
                 </div>
@@ -50,7 +51,7 @@ export class Scoreboard extends Component {
         return (
             <div style={this.state.isExpanded ? mainStyles[1] : mainStyles[0]} onClick={this.toggleExpansion}>
                 {this.expandedScores()}
-                <div className={styles.scoreboardMainEntry}>
+                <div className={scoreboardMainEntryClass}>
                     <span className={styles.mainScore}>
                         <span style={{fontSize: '2vh'}}>Team 1-3</span>
                         {this.props.current[0]}

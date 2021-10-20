@@ -8,3 +8,6 @@ export const rightActionButtonsDiv = `${styles.sideActionButtonsContainer} ${sty
 
 export const dragonSelection1 = `${styles.dragonSelection} ${styles.selection1}`
 export const dragonSelection2 = `${styles.dragonSelection} ${styles.selection2}`
+
+export const scoreboardMainEntryClass = `${styles.scoreboardEntry} ${styles.scoreboardMainEntry}`
+export const scoreboardNormalEntryClass = `${styles.scoreboardEntry} ${styles.scoreboardNormalEntry}`

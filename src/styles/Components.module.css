@@ -51,34 +51,28 @@ button {
 /* Scoreboard -------------------------------------------------------------- */
 
 .scoreboardEntry {
-    height: 50%;
     width: 100%;
     display: flex;
     flex-flow: row;
     justify-content: center;
     align-items: center;
     text-align: center;
-    column-gap: 28.75%;
-    background-color: rgb(112, 111, 111);
     text-decoration: none;
     outline: none;
     border: none;
+}
+
+.scoreboardNormalEntry {
+    height: 50%;    
+    column-gap: 28.75%;
+    background-color: rgb(112, 111, 111);    
     font-size: 2vh;
 }
 
 .scoreboardMainEntry {
     height: 100%;
-    width: 100%;
-    display: flex;
-    flex-flow: row;
-    justify-content: center;
-    align-items:center;
-    text-align: center;
     column-gap: 30%;
     background-color: rgb(80, 80, 80);
-    text-decoration: none;
-    outline: none;
-    border: none;
     font-size: 3.25vh;
 }
 
@@ -219,6 +213,7 @@ button {
 
 .playerIDSpan {
     padding-left: 2%;
+    user-select: none;
 }
 
 .selectionsContainer {
