@@ -17,9 +17,10 @@ button {
 
 .playerInfo {
     padding-top: 1%;
+    padding-right: 1%;
     display: flex;
     flex-direction: row;
-    column-gap: 2%;
+    justify-content: space-between;
     height: 10%;
 }
 
@@ -28,6 +29,25 @@ button {
     flex-direction: column;
     justify-content: center;
     height: 20%;
+}
+
+.actionButtonsMainContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.sideActionButtonsContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.leftActionButtonsContainer {
+    justify-content: left;    
+}
+
+.rightActionButtonsContainer {
+    justify-content: right;    
 }
 
 .player1 {
@@ -173,21 +193,19 @@ button {
     font-size: 1.5vh;
 }
 
-.selection1 {
+.dragonSelection {
     position: absolute;
     top: 0%;
-    left: 34%;
     width: 15%;
     min-width: min-content;
     height: 100%;
 }
+
+.selection1 {    
+    left: 34%;    
+}
 .selection2 {
-    position: absolute;
-    top: 0%;
     left: 49%;
-    width: 15%;
-    min-width: min-content;
-    height: 100%;
 }
 
 .tableBox {
@@ -202,7 +220,7 @@ button {
     position: relative;
 }
 
-.dragonSelection {
+.dragonSelectionTableContainer {
     display: flex;
     width: 100%;
     height: 90%;
@@ -266,18 +284,19 @@ button {
     grid-template-rows: 10% 90%;
 }
 
-.tichuBetMessage {
+.betMessage {
     height: min-content;
-    color: goldenrod;
-    border: 1px solid goldenrod;
+    color: black;
+    font-weight: bold;
     padding: 0% 1%;
 }
 
+.tichuBetMessage {
+    background-color: goldenrod;
+}
+
 .grandTichuBetMessage {
-    height: min-content;
-    color: rgb(173, 2, 2);
-    border: 1px solid rgb(173, 2, 2);
-    padding: 0% 1%;
+    background-color: rgb(173, 2, 2);
 }
 
 .winScoreSelector {

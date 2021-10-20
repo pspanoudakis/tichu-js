@@ -5,6 +5,7 @@ import { Card } from './Card';
 import { voidAction } from '../void';
 
 import * as styles from "../styles/Components.module.css"
+import { dragonSelection1, dragonSelection2 } from './styleUtils';
 
 export class Table extends Component {
 
@@ -63,7 +64,7 @@ export class Table extends Component {
                         );
                     })}
                 </div> :
-                <div className={styles.dragonSelection}>
+                <div className={styles.dragonSelectionTableContainer}>
                     <Card key={specialCards.DRAGON} id={specialCards.DRAGON}
                     cardImg={cardImages.get('dragon')} alt={specialCards.DRAGON}
                     selected={true} effectsOn={false} clickCallback={voidAction}
@@ -71,14 +72,14 @@ export class Table extends Component {
                     
                     {buttonText1 !== ''
                     ? <button key={buttonText1} id={buttonText1} onClick={this.dragonGiven}
-                    className={styles.selection1}>
+                    className={dragonSelection1}>
                         {buttonText1}
                     </button>
                     : ''}
                     
                     {buttonText2 !== ''
                     ? <button key={buttonText2} id={buttonText2} onClick={this.dragonGiven}
-                    className={styles.selection2}>
+                    className={dragonSelection2}>
                         {buttonText2}
                     </button>
                     : ''}

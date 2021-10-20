@@ -4,6 +4,7 @@ import { Card } from "./Card";
 import { playerKeys, gameBets } from "../GameLogic";
 import { voidAction, voidButton } from "../void";
 
+import { grandTichuBetDivClass, tichuBetDivClass } from "./styleUtils";
 import * as styles from "../styles/Components.module.css"
 
 export class InitialPlayerHand extends Component {
@@ -112,13 +113,13 @@ export class InitialPlayerHand extends Component {
         switch (this.props.currentBet) {
             case gameBets.TICHU:
                 return (
-                    <div className={styles.tichuBetMessage}>
+                    <div className={tichuBetDivClass}>
                         Tichu
                     </div>
                 );
             case gameBets.GRAND_TICHU:
                 return (
-                    <div className={styles.grandTichuBetMessage}>
+                    <div className={grandTichuBetDivClass}>
                         Grand Tichu
                     </div>
                 );
