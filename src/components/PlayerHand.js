@@ -6,6 +6,7 @@ import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
 import { gameBets } from '../GameLogic';
 import { voidButton } from '../void';
 
+import { grandTichuBetDivClass, leftActionButtonsDiv, rightActionButtonsDiv, tichuBetDivClass } from "./styleUtils";
 import * as styles from "../styles/Components.module.css"
 
 export class PlayerHand extends Component {
@@ -48,13 +49,13 @@ export class PlayerHand extends Component {
         switch (this.props.currentBet) {
             case gameBets.TICHU:
                 return (
-                    <div className={styles.tichuBetMessage}>
+                    <div className={tichuBetDivClass}>
                         Tichu
                     </div>
                 );
             case gameBets.GRAND_TICHU:
                 return (
-                    <div className={styles.grandTichuBetMessage}>
+                    <div className={grandTichuBetDivClass}>
                         Grand Tichu
                     </div>
                 );
@@ -135,7 +136,14 @@ export class PlayerHand extends Component {
         return (
             <div className={this.props.style}>
                 {this.renderedMainBox()}
-                {playCardsButton}{passButton}{bombButton}{tichuButton}
+                <div className={styles.actionButtonsMainContainer}>
+                    <div className={leftActionButtonsDiv}>
+                        {tichuButton}
+                    </div>
+                    <div className={rightActionButtonsDiv}>
+                        {playCardsButton}{passButton}{bombButton}
+                    </div>
+                </div>
             </div>
         )
     }
