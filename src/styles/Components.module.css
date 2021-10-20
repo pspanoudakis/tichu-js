@@ -2,234 +2,53 @@ button {
     font-size: 1.5vh;
 }
 
-.playerBox {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 90%;
-    border: 1px solid white;
-}
-.playerCardList {
-    display: flex;
-    height: 70%;
-    position: relative;
-}
-
-.playerInfo {
-    padding-top: 1%;
-    padding-right: 1%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    height: 10%;
-}
-
-.selectionsContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 20%;
-}
-
-.actionButtonsMainContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.sideActionButtonsContainer {
-    display: flex;
-    flex-direction: row;
-}
-
-.leftActionButtonsContainer {
-    justify-content: left;    
-}
-
-.rightActionButtonsContainer {
-    justify-content: right;    
-}
-
-.player1 {
-    grid-row-start: 1;
-    grid-row-end: 2;
-    grid-column-start: 2;
-    grid-column-end: 3;
-}
-.player2 {
-    grid-row-start: 2;
-    grid-row-end: 3;
-    grid-column-start: 1;
-    grid-column-end: 2;
-}
-.player3 {
-    grid-row-start: 3;
-    grid-row-end: 4;
-    grid-column-start: 2;
-    grid-column-end: 3;
-}
-.player4 {
-    grid-row-start: 2;
-    grid-row-end: 3;
-    grid-column-start: 3;
-    grid-column-end: 4;
-}
-
-.preTradePlayerBox {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 45%;
-    border: 1px solid white;
-}
-
-.preTradesCol {
-    display: flex;
-    row-gap: 0.25%;
-    flex-direction: column;
-    justify-content: center;
-    width: 33%;
-    height: 100%
-}
-
-.preTradeCardList {
-    display: flex;
-    height: 40%;
-    position: relative;
-    user-select: none;
-}
-
-.tradingCardSlots {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 40%;
-}
-
-.tradingCardSlot {
-    display: flex;
-    flex-direction: column;
-    row-gap: 5%;
-    align-items: center;
-    margin-left: 3%;
-    width: 100%;
-    height: 100%;
-}
-
-.gameboardPreTradesStyle {
-    width: 100%;
-    height: 95%;
-    display: flex;
-    column-gap: 0.25%;
-    justify-content: center;
-    flex-direction: row;
-    overflow: hidden;
-    font-size: 1.75vh
-}
-
-.tradePhaseButtonContainer {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-.tradePhaseButton {
-    width: 35%;
-}
-
-.inactiveButton {
-    width: 35%;
-    opacity: 0.5;
-}
-
-.inactiveButton:active {
-    border-style: outset;
-}
-
-.gameboardStyle {
-    width: 100%;
-    height: 95%;
-    display: grid;
-    grid-template-rows: 32.5% 32.5% 32.5%;
-    grid-template-columns: 32.5% 32.5% 32.5%;
-    grid-column-gap: 1%;
-    grid-row-gap: 1%;
-    justify-content: center;
-    overflow: hidden;
-    font-size: 1.75vh;
-}
-.tableStyle {
-    grid-row-start: 2;
-    grid-row-end: 3;
-    grid-column-start: 2;
-    grid-column-end: 3;
-}
-
 .disabledButton {
     opacity: 0.5;
 }
 
-.playerIDSpan {
-    padding-left: 2%;
-}
+/* Post-trades main container */
 
-.selectionBoxStyle {
-    display: flex;
+.gameContainer {
     width: 100%;
-    height: min-content;
-    overflow: visible;
-}
-.selectionButtonStyle {
-    overflow: visible;
-}
-
-.phoenixSelectionContainer {
-    display: flex;
-    flex-direction: row;
-}
-
-.phoenixSelectMenu {
-    font-size: 1.5vh;
-}
-
-.dragonSelection {
-    position: absolute;
-    top: 0%;
-    width: 15%;
-    min-width: min-content;
     height: 100%;
+    display: grid;    
+    row-gap: 2%;
+    grid-template-columns: 100%;
+    grid-template-rows: 10% 90%;
 }
 
-.selection1 {    
-    left: 34%;    
-}
-.selection2 {
-    left: 49%;
-}
+/* Game Entry -------------------------------------------------------------- */
 
-.tableBox {
-    border: 1px solid white;
+.winScoreSelector {
+    height: max-content;
+    padding: 3% 0%;
     width: 100%;
-    height: 90%;
-}
-.tableCardList {            
     display: flex;
-    width: 100%;
-    height: 90%;
-    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 2vh;
 }
 
-.dragonSelectionTableContainer {
+.scoreSelectionForm {
+    padding-top: 1%;
+}
+
+.enteringSceneContainer {
+    width: 100%;
+    height: 100%;
     display: flex;
-    width: 100%;
-    height: 90%;
-    position: relative;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }
 
-.requestedCardTable {
-    padding-left: 2%;
+.gameLogo {
+    height: 30vh;
 }
+
+/* Scoreboard -------------------------------------------------------------- */
 
 .scoreboardEntry {
     height: 50%;
@@ -275,14 +94,244 @@ button {
     user-select: none;
 }
 
-.gameContainer {
+/* Gameboard --------------------------------------------------------------- */
+
+.gameboardPreTradesStyle {
+    width: 100%;
+    height: 95%;
+    display: flex;
+    column-gap: 0.25%;
+    justify-content: center;
+    flex-direction: row;
+    overflow: hidden;
+    font-size: 1.75vh
+}
+
+.gameboardStyle {
+    width: 100%;
+    height: 95%;
+    display: grid;
+    grid-template-rows: 32.5% 32.5% 32.5%;
+    grid-template-columns: 32.5% 32.5% 32.5%;
+    grid-column-gap: 1%;
+    grid-row-gap: 1%;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 1.75vh;
+}
+
+.player1 {
+    grid-row-start: 1;
+    grid-row-end: 2;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.player2 {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+.player3 {
+    grid-row-start: 3;
+    grid-row-end: 4;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.player4 {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 3;
+    grid-column-end: 4;
+}
+
+/* Table ------------------------------------------------------------------- */
+
+.tableStyle {
+    grid-row-start: 2;
+    grid-row-end: 3;
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+.dragonSelection {
+    position: absolute;
+    top: 0%;
+    width: 15%;
+    min-width: min-content;
+    height: 100%;
+}
+
+.selection1 {    
+    left: 34%;    
+}
+.selection2 {
+    left: 49%;
+}
+
+.tableBox {
+    border: 1px solid white;
+    width: 100%;
+    height: 90%;
+}
+.tableCardList {            
+    display: flex;
+    width: 100%;
+    height: 90%;
+    position: relative;
+}
+
+.dragonSelectionTableContainer {
+    display: flex;
+    width: 100%;
+    height: 90%;
+    position: relative;
+}
+
+.requestedCardTable {
+    padding-left: 2%;
+}
+
+/* Player Box -------------------------------------------------------------- */
+
+.playerBox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 90%;
+    border: 1px solid white;
+}
+
+.playerCardList {
+    display: flex;
+    height: 70%;
+    position: relative;
+}
+
+.playerInfo {
+    padding-top: 1%;
+    padding-right: 1%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 10%;
+}
+
+.playerIDSpan {
+    padding-left: 2%;
+}
+
+.selectionsContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 20%;
+}
+
+.actionButtonsMainContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.sideActionButtonsContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.leftActionButtonsContainer {
+    justify-content: left;    
+}
+
+.rightActionButtonsContainer {
+    justify-content: right;    
+}
+
+.selectionBoxStyle {
+    display: flex;
+    width: 100%;
+    height: min-content;
+    overflow: visible;
+}
+.selectionButtonStyle {
+    overflow: visible;
+}
+
+.phoenixSelectionContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+.phoenixSelectMenu {
+    font-size: 1.5vh;
+}
+
+/* Pre-trades Player Box --------------------------------------------------- */
+
+.preTradePlayerBox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 45%;
+    border: 1px solid white;
+}
+
+.preTradesCol {
+    display: flex;
+    row-gap: 0.25%;
+    flex-direction: column;
+    justify-content: center;
+    width: 33%;
+    height: 100%
+}
+
+.preTradeCardList {
+    display: flex;
+    height: 40%;
+    position: relative;
+    user-select: none;
+}
+
+.tradingCardSlots {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 40%;
+}
+
+.tradingCardSlot {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5%;
+    align-items: center;
+    margin-left: 3%;
     width: 100%;
     height: 100%;
-    display: grid;    
-    row-gap: 2%;
-    grid-template-columns: 100%;
-    grid-template-rows: 10% 90%;
 }
+
+/* Trade Phase buttons ----------------------------------------------------- */
+
+.tradePhaseButtonContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.tradePhaseButton {
+    width: 35%;
+}
+
+.inactiveButton {
+    width: 35%;
+    opacity: 0.5;
+}
+
+.inactiveButton:active {
+    border-style: outset;
+}
+
+/* Bet messages ------------------------------------------------------------ */
 
 .betMessage {
     height: min-content;
@@ -297,33 +346,4 @@ button {
 
 .grandTichuBetMessage {
     background-color: rgb(173, 2, 2);
-}
-
-.winScoreSelector {
-    height: max-content;
-    padding: 3% 0%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 2vh;
-}
-
-.scoreSelectionForm {
-    padding-top: 1%;
-}
-
-.enteringSceneContainer {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-}
-
-.gameLogo {
-    height: 30vh;
 }
