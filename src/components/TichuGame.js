@@ -3,6 +3,7 @@ import { Gameboard } from "./Gameboard";
 import { Scoreboard } from "./Scoreboard";
 import { GameLogic } from "../GameLogic";
 import { WinScoreSelector } from "./WinScoreSelector";
+import { GenericCheckbox } from "./GenericCheckbox";
 
 import * as styles from "../styles/Components.module.css"
 import tichuLogo from "../res/tichu_logo.png"
@@ -10,21 +11,35 @@ import tichuLogo from "../res/tichu_logo.png"
 export class TichuGame extends Component {
 
     state = {
-        /*
-        previousGames: [[200,0], [55,45], [-25,125]],
-        team02TotalPoints: 230,
-        team13TotalPoints: 170,
-        */
         previousGames: [],
         team02TotalPoints: 0,
         team13TotalPoints: 0,
         winningScore: 0,
         winScoreSelected: false,
-        gameOver: false
+        gameOver: false,
+        showcaseScoreboard: true
+    }
+
+    setShowcaseScoreboard = (value) => {
+        console.log(value);
+        this.setState({
+            showcaseScoreboard: value
+        });
     }
 
     setWinningScore = (score) => {
+        let previousGames = [];
+        let team02TotalPoints = 0;
+        let team13TotalPoints = 0;
+        if (this.state.showcaseScoreboard) {
+            previousGames = [[200,0], [55,45], [-25,125]];
+            team02TotalPoints = 230;
+            team13TotalPoints = 170;
+        }
         this.setState({
+            previousGames: previousGames,
+            team02TotalPoints: team02TotalPoints,
+            team13TotalPoints: team13TotalPoints,
             winningScore: score,
             winScoreSelected: true
         });
@@ -62,6 +77,7 @@ export class TichuGame extends Component {
                 <img src={tichuLogo} alt={"Oops, let's pretend this is the logo :("}
                 className={styles.gameLogo}/>
                 <WinScoreSelector makeSelection={this.setWinningScore}/>
+                <GenericCheckbox text={"Showcase scoreboard"} callback={this.setShowcaseScoreboard}/>
             </div>
         );
     }

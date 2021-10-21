@@ -1,5 +1,4 @@
-button {
-    
+button {    
     font-weight: bold;
     font-size: 1.5vh;
 }
@@ -48,6 +47,15 @@ button {
 
 .gameLogo {
     height: 30vh;
+}
+
+.demoCheckboxContainer {
+    font-size: 2vh;
+}
+
+.demoCheckbox {
+    height: 2vh;
+    width: 2vh;
 }
 
 /* Scoreboard -------------------------------------------------------------- */
