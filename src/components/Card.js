@@ -7,6 +7,7 @@ export class Card extends Component {
 
     render() {
         let imgStyle = {
+            userSelect: 'none',
             filter: 'drop-shadow(0.5vw 0.25vh 0.5vw rgba(0, 0, 0, 0.65))'
         };
         if (this.props.movePosition !== undefined) {

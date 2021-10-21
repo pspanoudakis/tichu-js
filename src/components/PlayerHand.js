@@ -6,7 +6,7 @@ import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
 import { gameBets } from '../GameLogic';
 import { voidButton } from '../void';
 
-import { grandTichuBetDivClass, leftActionButtonsDiv, rightActionButtonsDiv, tichuBetDivClass } from "./styleUtils";
+import { grandTichuBetDivClass, inGamePlayerBoxClass, leftActionButtonsDiv, rightActionButtonsDiv, tichuBetDivClass } from "./styleUtils";
 import * as styles from "../styles/Components.module.css"
 
 export class PlayerHand extends Component {
@@ -86,7 +86,7 @@ export class PlayerHand extends Component {
         const selectedCards = this.props.cards.filter(card => card.isSelected);
         const betMessage = this.getBetMessageElement();
         return (
-            <div className={styles.playerBox}>
+            <div className={inGamePlayerBoxClass}>
                 <div className={styles.playerInfo}>
                     <span className={styles.playerIDSpan}>{this.props.id}</span>
                     {betMessage}

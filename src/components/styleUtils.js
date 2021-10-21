@@ -11,3 +11,6 @@ export const dragonSelection2 = `${styles.dragonSelection} ${styles.selection2}`
 
 export const scoreboardMainEntryClass = `${styles.scoreboardEntry} ${styles.scoreboardMainEntry}`
 export const scoreboardNormalEntryClass = `${styles.scoreboardEntry} ${styles.scoreboardNormalEntry}`
+
+export const inGamePlayerBoxClass = `${styles.playerBox} ${styles.inGamePlayerBox}`
+export const preTradePlayerBoxClass = `${styles.playerBox} ${styles.preTradePlayerBox}`

@@ -4,7 +4,7 @@ import { Card } from "./Card";
 import { playerKeys, gameBets } from "../GameLogic";
 import { voidAction, voidButton } from "../void";
 
-import { grandTichuBetDivClass, tichuBetDivClass } from "./styleUtils";
+import { grandTichuBetDivClass, preTradePlayerBoxClass, tichuBetDivClass } from "./styleUtils";
 import * as styles from "../styles/Components.module.css"
 
 export class InitialPlayerHand extends Component {
@@ -152,7 +152,7 @@ export class InitialPlayerHand extends Component {
         }
 
         return (
-            <div className={styles.preTradePlayerBox}>
+            <div className={preTradePlayerBoxClass}>
                 <div className={styles.playerInfo}>
                     <span className={styles.playerIDSpan}>{this.props.id}</span>
                     {betMessage}
@@ -202,7 +202,7 @@ export class InitialPlayerHand extends Component {
         }
 
         return (
-            <div className={styles.preTradePlayerBox}>
+            <div className={preTradePlayerBoxClass}>
                 <div className={styles.playerInfo}>
                     <span className={styles.playerIDSpan}>{this.props.id}</span>
                     {betMessage}

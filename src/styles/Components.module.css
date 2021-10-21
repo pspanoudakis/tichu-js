@@ -1,4 +1,6 @@
 button {
+    
+    font-weight: bold;
     font-size: 1.5vh;
 }
 
@@ -165,6 +167,7 @@ button {
 
 .tableBox {
     border: 1px solid white;
+    border-radius: max(0.30vw, 0.50vh);
     width: 100%;
     height: 90%;
 }
@@ -186,20 +189,14 @@ button {
     padding-left: 2%;
 }
 
-/* Player Box -------------------------------------------------------------- */
+/* General Player Box -------------------------------------------------------------- */
 
 .playerBox {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 90%;
+    border-radius: max(0.30vw, 0.50vh);
     border: 1px solid white;
-}
-
-.playerCardList {
-    display: flex;
-    height: 70%;
-    position: relative;
 }
 
 .playerInfo {
@@ -215,6 +212,19 @@ button {
     padding-left: 2%;
     user-select: none;
 }
+
+/* In-game player box */
+
+.inGamePlayerBox {
+    height: 90%;
+}
+
+.playerCardList {
+    display: flex;
+    height: 70%;
+    position: relative;
+}
+
 
 .selectionsContainer {
     display: flex;
@@ -264,11 +274,7 @@ button {
 /* Pre-trades Player Box --------------------------------------------------- */
 
 .preTradePlayerBox {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
     height: 45%;
-    border: 1px solid white;
 }
 
 .preTradesCol {
@@ -329,10 +335,12 @@ button {
 /* Bet messages ------------------------------------------------------------ */
 
 .betMessage {
+    user-select: none;
     height: min-content;
     color: black;
     font-weight: bold;
     padding: 0% 1%;
+    border-radius: max(0.10vw, 0.30vh);
 }
 
 .tichuBetMessage {
