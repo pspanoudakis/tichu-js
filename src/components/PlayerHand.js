@@ -73,7 +73,7 @@ export class PlayerHand extends Component {
                 position: 'absolute',
                 left: (index * 6.5).toString() + '%',
                 bottom: '15%',
-                transition: '85ms',
+                transition: '85ms, left 100ms',
                 height: '65%',
             }
             cardComponents.push(
