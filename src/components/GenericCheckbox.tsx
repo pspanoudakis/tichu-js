@@ -1,8 +1,11 @@
 import { Component } from "react";
 
-import * as styles from "../styles/Components.module.css"
+import styles from "../styles/Components.module.css"
 
-export class GenericCheckbox extends Component {
+export class GenericCheckbox extends Component<{
+    text: string,
+    callback: (s: boolean) => void
+}> {
 
     state = {
         isChecked: true
@@ -12,7 +15,7 @@ export class GenericCheckbox extends Component {
         const newStatus = !this.state.isChecked
         this.setState({
             isChecked: newStatus
-        }, this.props.callback(newStatus))
+        }, () => this.props.callback(newStatus))
     }
 
     render() {

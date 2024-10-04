@@ -1,4 +1,4 @@
-import * as styles from "../styles/Components.module.css"
+import styles from "../styles/Components.module.css"
 
 export const tichuBetDivClass = `${styles.betMessage} ${styles.tichuBetMessage}`
 export const grandTichuBetDivClass = `${styles.betMessage} ${styles.grandTichuBetMessage}`
