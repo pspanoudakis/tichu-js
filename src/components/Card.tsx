@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 
 export class Card extends Component<{
     id: string,
-    selected: boolean,
+    selected?: boolean,
     cardImg: string,
     alt: string,
     movePosition?: string,
-    clickCallback: (id: string) => void,
+    clickCallback?: (id: string) => void,
     style: React.CSSProperties
 }> {
     clickDetected = () => {
-        this.props.clickCallback(this.props.id);
+        this.props.clickCallback?.(this.props.id);
     }
 
     render = () => (
