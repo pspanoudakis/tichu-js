@@ -1,9 +1,12 @@
 import { Component } from "react";
 
-import * as styles from "../styles/Components.module.css"
+import styles from "../styles/Components.module.css"
 import { scoreboardMainEntryClass, scoreboardNormalEntryClass } from "./styleUtils";
 
-export class Scoreboard extends Component {
+export class Scoreboard extends Component<{
+    current: [number, number],
+    scores: [number, number][]
+}> {
     
     state = {
         isExpanded: false

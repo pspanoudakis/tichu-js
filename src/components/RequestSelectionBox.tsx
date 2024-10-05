@@ -4,23 +4,21 @@ import { reversedCardKeys } from '../CardInfo';
 import styles from "../styles/Components.module.css"
 
 export class RequestSelectionBox extends Component<{
-    requestMade: (id: string) => void
+    onSelection: (id: string) => void
 }> {
 
     selectionMade = (event: React.MouseEvent<HTMLButtonElement>) => {
-        this.props.requestMade(event.currentTarget.id);
+        this.props.onSelection(event.currentTarget.id);
     }
 
-    render() {
-        return (
-            <div className={styles.selectionBoxStyle}>
-                {reversedCardKeys.map(name => 
-                    <button
-                        key={name} id={name} onClick={this.selectionMade}
-                        className={styles.selectionButtonStyle}
-                    >{name}</button>
-                )}
-            </div>
-        );
-    }
+    render = () => (
+        <div className={styles.selectionBoxStyle}>
+            {reversedCardKeys.map(name => 
+                <button
+                    key={name} id={name} onClick={this.selectionMade}
+                    className={styles.selectionButtonStyle}
+                >{name}</button>
+            )}
+        </div>
+    );
 }
