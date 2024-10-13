@@ -1,9 +1,17 @@
 import { z } from "zod";
+import { createGameEventSchema } from "./GameEvent";
 import {
-    createEmptyGameEventSchema,
-    createGameEventSchema,
-} from "./GameEvent";
-import { CardCombinationType, ERROR_TYPES, PLAYER_KEYS, PlayerBet, PlayerKey, zCardKey, zCardName, zGameWinnerResult, zPlayerKey, zRoundScore } from "./shared";
+    CardCombinationType,
+    ERROR_TYPES,
+    PLAYER_KEYS,
+    PlayerBet,
+    PlayerKey,
+    zCardKey,
+    zCardName,
+    zGameWinnerResult,
+    zPlayerKey,
+    zRoundScore
+} from "./shared";
 
 export const ServerEventType = {
     WAITING_4_JOIN: 'WAITING_4_JOIN',
@@ -33,6 +41,7 @@ export const ServerEventType = {
 export const zWaitingForJoinEvent = createGameEventSchema(
     z.literal(ServerEventType.WAITING_4_JOIN),
     z.object({
+        playerKey: zPlayerKey,
         presentPlayers: z.object(PLAYER_KEYS.reduce<
             {[playerKey in PlayerKey]? : z.ZodOptional<z.ZodString>}
         >((acc, k) => {
@@ -40,7 +49,8 @@ export const zWaitingForJoinEvent = createGameEventSchema(
             return acc;
         }, {})),
         winningScore: z.number(),
-    })
+    }),
+    zPlayerKey,
 );
 export type WaitingForJoinEvent = z.infer<typeof zWaitingForJoinEvent>;
 
@@ -48,11 +58,12 @@ export const zPlayerJoinedEvent = createGameEventSchema(
     z.literal(ServerEventType.PLAYER_JOINED),
     z.object({
         playerNickname: z.string(),
-    })
+    }),
+    zPlayerKey,
 )
 export type PlayerJoinedEvent = z.infer<typeof zPlayerJoinedEvent>;
 
-export const zPlayerLeftEvent = createEmptyGameEventSchema(
+export const zPlayerLeftEvent = createGameEventSchema(
     z.literal(ServerEventType.PLAYER_LEFT)
 );
 export type PlayerLeftEvent = z.infer<typeof zPlayerLeftEvent>;
@@ -76,7 +87,7 @@ export const zCardsPlayedEvent = createGameEventSchema(
 );
 export type CardsPlayedEvent = z.infer<typeof zCardsPlayedEvent>;
 
-export const zTurnPassedEvent = createEmptyGameEventSchema(
+export const zTurnPassedEvent = createGameEventSchema(
     z.literal(ServerEventType.TURN_PASSED)
 );
 export type TurnPassedEvent = z.infer<typeof zTurnPassedEvent>;
@@ -91,7 +102,7 @@ export const zCardsTradedEvent = createGameEventSchema(
 );
 export type CardsTradedEvent = z.infer<typeof zCardsTradedEvent>;
 
-export const zPendingDragonDecisionEvent = createEmptyGameEventSchema(
+export const zPendingDragonDecisionEvent = createGameEventSchema(
     z.literal(ServerEventType.PENDING_DRAGON_DECISION)
 );
 export type PendingDragonDecisionEvent =
@@ -116,7 +127,7 @@ export const zBetPlacedEvent = createGameEventSchema(
 )
 export type BetPlacedEvent = z.infer<typeof zBetPlacedEvent>;
 
-export const zBombDroppedEvent = createEmptyGameEventSchema(
+export const zBombDroppedEvent = createGameEventSchema(
     z.literal(ServerEventType.BOMB_DROPPED)
 );
 export type BombDroppedEvent = z.infer<typeof zBombDroppedEvent>;
@@ -197,3 +208,28 @@ export const zClientStateSyncEvent = createGameEventSchema(
     })
 );
 export type ClientStateSyncEvent = z.infer<typeof zClientStateSyncEvent>;
+
+export const zServerEvent = z.union([
+    zWaitingForJoinEvent,
+    zPlayerJoinedEvent,
+    zPlayerLeftEvent,
+    zAllCardsRevealedEvent,
+    zCardsPlayedEvent,
+    zTurnPassedEvent,
+    zCardsTradedEvent,
+    zPendingDragonDecisionEvent,
+    zDragonGivenEvent,
+    zBetPlacedEvent,
+    zBombDroppedEvent,
+    zCardRequestedEvent,
+    zMessageSentEvent,
+    zTableRoundStartedEvent,
+    zTableRoundEndedEvent,
+    zGameRoundStartedEvent,
+    zGameRoundEndedEvent,
+    zGameEndedEvent,
+    zErrorEvent,
+    zClientStateSyncEvent,
+
+])
+export type ServerEvent = z.infer<typeof zServerEvent>;

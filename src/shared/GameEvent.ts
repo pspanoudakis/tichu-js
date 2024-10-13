@@ -3,22 +3,17 @@ import { PlayerKey, zPlayerKey } from "./shared";
 
 export function createGameEventSchema<
     EventType extends z.ZodTypeAny,
-    DataType extends z.ZodTypeAny
+    DataType extends z.ZodTypeAny,
+    PlayerKeyType extends typeof zPlayerKey | z.ZodUndefined,
 >(
     eventTypeSchema: EventType,
-    dataTypeSchema: DataType
+    dataTypeSchema: DataType = z.undefined() as DataType,
+    playerKeySchema: PlayerKeyType = z.undefined() as PlayerKeyType,
 ) {
     return z.object({
-        playerKey: z.optional(zPlayerKey),
+        playerKey: playerKeySchema,
         eventType: eventTypeSchema,
         data: dataTypeSchema,
-    });
-};
-export function createEmptyGameEventSchema<EventType extends z.ZodTypeAny>
-(eventTypeSchema: EventType) {
-    return z.object({
-        playerKey: z.optional(zPlayerKey),
-        eventType: eventTypeSchema
     });
 };
 
