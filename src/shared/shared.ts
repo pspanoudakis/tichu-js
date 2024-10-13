@@ -39,16 +39,16 @@ export const TEAM_KEYS = {
 
 export const zTeamKeySchema = z.nativeEnum(TEAM_KEYS);
 
-const CardColor = {
+const CardColors = {
     BLACK: 'black',
     RED: 'red',
     BLUE: 'blue',
     GREEN: 'green'
 } as const;
 
-export type CardColor = typeof CardColor[keyof typeof CardColor];
+export type CardColor = typeof CardColors[keyof typeof CardColors];
 
-export const cardColorValues = Object.values(CardColor);
+export const cardColorValues = Object.values(CardColors);
 
 const zNumericCardName = z.union([
     z.literal('2'),
@@ -105,7 +105,7 @@ export type CardName = z.infer<typeof zCardName>;
 
 export const NormalCardConfig: {
     [name in NormalCardName]: {
-        [color in typeof CardColor[keyof typeof CardColor]]: {
+        [color in typeof CardColors[keyof typeof CardColors]]: {
             key: string,
             img: string,
         }
@@ -372,7 +372,7 @@ const CardKeyToImgMap: ReadonlyMap<string, string> = new Map(Object.entries({
         ...Object.values(NormalCardConfig).reduce<
             { [key: string]: string }
         >((acc, v) => {
-            Object.values(CardColor).forEach(c => acc[v[c].key] = v[c].img)
+            Object.values(CardColors).forEach(c => acc[v[c].key] = v[c].img)
             return acc;
         }, {}),
         ...Object.entries(SpecialCardConfig).reduce<

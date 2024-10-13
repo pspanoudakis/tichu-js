@@ -9,5 +9,6 @@ export type GameRoundState = {
     RightOpponent: HiddenPlayerState,
     requestedCardName?: NormalCardName,
     tableState: TableState,
-    playerInTurnKey: PlayerKey,
+    playerInTurnKey?: PlayerKey,
+    pendingDragonDecision: boolean,
 };
