@@ -41,7 +41,6 @@ export const ServerEventType = {
 export const zWaitingForJoinEvent = createGameEventSchema(
     z.literal(ServerEventType.WAITING_4_JOIN),
     z.object({
-        playerKey: zPlayerKey,
         presentPlayers: z.object(PLAYER_KEYS.reduce<
             {[playerKey in PlayerKey]? : z.ZodOptional<z.ZodString>}
         >((acc, k) => {
@@ -64,7 +63,9 @@ export const zPlayerJoinedEvent = createGameEventSchema(
 export type PlayerJoinedEvent = z.infer<typeof zPlayerJoinedEvent>;
 
 export const zPlayerLeftEvent = createGameEventSchema(
-    z.literal(ServerEventType.PLAYER_LEFT)
+    z.literal(ServerEventType.PLAYER_LEFT),
+    z.undefined(),
+    zPlayerKey,
 );
 export type PlayerLeftEvent = z.infer<typeof zPlayerLeftEvent>;
 
@@ -83,12 +84,15 @@ export const zCardsPlayedEvent = createGameEventSchema(
         combinationType: z.nativeEnum(CardCombinationType),
         tableCardKeys: z.array(zCardKey),
         requestedCardName: z.optional(z.string()),
-    })
+    }),
+    zPlayerKey,
 );
 export type CardsPlayedEvent = z.infer<typeof zCardsPlayedEvent>;
 
 export const zTurnPassedEvent = createGameEventSchema(
-    z.literal(ServerEventType.TURN_PASSED)
+    z.literal(ServerEventType.TURN_PASSED),
+    z.undefined(),
+    zPlayerKey,
 );
 export type TurnPassedEvent = z.infer<typeof zTurnPassedEvent>;
 
@@ -123,12 +127,15 @@ export const zBetPlacedEvent = createGameEventSchema(
             z.literal(PlayerBet.TICHU),
             z.literal(PlayerBet.GRAND_TICHU)
         ]),
-    })
+    }),
+    zPlayerKey,
 )
 export type BetPlacedEvent = z.infer<typeof zBetPlacedEvent>;
 
 export const zBombDroppedEvent = createGameEventSchema(
-    z.literal(ServerEventType.BOMB_DROPPED)
+    z.literal(ServerEventType.BOMB_DROPPED),
+    z.undefined(),
+    zPlayerKey,
 );
 export type BombDroppedEvent = z.infer<typeof zBombDroppedEvent>;
 
@@ -136,7 +143,8 @@ export const zCardRequestedEvent = createGameEventSchema(
     z.literal(ServerEventType.CARD_REQUESTED),
     z.object({
         requestedCardName: zCardName,
-    })
+    }),
+    zPlayerKey,
 )
 export type CardRequestedEvent = z.infer<typeof zCardRequestedEvent>;
 
@@ -146,7 +154,8 @@ export const zMessageSentEvent = createGameEventSchema(
         sentBy: z.string(),
         sentOn: z.string(),
         text: z.string(),
-    })
+    }),
+    zPlayerKey,
 );
 export type MessageSentEvent = z.infer<typeof zMessageSentEvent>;
 
