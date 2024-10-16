@@ -4,6 +4,10 @@ import { createSessionSocketURI } from "../API/coreAPI";
 import { zPlayerJoinedEvent, zWaitingForJoinEvent } from "../shared/ServerEvents";
 import { createInitialGameState } from "../state_types/GameState";
 import { PLAYER_KEYS } from "../shared/shared";
+import { Scoreboard } from "./Scoreboard";
+
+import styles from "../styles/Components.module.css"
+import { AppContext, appContextInitState } from "../AppContext";
 
 type GameSessionProps = {
     sessionId: string,
@@ -36,6 +40,7 @@ function eventHandlerWrapper<SE>(
 
 export const GameSession: React.FC<GameSessionProps> = (props) => {
 
+    const [appContextState, setAppContextState] = useState(appContextInitState);
     const [connectingToSession, setConnectingToSession] = useState(true);
     const [gameState, setGameState] = useState(createInitialGameState());
 
@@ -97,6 +102,11 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
             }
         ))
 
+        setAppContextState({
+            gameContext: appContextState.gameContext,
+            socket: socket,
+        });
+
         // Connect after listeners registered
         socket.connect();
 
@@ -108,11 +118,30 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
     }, [props.sessionId, props.playerNickname]);
 
     return (
-        connectingToSession ?
-        <div>
-            Connecting to session...
-        </div>
-        :
-        <div>Connected to session!</div>
+        <AppContext.Provider 
+			value={{
+				state: appContextState,
+				setState: setAppContextState,
+			}}
+		>{
+            connectingToSession ?
+            <div>
+                Connecting to session...
+            </div>
+            :
+            <div className={styles.gameContainer}>
+                <Scoreboard
+                    scores={gameState.previousGames}
+                    current={{
+                        team02: gameState.previousGames.reduce(
+                            (sum, { team02 }) => sum + team02, 0
+                        ),
+                        team13: gameState.previousGames.reduce(
+                            (sum, { team13 }) => sum + team13, 0
+                        )
+                    }}
+                />
+            </div>
+        }</AppContext.Provider>
     );
 }

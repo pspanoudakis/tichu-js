@@ -2,10 +2,11 @@ import { Component } from "react";
 
 import styles from "../styles/Components.module.css"
 import { scoreboardMainEntryClass, scoreboardNormalEntryClass } from "./styleUtils";
+import { RoundScore } from "../shared/shared";
 
 export class Scoreboard extends Component<{
-    current: [number, number],
-    scores: [number, number][]
+    current: RoundScore,
+    scores: RoundScore[]
 }> {
     
     state = {
@@ -14,7 +15,7 @@ export class Scoreboard extends Component<{
 
     expandedScores = () => {
         if (this.props.scores.length > 0) {
-            return this.props.scores.map(([team02, team13], index) => 
+            return this.props.scores.map(({team02, team13}, index) => 
                 <div key={index} className={scoreboardNormalEntryClass}>
                     <div className={styles.innerScore}>{team02}</div> 
                     <div className={styles.innerScore}>{team13}</div>
@@ -57,11 +58,11 @@ export class Scoreboard extends Component<{
                 <div className={scoreboardMainEntryClass}>
                     <span className={styles.mainScore}>
                         <span style={{fontSize: '2vh'}}>Team 1-3</span>
-                        {this.props.current[0]}
+                        {this.props.current.team02}
                     </span> 
                     <span className={styles.mainScore}>
                         <span style={{fontSize: '2vh'}}>Team 2-4</span>
-                        {this.props.current[1]}
+                        {this.props.current.team02}
                     </span>
                 </div>
             </div>
