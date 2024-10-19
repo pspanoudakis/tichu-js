@@ -1,5 +1,5 @@
 import { GameRoundState } from "./GameRoundState";
-import { RoundScore } from "../shared/shared";
+import { RoundScore } from "../game_logic/shared/shared";
 import { PlayerInfoState } from "./PlayerState";
 
 export type GameState = {

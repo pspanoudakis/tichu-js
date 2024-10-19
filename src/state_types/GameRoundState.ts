@@ -1,4 +1,4 @@
-import { NormalCardName, PlayerKey } from "../shared/shared";
+import { NormalCardName, PlayerKey } from "../game_logic/shared/shared";
 import { HiddenPlayerState, ThisPlayerState } from "./PlayerState";
 import { TableState } from "./TableState";
 

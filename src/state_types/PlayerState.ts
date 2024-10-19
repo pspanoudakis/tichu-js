@@ -1,4 +1,4 @@
-import { PlayerBet, PlayerKey } from "../shared/shared"
+import { PlayerBet, PlayerKey } from "../game_logic/shared/shared"
 
 export type PlayerInfoState = {
     playerKey: PlayerKey,

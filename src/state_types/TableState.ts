@@ -1,4 +1,4 @@
-import { CardCombinationType } from "../shared/shared";
+import { CardCombinationType } from "../game_logic/shared/shared";
 
 export type TableState = {
     currentCardKeys?: string[],
