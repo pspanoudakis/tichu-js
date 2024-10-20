@@ -22,8 +22,7 @@ export const AppRoot: React.FC<{}> = (props) => {
     return <>{
         loading ?
         <div>Loading...</div>
-        :
-        <div>{
+        : (
             currentSessionId ?
             <GameSession
                 sessionId={currentSessionId}
@@ -38,6 +37,6 @@ export const AppRoot: React.FC<{}> = (props) => {
                 </button>
                 <button>Join Open Room</button>            
             </div>
-        }</div>
+        )
     }</>;
 }

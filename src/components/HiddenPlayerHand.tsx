@@ -42,7 +42,7 @@ export const HiddenPlayerHand: React.FC<{
             <div className={inGamePlayerBoxClass}>
                 <div className={styles.playerInfo}>
                     <span className={styles.playerIDSpan}>
-                        {nickname} ({playerAccessKey})
+                        {nickname} - Cards: {numCards}
                     </span>
                     <BetIndicator bet={currentBet}/>
                 </div>
@@ -51,7 +51,7 @@ export const HiddenPlayerHand: React.FC<{
                         return (
                             <Card
                                 key={i} id={i.toString()} index={i}
-                                cardImg={cardImages.get('cardBackground') ?? ''}
+                                cardImg={'cardBackground'}
                                 alt='hidden'
                             />
                         );
