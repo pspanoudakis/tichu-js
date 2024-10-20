@@ -329,24 +329,36 @@ const SpecialCardConfig: {
     },
 } as const;
 
-const CardKeyToImgMap: ReadonlyMap<string, string> = new Map(Object.entries({
-        ...Object.values(NormalCardConfig).reduce<
-            { [key: string]: string }
-        >((acc, v) => {
-            Object.values(CardColor).forEach(c => acc[v[c].key] = v[c].img)
+type CardConfigMapEntry = {
+    name: string,
+    img: string,
+    color?: CardColor,
+}
+const CardKeyToConfigMap:
+    ReadonlyMap<string, CardConfigMapEntry> = new Map(Object.entries({
+        ...Object.entries(NormalCardConfig).reduce<
+            { [key: string]: CardConfigMapEntry }
+        >((acc, [n, v]) => {
+            Object.values(CardColor).forEach(c => acc[v[c].key] = {
+                name: n,
+                img: v[c].img,
+                color: c,
+            })
             return acc;
         }, {}),
         ...Object.entries(SpecialCardConfig).reduce<
-            { [key: string]: string }
-        >((acc, [k, v]) => {
-            acc[k] = v.img
+            { [key: string]: CardConfigMapEntry }
+        >((acc, [n, v]) => {
+            acc[n] = {
+                name: n,
+                img: v.img,
+            }
             return acc;
         }, {})
-    })
-);
+    }));
 
-export function getCardImgByKey(key: string) {
-    return CardKeyToImgMap.get(key);
+export function getCardConfigByKey(key: string) {
+    return CardKeyToConfigMap.get(key);
 }
 
 export function getNormalCardValueByName(name: string) {

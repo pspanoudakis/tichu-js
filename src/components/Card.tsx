@@ -1,33 +1,34 @@
-import React, { Component } from 'react';
+import React, { useCallback } from 'react';
 
-export class Card extends Component<{
+export const Card: React.FC<{
     id: string,
     selected?: boolean,
     cardImg: string,
     alt: string,
     movePosition?: string,
-    clickCallback?: (id: string) => void,
+    onClick?: (id: string) => void,
     style: React.CSSProperties
-}> {
-    clickDetected = () => {
-        this.props.clickCallback?.(this.props.id);
-    }
+}> = (props) => {
 
-    render = () => (
+    const onClick = useCallback(() => {
+        props.onClick?.(props.id);
+    }, [props.id]);
+
+    return (
         <img
-            src={this.props.cardImg}
-            alt={this.props.alt}
-            onClick={this.clickDetected}
+            src={props.cardImg}
+            alt={props.alt}
+            onClick={onClick}
             style={{
                 userSelect: "none",
                 filter:
                     'drop-shadow(0.5vw 0.25vh 0.5vw rgba(0, 0, 0, 0.65))' +
-                    (this.props.movePosition ? ' brightness(62.5%) contrast(85%)' : ''),
+                    (props.movePosition ? ' brightness(62.5%) contrast(85%)' : ''),
                 ...(
-                    this.props.movePosition ?
-                    { transform: `translateY(-${this.props.movePosition})`} : {}
+                    props.movePosition ?
+                    { transform: `translateY(-${props.movePosition})`} : {}
                 ),
-                ...this.props.style
+                ...props.style,
             }}
         />
     );

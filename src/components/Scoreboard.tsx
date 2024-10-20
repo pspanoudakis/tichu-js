@@ -2,7 +2,7 @@ import { Component } from "react";
 
 import styles from "../styles/Components.module.css"
 import { scoreboardMainEntryClass, scoreboardNormalEntryClass } from "./styleUtils";
-import { RoundScore } from "../shared/shared";
+import { RoundScore } from "../game_logic/shared/shared";
 
 export class Scoreboard extends Component<{
     current: RoundScore,

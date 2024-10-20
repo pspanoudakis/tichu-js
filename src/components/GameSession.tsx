@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { createSessionSocketURI } from "../API/coreAPI";
-import { zPlayerJoinedEvent, zWaitingForJoinEvent } from "../shared/ServerEvents";
+import { zPlayerJoinedEvent, zWaitingForJoinEvent } from "../game_logic/shared/ServerEvents";
 import { createInitialGameState } from "../state_types/GameState";
-import { PLAYER_KEYS } from "../shared/shared";
+import { PLAYER_KEYS } from "../game_logic/shared/shared";
 import { Scoreboard } from "./Scoreboard";
 
 import styles from "../styles/Components.module.css"

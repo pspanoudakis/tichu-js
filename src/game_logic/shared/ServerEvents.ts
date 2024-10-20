@@ -6,12 +6,11 @@ import {
     PLAYER_KEYS,
     PlayerBet,
     PlayerKey,
-    zCardKey,
-    zCardName,
     zGameWinnerResult,
     zPlayerKey,
     zRoundScore
 } from "./shared";
+import { zCardKey, zCardName } from "./CardConfig";
 
 export const ServerEventType = {
     WAITING_4_JOIN: 'WAITING_4_JOIN',
