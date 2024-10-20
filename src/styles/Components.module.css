@@ -124,25 +124,25 @@ button {
     font-size: 1.75vh;
 }
 
-.player1 {
+.teammate {
     grid-row-start: 1;
     grid-row-end: 2;
     grid-column-start: 2;
     grid-column-end: 3;
 }
-.player2 {
+.leftOpponent {
     grid-row-start: 2;
     grid-row-end: 3;
     grid-column-start: 1;
     grid-column-end: 2;
 }
-.player3 {
+.thisPlayer {
     grid-row-start: 3;
     grid-row-end: 4;
     grid-column-start: 2;
     grid-column-end: 3;
 }
-.player4 {
+.rightOpponent {
     grid-row-start: 2;
     grid-row-end: 3;
     grid-column-start: 3;

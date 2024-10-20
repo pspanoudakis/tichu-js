@@ -75,235 +75,235 @@ export const NormalCardConfig: {
     "2": {
         red: {
             key: "red_2",
-            img: "red_2.png"
+            img: "red_2"
         },
         black: {
             key: "black_2",
-            img: "black_2.png"
+            img: "black_2"
         },
         blue: {
             key: "blue_2",
-            img: "blue_2.png"
+            img: "blue_2"
         },
         green: {
             key: "green_2",
-            img: "green_2.png"
+            img: "green_2"
         },
     },
     "3": {
         red: {
             key: "red_3",
-            img: "red_3.png"
+            img: "red_3"
         },
         black: {
             key: "black_3",
-            img: "black_3.png"
+            img: "black_3"
         },
         blue: {
             key: "blue_3",
-            img: "blue_3.png"
+            img: "blue_3"
         },
         green: {
             key: "green_3",
-            img: "green_3.png"
+            img: "green_3"
         },
     },
     "4": {
         red: {
             key: "red_4",
-            img: "red_4.png"
+            img: "red_4"
         },
         black: {
             key: "black_4",
-            img: "black_4.png"
+            img: "black_4"
         },
         blue: {
             key: "blue_4",
-            img: "blue_4.png"
+            img: "blue_4"
         },
         green: {
             key: "green_4",
-            img: "green_4.png"
+            img: "green_4"
         },
     },
     "5": {
         red: {
             key: "red_5",
-            img: "red_5.png"
+            img: "red_5"
         },
         black: {
             key: "black_5",
-            img: "black_5.png"
+            img: "black_5"
         },
         blue: {
             key: "blue_5",
-            img: "blue_5.png"
+            img: "blue_5"
         },
         green: {
             key: "green_5",
-            img: "green_5.png"
+            img: "green_5"
         },
     },
     "6": {
         red: {
             key: "red_6",
-            img: "red_6.png"
+            img: "red_6"
         },
         black: {
             key: "black_6",
-            img: "black_6.png"
+            img: "black_6"
         },
         blue: {
             key: "blue_6",
-            img: "blue_6.png"
+            img: "blue_6"
         },
         green: {
             key: "green_6",
-            img: "green_6.png"
+            img: "green_6"
         },
     },
     "7": {
         red: {
             key: "red_7",
-            img: "red_7.png"
+            img: "red_7"
         },
         black: {
             key: "black_7",
-            img: "black_7.png"
+            img: "black_7"
         },
         blue: {
             key: "blue_7",
-            img: "blue_7.png"
+            img: "blue_7"
         },
         green: {
             key: "green_7",
-            img: "green_7.png"
+            img: "green_7"
         },
     },
     "8": {
         red: {
             key: "red_8",
-            img: "red_8.png"
+            img: "red_8"
         },
         black: {
             key: "black_8",
-            img: "black_8.png"
+            img: "black_8"
         },
         blue: {
             key: "blue_8",
-            img: "blue_8.png"
+            img: "blue_8"
         },
         green: {
             key: "green_8",
-            img: "green_8.png"
+            img: "green_8"
         },
     },
     "9": {
         red: {
             key: "red_9",
-            img: "red_9.png"
+            img: "red_9"
         },
         black: {
             key: "black_9",
-            img: "black_9.png"
+            img: "black_9"
         },
         blue: {
             key: "blue_9",
-            img: "blue_9.png"
+            img: "blue_9"
         },
         green: {
             key: "green_9",
-            img: "green_9.png"
+            img: "green_9"
         },
     },
     "10": {
         red: {
             key: "red_10",
-            img: "red_10.png"
+            img: "red_10"
         },
         black: {
             key: "black_10",
-            img: "black_10.png"
+            img: "black_10"
         },
         blue: {
             key: "blue_10",
-            img: "blue_10.png"
+            img: "blue_10"
         },
         green: {
             key: "green_10",
-            img: "green_10.png"
+            img: "green_10"
         },
     },
     "J": {
         red: {
             key: "red_J",
-            img: "red_J.png"
+            img: "red_J"
         },
         black: {
             key: "black_J",
-            img: "black_J.png"
+            img: "black_J"
         },
         blue: {
             key: "blue_J",
-            img: "blue_J.png"
+            img: "blue_J"
         },
         green: {
             key: "green_J",
-            img: "green_J.png"
+            img: "green_J"
         },
     },
     "Q": {
         red: {
             key: "red_Q",
-            img: "red_Q.png"
+            img: "red_Q"
         },
         black: {
             key: "black_Q",
-            img: "black_Q.png"
+            img: "black_Q"
         },
         blue: {
             key: "blue_Q",
-            img: "blue_Q.png"
+            img: "blue_Q"
         },
         green: {
             key: "green_Q",
-            img: "green_Q.png"
+            img: "green_Q"
         },
     },
     "K": {
         red: {
             key: "red_K",
-            img: "red_K.png"
+            img: "red_K"
         },
         black: {
             key: "black_K",
-            img: "black_K.png"
+            img: "black_K"
         },
         blue: {
             key: "blue_K",
-            img: "blue_K.png"
+            img: "blue_K"
         },
         green: {
             key: "green_K",
-            img: "green_K.png"
+            img: "green_K"
         },
     },
     "A": {
         red: {
             key: "red_A",
-            img: "red_A.png"
+            img: "red_A"
         },
         black: {
             key: "black_A",
-            img: "black_A.png"
+            img: "black_A"
         },
         blue: {
             key: "blue_A",
-            img: "blue_A.png"
+            img: "blue_A"
         },
         green: {
             key: "green_A",
-            img: "green_A.png"
+            img: "green_A"
         },
     },
 } as const;
@@ -316,16 +316,16 @@ const SpecialCardConfig: {
     }
 } = {
     Dogs: {
-        img: 'dogs.png'
+        img: 'dogs'
     },
     Dragon: {
-        img: 'dragon.png'
+        img: 'dragon'
     },
     Phoenix: {
-        img: 'phoenix.png'
+        img: 'phoenix'
     },
     Mahjong: {
-        img: 'mahjong.png'
+        img: 'mahjong'
     },
 } as const;
 

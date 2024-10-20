@@ -40,12 +40,14 @@ export const ServerEventType = {
 export const zWaitingForJoinEvent = createGameEventSchema(
     z.literal(ServerEventType.WAITING_4_JOIN),
     z.object({
-        presentPlayers: z.object(PLAYER_KEYS.reduce<
-            {[playerKey in PlayerKey]? : z.ZodOptional<z.ZodString>}
-        >((acc, k) => {
-            acc[k] = z.string().optional();
-            return acc;
-        }, {})),
+        presentPlayers: z.object<{
+            [playerKey in PlayerKey] : z.ZodOptional<z.ZodString>
+        }>({
+            player1: z.string().optional(),
+            player2: z.string().optional(),
+            player3: z.string().optional(),
+            player4: z.string().optional(),
+        }),
         winningScore: z.number(),
     }),
     zPlayerKey,

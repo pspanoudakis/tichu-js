@@ -1,41 +1,63 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import { Card } from './Card';
-import { gameBets } from '../GameLogic';
 
 import { inGamePlayerBoxClass } from "./styleUtils";
 import styles from "../styles/Components.module.css"
 import { BetIndicator } from './BetIndicator';
+import { PlayerKey } from '../game_logic/shared/shared';
+import { AppContext } from '../AppContext';
+import { cardImages } from '../CardResources';
 
 export const HiddenPlayerHand: React.FC<{
-    currentBet: gameBets,
-    numCards: number,
+    playerKey?: PlayerKey,
     style: string,
-    id: string
-}> = props => (
-    <div className={props.style}>
-        <div className={inGamePlayerBoxClass}>
-            <div className={styles.playerInfo}>
-                <span className={styles.playerIDSpan}>{props.id}</span>
-                <BetIndicator bet={props.currentBet}/>
+}> = props => {
+
+    const ctx = useContext(AppContext);
+
+    const playerAccessKey = useMemo(() => {
+        switch (props.playerKey) {
+            case ctx.state.gameContext.teammate?.playerKey:
+                return 'teammate';
+            case ctx.state.gameContext.rightOpponent?.playerKey:
+                return 'rightOpponent';
+            case ctx.state.gameContext.leftOpponent?.playerKey:
+                return 'leftOpponent';
+            default:
+                throw new Error(`Cannot find player with key: '${props.playerKey}'`);
+        }
+    }, [
+        props.playerKey,
+        ctx.state.gameContext.teammate?.playerKey,
+        ctx.state.gameContext.leftOpponent?.playerKey,
+        ctx.state.gameContext.rightOpponent?.playerKey,
+    ]);
+
+    const nickname = ctx.state.gameContext[playerAccessKey]?.nickname;
+    const numCards = ctx.state.gameContext.currentRoundState?.[playerAccessKey].numberOfCards ?? 0;
+    const currentBet = ctx.state.gameContext.currentRoundState?.[playerAccessKey].playerBet;
+
+    return (
+        <div className={props.style}>
+            <div className={inGamePlayerBoxClass}>
+                <div className={styles.playerInfo}>
+                    <span className={styles.playerIDSpan}>
+                        {nickname} ({playerAccessKey})
+                    </span>
+                    <BetIndicator bet={currentBet}/>
+                </div>
+                <div className={styles.playerCardList}>{
+                    Array.from({ length: numCards }).map((_, i) => {
+                        return (
+                            <Card
+                                key={i} id={i.toString()} index={i}
+                                cardImg={cardImages.get('cardBackground') ?? ''}
+                                alt='hidden'
+                            />
+                        );
+                    })
+                }</div>
             </div>
-            <div className={styles.playerCardList}>{
-                Array.from({ length: props.numCards }).map((_, i) => {
-                    const cardStyle: React.CSSProperties = {
-                        position: 'absolute',
-                        left: (i * 6.5).toString() + '%',
-                        bottom: '15%',
-                        transition: '85ms, left 100ms',
-                        height: '65%',
-                    }
-                    return (
-                        <Card
-                            key={i} id={i.toString()}
-                            cardImg={'./res/background.png'} alt={'hidden'}
-                            style={cardStyle}
-                        />
-                    );
-                })
-            }</div>
         </div>
-    </div>
-);
+    )
+};
