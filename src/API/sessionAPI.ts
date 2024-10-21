@@ -18,6 +18,6 @@ export async function createSession(winningScore: number) {
 export async function getOpenSession() {
     return await fetchData({
         method: 'GET',
-        endpoint: '/openSession',
+        endpoint: 'openSession',
     }, zSessionAPIResponse.parse);
 }
