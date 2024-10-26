@@ -12,6 +12,7 @@ import { BetIndicator } from './BetIndicator';
 import { UICardInfo } from '../game_logic/UICardInfo';
 import { SpecialCards } from '../game_logic/shared/CardConfig';
 import { PlayerKey } from '../game_logic/shared/shared';
+import { PlayerInfoHeader } from './PlayerInfoHeader';
 
 export const ControlledPlayerHand: React.FC<{}> = (props) => {
 
@@ -64,12 +65,11 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
         // const betMessage = this.getBetMessageElement();
         return (
             <div className={inGamePlayerBoxClass}>
-                <div className={styles.playerInfo}>
-                    <span className={styles.playerIDSpan}>{playerNickname}</span>
-                    <BetIndicator
-                        bet={ctx.state.gameContext.currentRoundState?.thisPlayer.playerBet}
-                    />
-                </div>
+                <PlayerInfoHeader
+                    nickname={playerNickname ?? 'You'}
+                    bet={ctx.state.gameContext.currentRoundState?.thisPlayer.playerBet}
+                    numCards={cards.length}
+                />
                 <div className={styles.playerCardList}>
                     {cardComponents}
                 </div>

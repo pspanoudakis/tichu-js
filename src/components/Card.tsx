@@ -9,6 +9,7 @@ export const Card: React.FC<{
     alt: string,
     onClick?: (id: string) => void,
     index: number,
+    omitPosition?: boolean,
 }> = (props) => {
 
     const onClick = useCallback(() => {
@@ -31,10 +32,15 @@ export const Card: React.FC<{
                     props.isSelected ?
                     { transform: `translateY(-${movePct})`} : {}
                 ),
+                ...(
+                    !props.omitPosition ?
+                    {
+                        position: 'absolute',
+                        left: (props.index * 6.5).toString() + '%',
+                        bottom: '15%',
+                    } : {}
+                ),
                 ...{
-                    position: 'absolute',
-                    left: (props.index * 6.5).toString() + '%',
-                    bottom: '15%',
                     transition: '85ms, left 100ms',
                     height: '65%',
                 },

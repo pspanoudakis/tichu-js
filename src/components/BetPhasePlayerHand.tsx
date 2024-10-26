@@ -3,7 +3,7 @@ import { Card } from "./Card";
 
 import { preTradePlayerBoxClass } from "./styleUtils";
 import styles from "../styles/Components.module.css"
-import { AppContext, handleAllCardsRevealedEvent } from "../AppContext";
+import { AppContext, handleAllCardsRevealedEvent, handleCardsTradedEvent } from "../AppContext";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { PlayerInfoHeader } from "./PlayerInfoHeader";
 import {
@@ -20,6 +20,7 @@ import {
     RevealAllCardsEvent,
     TradeCardsEvent
 } from "../game_logic/shared/ClientEvents";
+import { TradeDecisions } from "../game_logic/TradeDecisions";
 
 export const BetPhasePlayerHand: React.FC<{}> = () => {
 
@@ -38,24 +39,26 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
             ?.on(
                 ServerEventType.ALL_CARDS_REVEALED, eventHandlerWrapper(
                 zAllCardsRevealedEvent.parse, e => {
-                    handleAllCardsRevealedEvent(ctx.state, e);
+                    ctx.setState?.(s => handleAllCardsRevealedEvent(s, e));
                     setCardsExpanded(true);
                 }
             ))
             .on(
                 ServerEventType.CARDS_TRADED, eventHandlerWrapper(
                 zCardsTradedEvent.parse, e => {
-                    // handleAllCardsRevealedEvent(ctx.state, e);
+                    ctx.setState?.(s => handleCardsTradedEvent(s, e, tradeDecisions));
                     setTradesReceived(true);
                 }
             ));
-    }, [ctx.state.socket])
+        return () => {
+            const socket = ctx.state.socket;
+            if (!socket) return;
+            socket.removeAllListeners(ServerEventType.ALL_CARDS_REVEALED);
+            socket.removeAllListeners(ServerEventType.CARDS_TRADED);
+        }
+    }, [ctx.state.socket]);
 
-    const [tradeDecisions, setTradeDecisions] = useState<{
-        teammate?: UICardInfo,
-        leftOp?: UICardInfo,
-        rightOp?: UICardInfo,
-    }>({
+    const [tradeDecisions, setTradeDecisions] = useState<TradeDecisions>({
         teammate: undefined,
         leftOp: undefined,
         rightOp: undefined,
@@ -88,7 +91,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         }
         ctx.state.socket?.emit(ClientEventType.PLACE_BET, e);
         
-    }, [ctx.state.socket?.emit]);
+    }, [ctx.state.socket]);
 
     const onTichuBetPlaced = useCallback(
         () => onBetPlaced(PlayerBet.TICHU), [onBetPlaced]
@@ -101,8 +104,8 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         const e: RevealAllCardsEvent = {
             eventType: ClientEventType.REVEAL_ALL_CARDS
         };
-        ctx.state.socket?.emit(ClientEventType.REVEAL_ALL_CARDS);
-    }, [ctx.state.socket?.emit]);
+        ctx.state.socket?.emit(ClientEventType.REVEAL_ALL_CARDS, e);
+    }, [ctx.state.socket]);
 
     const onTradesFinalized = useCallback(() => {
         if (
@@ -118,15 +121,17 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                     rightCardKey: tradeDecisions.rightOp.key,
                 }
             };
-            ctx.state.socket?.emitWithAck(
+            ctx.state.socket?.emit(
                 ClientEventType.TRADE_CARDS, e, () => setTradesSent(true)
             );
+        } else {
+            alert('Trade decisions are incomplete.');
         }
     }, [
         tradeDecisions.teammate?.key,
         tradeDecisions.leftOp?.key,
         tradeDecisions.rightOp?.key,
-        ctx.state.socket?.emitWithAck,
+        ctx.state.socket,
     ])
 
     const onCardClicked = useCallback((key: string) => {
@@ -181,13 +186,14 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                     ].map((td, i) => (
                         <div key={i} className={styles.tradingCardSlot}>
                             <span>{}</span>
-                            {td !== undefined ?
+                            {
+                                td !== undefined ?
                                 <Card
                                     key={td.key} id={td.key} index={i}
                                     alt={td.imgAlt} cardImg={td.img} isSelected={true}
                                     onClick={tradesSent ? undefined : onCardClicked}
-                                /> :
-                                <span></span>
+                                    omitPosition
+                                /> : <span></span>
                             }
                         </div>
                     ))

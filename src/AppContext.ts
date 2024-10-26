@@ -3,6 +3,7 @@ import { createInitialGameState, GameState } from './state_types/GameState'
 import { Socket } from 'socket.io-client'
 import { AllCardsRevealedEvent, CardsTradedEvent, GameRoundStartedEvent, PlayerJoinedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
 import { PLAYER_KEYS, PlayerBet } from './game_logic/shared/shared';
+import { TradeDecisions } from './game_logic/TradeDecisions';
 
 export type AppContextState = {
     gameContext: GameState,
@@ -204,7 +205,7 @@ export function handleAllCardsRevealedEvent(
 }
 
 export function handleCardsTradedEvent(
-    ctx: AppContextState, e: CardsTradedEvent
+    ctx: AppContextState, e: CardsTradedEvent, td: TradeDecisions
 ): AppContextState {
     if (!ctx.gameContext.currentRoundState) {
         console.error(
@@ -221,7 +222,15 @@ export function handleCardsTradedEvent(
                 ...ctx.gameContext.currentRoundState,
                 thisPlayer: {
                     ...ctx.gameContext.currentRoundState.thisPlayer,
-                    // cardKeys: e.data.cards,
+                    cardKeys: [
+                        ...ctx.gameContext.currentRoundState.thisPlayer.cardKeys
+                            .filter(key =>
+                                !Object.values(td).some(c => c.key !== key)
+                            ),
+                        e.data.cardByLeft,
+                        e.data.cardByRight,
+                        e.data.cardByTeammate,
+                    ],
                 },
                 
             }

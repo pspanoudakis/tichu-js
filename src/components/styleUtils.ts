@@ -13,4 +13,4 @@ export const scoreboardMainEntryClass = `${styles.scoreboardEntry} ${styles.scor
 export const scoreboardNormalEntryClass = `${styles.scoreboardEntry} ${styles.scoreboardNormalEntry}`
 
 export const inGamePlayerBoxClass = `${styles.playerBox} ${styles.inGamePlayerBox}`
-export const preTradePlayerBoxClass = `${styles.playerBox} ${styles.preTradePlayerBox}`
+export const preTradePlayerBoxClass = `${styles.playerBox} ${styles.thisPlayer} ${styles.preTradePlayerBox}`

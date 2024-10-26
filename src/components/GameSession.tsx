@@ -21,6 +21,7 @@ import { ClientEventType } from "../game_logic/shared/ClientEvents";
 import { HiddenPlayerHand } from "./HiddenPlayerHand";
 import { ControlledPlayerHand } from "./ControlledPlayerHand";
 import { eventHandlerWrapper } from "../utils/eventUtils";
+import { BetPhasePlayerHand } from "./BetPhasePlayerHand";
 
 type GameSessionProps = {
     sessionId: string,
@@ -110,7 +111,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                         )
                     }}
                 />
-                <div className={styles.gameboardStyle}>
+                {/* <div className={styles.gameboardStyle}>
                     <HiddenPlayerHand
                         playerKey={appContextState.gameContext.teammate?.playerKey}
                         style={styles.teammate}
@@ -127,7 +128,28 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                         style={styles.rightOpponent}
                     />
                     <ControlledPlayerHand/>
-            </div>
+                </div> */}
+                <div className={styles.gameboardPreTradesStyle}>
+                    <div className={styles.preTradesCol}>
+                        <HiddenPlayerHand
+                            playerKey={appContextState.gameContext.leftOpponent?.playerKey}
+                            style={styles.preTradePlayerBox}
+                        />
+                    </div>
+                    <div className={styles.preTradesCol}>
+                        <HiddenPlayerHand
+                            playerKey={appContextState.gameContext.teammate?.playerKey}
+                            style={styles.preTradePlayerBox}
+                        />
+                        <BetPhasePlayerHand/>
+                    </div>
+                    <div className={styles.preTradesCol}>
+                        <HiddenPlayerHand
+                            playerKey={appContextState.gameContext.rightOpponent?.playerKey}
+                            style={styles.preTradePlayerBox}
+                        />
+                    </div>
+                </div>
             </div>
         }</AppContext.Provider>
     );
