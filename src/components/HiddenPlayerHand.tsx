@@ -7,6 +7,7 @@ import { BetIndicator } from './BetIndicator';
 import { PlayerKey } from '../game_logic/shared/shared';
 import { AppContext } from '../AppContext';
 import { cardImages } from '../CardResources';
+import { PlayerInfoHeader } from './PlayerInfoHeader';
 
 export const HiddenPlayerHand: React.FC<{
     playerKey?: PlayerKey,
@@ -40,12 +41,11 @@ export const HiddenPlayerHand: React.FC<{
     return (
         <div className={props.style}>
             <div className={inGamePlayerBoxClass}>
-                <div className={styles.playerInfo}>
-                    <span className={styles.playerIDSpan}>
-                        {nickname} - Cards: {numCards}
-                    </span>
-                    <BetIndicator bet={currentBet}/>
-                </div>
+                <PlayerInfoHeader
+                    nickname={nickname ?? props.playerKey}
+                    bet={currentBet}
+                    numCards={numCards}
+                />
                 <div className={styles.playerCardList}>{
                     Array.from({ length: numCards }).map((_, i) => {
                         return (

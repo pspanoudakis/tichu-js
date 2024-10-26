@@ -20,35 +20,12 @@ import {
 import { ClientEventType } from "../game_logic/shared/ClientEvents";
 import { HiddenPlayerHand } from "./HiddenPlayerHand";
 import { ControlledPlayerHand } from "./ControlledPlayerHand";
+import { eventHandlerWrapper } from "../utils/eventUtils";
 
 type GameSessionProps = {
     sessionId: string,
     playerNickname: string,
 };
-
-function logError(msg?: any, ...optionals: any[]) {
-    console.error(msg, ...optionals);
-    alert(`${msg}. See console.`);
-}
-
-function eventHandlerWrapper<EventType>(
-    validator: (e: any) => EventType,
-    eventHandler: (e: EventType) => void,
-) {
-    return (event: any) => {
-        let e;
-        try {
-            e = validator(event);
-        } catch (error) {
-            return logError('Validation Error', error);
-        }
-        try {
-            eventHandler(e);
-        } catch (error) {
-            return logError('Error in event handler', error);
-        }
-    };
-}
 
 export const GameSession: React.FC<GameSessionProps> = (props) => {
 

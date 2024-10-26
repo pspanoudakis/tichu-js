@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 import { createInitialGameState, GameState } from './state_types/GameState'
 import { Socket } from 'socket.io-client'
-import { GameRoundStartedEvent, PlayerJoinedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
+import { AllCardsRevealedEvent, CardsTradedEvent, GameRoundStartedEvent, PlayerJoinedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
 import { PLAYER_KEYS, PlayerBet } from './game_logic/shared/shared';
 
 export type AppContextState = {
@@ -175,4 +175,56 @@ export function handleGameRoundStartedEvent(
             }
         }
     }
+}
+
+export function handleAllCardsRevealedEvent(
+    ctx: AppContextState, e: AllCardsRevealedEvent
+): AppContextState {
+    if (!ctx.gameContext.currentRoundState) {
+        console.error(
+            `Round state not initialized: `,
+            ctx.gameContext.thisPlayer
+        );
+        throw new Error();
+    }
+    return {
+        ...ctx,
+        gameContext: {
+            ...ctx.gameContext,
+            currentRoundState: {
+                ...ctx.gameContext.currentRoundState,
+                thisPlayer: {
+                    ...ctx.gameContext.currentRoundState.thisPlayer,
+                    cardKeys: e.data.cards,
+                },
+                
+            }
+        }
+    } 
+}
+
+export function handleCardsTradedEvent(
+    ctx: AppContextState, e: CardsTradedEvent
+): AppContextState {
+    if (!ctx.gameContext.currentRoundState) {
+        console.error(
+            `Round state not initialized: `,
+            ctx.gameContext.thisPlayer
+        );
+        throw new Error();
+    }
+    return {
+        ...ctx,
+        gameContext: {
+            ...ctx.gameContext,
+            currentRoundState: {
+                ...ctx.gameContext.currentRoundState,
+                thisPlayer: {
+                    ...ctx.gameContext.currentRoundState.thisPlayer,
+                    // cardKeys: e.data.cards,
+                },
+                
+            }
+        }
+    } 
 }
