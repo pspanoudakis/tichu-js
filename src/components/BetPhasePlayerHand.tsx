@@ -3,7 +3,7 @@ import { Card } from "./Card";
 
 import { preTradePlayerBoxClass } from "./styleUtils";
 import styles from "../styles/Components.module.css"
-import { AppContext, handleAllCardsRevealedEvent, handleCardsTradedEvent } from "../AppContext";
+import { addIncomingTradedCards, AppContext, handleAllCardsRevealedEvent, removeOutcomingTradedCards } from "../AppContext";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { PlayerInfoHeader } from "./PlayerInfoHeader";
 import {
@@ -33,6 +33,11 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
     const [cardsExpanded, setCardsExpanded] = useState(false);
     const [tradesSent, setTradesSent] = useState(false);
     const [tradesReceived, setTradesReceived] = useState(false);
+    const [tradeDecisions, setTradeDecisions] = useState<TradeDecisions>({
+        teammate: undefined,
+        leftOp: undefined,
+        rightOp: undefined,
+    });
 
     useEffect(() => {
         ctx.state.socket
@@ -46,8 +51,13 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
             .on(
                 ServerEventType.CARDS_TRADED, eventHandlerWrapper(
                 zCardsTradedEvent.parse, e => {
-                    ctx.setState?.(s => handleCardsTradedEvent(s, e, tradeDecisions));
+                    ctx.setState?.(s => addIncomingTradedCards(s, e));
                     setTradesReceived(true);
+                    setTradeDecisions({
+                        teammate: new UICardInfo(e.data.cardByTeammate),
+                        leftOp: new UICardInfo(e.data.cardByLeft),
+                        rightOp: new UICardInfo(e.data.cardByRight),
+                    });
                 }
             ));
         return () => {
@@ -56,13 +66,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
             socket.removeAllListeners(ServerEventType.ALL_CARDS_REVEALED);
             socket.removeAllListeners(ServerEventType.CARDS_TRADED);
         }
-    }, [ctx.state.socket]);
-
-    const [tradeDecisions, setTradeDecisions] = useState<TradeDecisions>({
-        teammate: undefined,
-        leftOp: undefined,
-        rightOp: undefined,
-    });
+    }, [ctx.state.socket,]);
 
     const allCards = useMemo(
         () => playerCardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards),
@@ -81,6 +85,12 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         tradeDecisions.rightOp,
         allCards,
     ]);
+
+    useEffect(() => {
+        if (tradesReceived) {
+            ctx.setState?.(s => removeOutcomingTradedCards(s, tradeDecisions));
+        }
+    }, [tradesReceived, tradeDecisions]);
 
     const onBetPlaced = useCallback((bet: PlayerBet.TICHU | PlayerBet.GRAND_TICHU) => {
         const e: PlaceBetEvent = {
@@ -161,111 +171,110 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
     );
 
     return (
-        cardsExpanded ? (
-            <div className={preTradePlayerBoxClass}>
-                <PlayerInfoHeader
-                    nickname={ctx.state.gameContext.thisPlayer?.nickname}
-                    numCards={allCards.length}
-                    bet={playerBet}
-                />
-                <div className={styles.preTradeCardList}>{
-                    nonSelectedCards.map((card, i) => (
-                        <Card
-                            key={card.key} id={card.key} index={i}
-                            cardImg={card.img} alt={card.imgAlt}
-                            onClick={onCardClicked}
-                            isSelected={true}
-                        />
-                    ))
-                }</div>
-                <div className={styles.tradingCardSlots}>{
-                    [
-                        tradeDecisions.teammate,
-                        tradeDecisions.leftOp,
-                        tradeDecisions.rightOp
-                    ].map((td, i) => (
-                        <div key={i} className={styles.tradingCardSlot}>
-                            <span>{}</span>
-                            {
-                                td !== undefined ?
+        <div className={preTradePlayerBoxClass}>
+            <PlayerInfoHeader
+                nickname={ctx.state.gameContext.thisPlayer?.nickname}
+                numCards={allCards.length}
+                bet={playerBet}
+            />
+            {
+                cardsExpanded ? (
+                    <>
+                        <div className={styles.preTradeCardList}>{
+                            nonSelectedCards.map((card, i) => (
                                 <Card
-                                    key={td.key} id={td.key} index={i}
-                                    alt={td.imgAlt} cardImg={td.img} isSelected={true}
-                                    onClick={tradesSent ? undefined : onCardClicked}
-                                    omitPosition
-                                /> : <span></span>
+                                    key={card.key} id={card.key} index={i}
+                                    cardImg={card.img} alt={card.imgAlt}
+                                    onClick={onCardClicked}
+                                    isSelected={true}
+                                />
+                            ))
+                        }</div>
+                        <div className={styles.tradingCardSlots}>{
+                            [
+                                tradeDecisions.leftOp,
+                                tradeDecisions.teammate,
+                                tradeDecisions.rightOp
+                            ].map((td, i) => (
+                                <div key={i} className={styles.tradingCardSlot}>
+                                    <span>{}</span>
+                                    {
+                                        td !== undefined ?
+                                        <Card
+                                            key={td.key} id={td.key} index={i}
+                                            alt={td.imgAlt} cardImg={td.img} isSelected={true}
+                                            onClick={tradesSent ? undefined : onCardClicked}
+                                            omitPosition
+                                        /> : <span></span>
+                                    }
+                                </div>
+                            ))
+                        }</div>
+                        <div className={styles.tradePhaseButtonContainer}>
+                            {
+                                tradesSent ? (
+                                    tradesReceived ?
+                                    <button className={styles.inactiveButton}>
+                                        Received
+                                    </button>
+                                    :
+                                    <button className={styles.inactiveButton}>
+                                        Cards Sent
+                                    </button>
+                                ) : (
+                                    <button
+                                        className={styles.tradePhaseButton}
+                                        onClick={onTradesFinalized}
+                                    >
+                                        Send
+                                    </button>
+                                )
+                            }
+                            {
+                                (playerBet === PlayerBet.NONE || !playerBet) && (
+                                    <button
+                                        className={styles.tradePhaseButton}
+                                        onClick={onTichuBetPlaced}
+                                    >
+                                        Tichu
+                                    </button>
+                                )
                             }
                         </div>
-                    ))
-                }</div>
-                <div className={styles.tradePhaseButtonContainer}>
-                    {
-                        tradesSent ? (
-                            tradesReceived ?
-                            <button className={styles.inactiveButton}>
-                                Received
-                            </button>
-                            :
-                            <button className={styles.inactiveButton}>
-                                Cards Sent
-                            </button>
-                        ) : (
+                    </>
+                ) : (
+                    <>
+                        <div className={styles.preTradeCardList}>{
+                            allCards.map((card, i) => (
+                                <Card
+                                    key={card.key} id={card.key} index={i}
+                                    cardImg={card.img} alt={card.imgAlt}
+                                    isSelected={true}
+                                />
+                            ))
+                        }</div>
+                        <div className={styles.tradingCardSlots}/>
+                        <div className={styles.tradePhaseButtonContainer}>
                             <button
                                 className={styles.tradePhaseButton}
-                                onClick={onTradesFinalized}
+                                onClick={onCardsExpanded}
                             >
-                                Send
+                                Expand Cards
                             </button>
-                        )
-                    }
-                    {
-                        (playerBet === PlayerBet.NONE || !playerBet) && (
-                            <button
-                                className={styles.tradePhaseButton}
-                                onClick={onTichuBetPlaced}
-                            >
-                                Tichu
-                            </button>
-                        )
-                    }
-                </div>
-            </div>
-        ) : (
-            <div className={preTradePlayerBoxClass}>
-                <PlayerInfoHeader
-                    nickname={ctx.state.gameContext.thisPlayer?.nickname}
-                    numCards={allCards.length}
-                    bet={playerBet}
-                />
-                <div className={styles.preTradeCardList}>{
-                    allCards.map((card, i) => (
-                        <Card
-                            key={card.key} id={card.key} index={i}
-                            cardImg={card.img} alt={card.imgAlt}
-                            isSelected={true}
-                        />
-                    ))
-                }</div>
-                <div className={styles.tradingCardSlots}/>
-                <div className={styles.tradePhaseButtonContainer}>
-                    <button
-                        className={styles.tradePhaseButton}
-                        onClick={onCardsExpanded}
-                    >
-                        Expand Cards
-                    </button>
-                    {
-                        (playerBet === PlayerBet.NONE || !playerBet) && (
-                            <button
-                                className={styles.tradePhaseButton}
-                                onClick={onGrandTichuBetPlaced}
-                            >
-                                Grand Tichu
-                            </button>
-                        )
-                    }
-                </div>
-            </div>            
-        )
+                            {
+                                (playerBet === PlayerBet.NONE || !playerBet) && (
+                                    <button
+                                        className={styles.tradePhaseButton}
+                                        onClick={onGrandTichuBetPlaced}
+                                    >
+                                        Grand Tichu
+                                    </button>
+                                )
+                            }
+                        </div>
+                    </>
+                )
+            }
+        </div>
     );
 }

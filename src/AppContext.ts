@@ -204,8 +204,39 @@ export function handleAllCardsRevealedEvent(
     } 
 }
 
-export function handleCardsTradedEvent(
-    ctx: AppContextState, e: CardsTradedEvent, td: TradeDecisions
+export function addIncomingTradedCards(
+    ctx: AppContextState, e: CardsTradedEvent
+): AppContextState {
+    if (!ctx.gameContext.currentRoundState) {
+        console.error(
+            `Round state not initialized: `,
+            ctx.gameContext.thisPlayer
+        );
+        throw new Error();
+    }
+    return {
+        ...ctx,
+        gameContext: {
+            ...ctx.gameContext,
+            currentRoundState: {
+                ...ctx.gameContext.currentRoundState,
+                thisPlayer: {
+                    ...ctx.gameContext.currentRoundState.thisPlayer,
+                    cardKeys: [
+                        ...ctx.gameContext.currentRoundState.thisPlayer.cardKeys,
+                        e.data.cardByLeft,
+                        e.data.cardByRight,
+                        e.data.cardByTeammate,
+                    ],
+                },
+                
+            }
+        }
+    } 
+}
+
+export function removeOutcomingTradedCards(
+    ctx: AppContextState, td: TradeDecisions
 ): AppContextState {
     if (!ctx.gameContext.currentRoundState) {
         console.error(
@@ -225,11 +256,8 @@ export function handleCardsTradedEvent(
                     cardKeys: [
                         ...ctx.gameContext.currentRoundState.thisPlayer.cardKeys
                             .filter(key =>
-                                !Object.values(td).some(c => c.key !== key)
-                            ),
-                        e.data.cardByLeft,
-                        e.data.cardByRight,
-                        e.data.cardByTeammate,
+                                !Object.values(td).some(c => c.key === key)
+                            )
                     ],
                 },
                 
