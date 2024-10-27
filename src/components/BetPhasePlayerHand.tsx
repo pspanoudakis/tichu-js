@@ -46,14 +46,14 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
             ?.on(
                 ServerEventType.ALL_CARDS_REVEALED, eventHandlerWrapper(
                 zAllCardsRevealedEvent.parse, e => {
-                    ctx.setState?.(s => handleAllCardsRevealedEvent(s, e));
+                    handleAllCardsRevealedEvent(ctx, e);
                     setCardsExpanded(true);
                 }
             ))
             .on(
                 ServerEventType.CARDS_TRADED, eventHandlerWrapper(
                 zCardsTradedEvent.parse, e => {
-                    ctx.setState?.(s => addIncomingTradedCards(s, e));
+                    addIncomingTradedCards(ctx, e);
                     setIncomingTradesSent(true);
                     setTradeDecisions({
                         teammate: new UICardInfo(e.data.cardByTeammate),
@@ -90,7 +90,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
 
     useEffect(() => {
         if (tradesReceived) {
-            ctx.setState?.(s => removeOutcomingTradedCards(s, tradeDecisions));
+            removeOutcomingTradedCards(ctx, tradeDecisions);
         }
     }, [tradesReceived, tradeDecisions]);
 

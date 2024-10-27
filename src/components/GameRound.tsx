@@ -2,29 +2,41 @@ import React, { useState, useEffect, useContext } from "react";
 import { HiddenPlayerHand } from "./HiddenPlayerHand";
 import { BetPhasePlayerHand } from "./BetPhasePlayerHand";
 import { ControlledPlayerHand } from "./ControlledPlayerHand";
-import { AppContext, handleTableRoundStartedEvent } from "../AppContext";
+import { AppContext, handleGameRoundStartedEvent, handleTableRoundStartedEvent } from "../AppContext";
 import styles from "../styles/Components.module.css";
-import { ServerEventType, zTableRoundStartedEvent } from "../game_logic/shared/ServerEvents";
+import { ServerEventType, zGameRoundStartedEvent, zTableRoundStartedEvent } from "../game_logic/shared/ServerEvents";
 import { eventHandlerWrapper } from "../utils/eventUtils";
 
-type GameRoundPhase = 'WAIT4JOIN' | 'TRADES' | 'MAIN' | 'OVER';
+type GameRoundPhase = 'WAIT4START' | 'TRADES' | 'MAIN' | 'OVER';
 
 export const GameRound: React.FC<{
     initialState?: GameRoundPhase
 }> = (props) => {
 
     const ctx = useContext(AppContext);
-    const [roundPhase, setRoundPhase] = useState(props.initialState ?? 'TRADES');
+    const [roundPhase, setRoundPhase] = useState(props.initialState ?? 'WAIT4START');
 
     useEffect(() => {
-        ctx.state.socket?.on(
-            ServerEventType.TABLE_ROUND_STARTED, eventHandlerWrapper(
-                zTableRoundStartedEvent.parse, e => {
-                    setRoundPhase('MAIN');
-                    ctx.setState?.(handleTableRoundStartedEvent(ctx, e));
+        ctx.state.socket
+            ?.on(ServerEventType.GAME_ROUND_STARTED, eventHandlerWrapper(
+                zGameRoundStartedEvent.parse, e => {
+                    handleGameRoundStartedEvent(ctx, e);
+                    setRoundPhase('TRADES')
                 }
-            )
-        );
+            ))
+            .on(
+                ServerEventType.TABLE_ROUND_STARTED, eventHandlerWrapper(
+                    zTableRoundStartedEvent.parse, e => {
+                        handleTableRoundStartedEvent(ctx, e);
+                        setRoundPhase('MAIN');
+                    }
+                )
+            );
+        
+        return () => {
+            ctx.state.socket?.removeAllListeners(ServerEventType.GAME_ROUND_STARTED);
+            ctx.state.socket?.removeAllListeners(ServerEventType.TABLE_ROUND_STARTED);
+        }
     }, [ctx.state.socket]);
 
     switch (roundPhase) {
@@ -52,7 +64,7 @@ export const GameRound: React.FC<{
                     </div>
                 </div>
             );
-        case 'WAIT4JOIN':
+        case 'WAIT4START':
         case 'OVER':
         case 'MAIN':
             return (

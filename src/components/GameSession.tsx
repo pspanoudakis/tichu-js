@@ -44,7 +44,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
             console.log(`SocketIO connection established. Socket ID: ${socket.id}`);
         }).on(ServerEventType.WAITING_4_JOIN, eventHandlerWrapper(
             zWaitingForJoinEvent.parse, e => {
-                setAppContextState(ctx => handleWaitingForJoinEvent(ctx, e));
+                setAppContextState(s => handleWaitingForJoinEvent(s, e));
                 socket.emit(
                     ClientEventType.JOIN_GAME, {
                         data: {
@@ -56,16 +56,12 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
             }
         )).on(ServerEventType.PLAYER_JOINED, eventHandlerWrapper(
             zPlayerJoinedEvent.parse, e => {
-                setAppContextState(ctx => handlePlayerJoinedEvent(ctx, e));
-            }
-        )).on(ServerEventType.GAME_ROUND_STARTED, eventHandlerWrapper(
-            zGameRoundStartedEvent.parse, e => {
-                setAppContextState(ctx => handleGameRoundStartedEvent(ctx, e))
+                setAppContextState(s => handlePlayerJoinedEvent(s, e));
             }
         ));
 
-        setAppContextState(ctx => ({
-            ...ctx,
+        setAppContextState(s => ({
+            ...s,
             socket: socket,
         }));
 
