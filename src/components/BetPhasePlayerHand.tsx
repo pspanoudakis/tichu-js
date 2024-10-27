@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Card } from "./Card";
 
 import { preTradePlayerBoxClass } from "./styleUtils";
-import styles from "../styles/Components.module.css"
+import styles from "../styles/Components.module.css";
 import { addIncomingTradedCards, AppContext, handleAllCardsRevealedEvent, removeOutcomingTradedCards } from "../AppContext";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { PlayerInfoHeader } from "./PlayerInfoHeader";

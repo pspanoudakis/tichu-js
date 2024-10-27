@@ -18,10 +18,8 @@ import {
     handleWaitingForJoinEvent
 } from "../AppContext";
 import { ClientEventType } from "../game_logic/shared/ClientEvents";
-import { HiddenPlayerHand } from "./HiddenPlayerHand";
-import { ControlledPlayerHand } from "./ControlledPlayerHand";
 import { eventHandlerWrapper } from "../utils/eventUtils";
-import { BetPhasePlayerHand } from "./BetPhasePlayerHand";
+import { GameRound } from "./GameRound";
 
 type GameSessionProps = {
     sessionId: string,
@@ -111,45 +109,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                         )
                     }}
                 />
-                {/* <div className={styles.gameboardStyle}>
-                    <HiddenPlayerHand
-                        playerKey={appContextState.gameContext.teammate?.playerKey}
-                        style={styles.teammate}
-                    />
-                    <HiddenPlayerHand
-                        playerKey={appContextState.gameContext.leftOpponent?.playerKey}
-                        style={styles.leftOpponent}
-                    />
-                    <div className={styles.tableStyle}>
-                        
-                    </div>
-                    <HiddenPlayerHand
-                        playerKey={appContextState.gameContext.rightOpponent?.playerKey}
-                        style={styles.rightOpponent}
-                    />
-                    <ControlledPlayerHand/>
-                </div> */}
-                <div className={styles.gameboardPreTradesStyle}>
-                    <div className={styles.preTradesCol}>
-                        <HiddenPlayerHand
-                            playerKey={appContextState.gameContext.leftOpponent?.playerKey}
-                            style={styles.preTradePlayerBox}
-                        />
-                    </div>
-                    <div className={styles.preTradesCol}>
-                        <HiddenPlayerHand
-                            playerKey={appContextState.gameContext.teammate?.playerKey}
-                            style={styles.preTradePlayerBox}
-                        />
-                        <BetPhasePlayerHand/>
-                    </div>
-                    <div className={styles.preTradesCol}>
-                        <HiddenPlayerHand
-                            playerKey={appContextState.gameContext.rightOpponent?.playerKey}
-                            style={styles.preTradePlayerBox}
-                        />
-                    </div>
-                </div>
+                <GameRound/>
             </div>
         }</AppContext.Provider>
     );

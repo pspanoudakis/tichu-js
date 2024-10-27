@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 import { createInitialGameState, GameState } from './state_types/GameState'
 import { Socket } from 'socket.io-client'
-import { AllCardsRevealedEvent, CardsTradedEvent, GameRoundStartedEvent, PlayerJoinedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
+import { AllCardsRevealedEvent, CardsTradedEvent, GameRoundStartedEvent, PlayerJoinedEvent, TableRoundStartedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
 import { PLAYER_KEYS, PlayerBet } from './game_logic/shared/shared';
 import { TradeDecisions } from './game_logic/TradeDecisions';
 
@@ -261,6 +261,28 @@ export function removeOutcomingTradedCards(
                     ],
                 },
                 
+            }
+        }
+    } 
+}
+
+export function handleTableRoundStartedEvent(
+    ctx: AppContextState, e: TableRoundStartedEvent
+): AppContextState {
+    if (!ctx.gameContext.currentRoundState) {
+        console.error(
+            `Round state not initialized: `,
+            ctx.gameContext.thisPlayer
+        );
+        throw new Error();
+    }
+    return {
+        ...ctx,
+        gameContext: {
+            ...ctx.gameContext,
+            currentRoundState: {
+                ...ctx.gameContext.currentRoundState,
+                playerInTurnKey: e.data.currentPlayer,
             }
         }
     } 
