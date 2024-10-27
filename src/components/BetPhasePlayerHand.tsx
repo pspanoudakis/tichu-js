@@ -17,6 +17,7 @@ import { PlayerBet } from "../game_logic/shared/shared";
 import {
     ClientEventType,
     PlaceBetEvent,
+    ReceiveTradeEvent,
     RevealAllCardsEvent,
     TradeCardsEvent
 } from "../game_logic/shared/ClientEvents";
@@ -32,6 +33,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
 
     const [cardsExpanded, setCardsExpanded] = useState(false);
     const [tradesSent, setTradesSent] = useState(false);
+    const [incomingTradesSent, setIncomingTradesSent] = useState(false);
     const [tradesReceived, setTradesReceived] = useState(false);
     const [tradeDecisions, setTradeDecisions] = useState<TradeDecisions>({
         teammate: undefined,
@@ -52,7 +54,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                 ServerEventType.CARDS_TRADED, eventHandlerWrapper(
                 zCardsTradedEvent.parse, e => {
                     ctx.setState?.(s => addIncomingTradedCards(s, e));
-                    setTradesReceived(true);
+                    setIncomingTradesSent(true);
                     setTradeDecisions({
                         teammate: new UICardInfo(e.data.cardByTeammate),
                         leftOp: new UICardInfo(e.data.cardByLeft),
@@ -142,7 +144,16 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         tradeDecisions.leftOp?.key,
         tradeDecisions.rightOp?.key,
         ctx.state.socket,
-    ])
+    ]);
+
+    const onTradesReceived = useCallback(() => {
+        const e: ReceiveTradeEvent = {
+            eventType: ClientEventType.RECEIVE_TRADE,
+        };
+        ctx.state.socket?.emit(
+            ClientEventType.RECEIVE_TRADE, e, () => setTradesReceived(true)
+        );
+    }, [ctx.state.socket]);
 
     const onCardClicked = useCallback((key: string) => {
         const card = allCards.find(c => c.key === key);
@@ -213,14 +224,23 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                         <div className={styles.tradePhaseButtonContainer}>
                             {
                                 tradesSent ? (
-                                    tradesReceived ?
-                                    <button className={styles.inactiveButton}>
-                                        Received
-                                    </button>
-                                    :
-                                    <button className={styles.inactiveButton}>
-                                        Cards Sent
-                                    </button>
+                                    incomingTradesSent ? (
+                                        tradesReceived ?
+                                            <button
+                                                className={styles.tradePhaseButton}
+                                                onClick={onTradesReceived}    
+                                            >
+                                                Receive Cards
+                                            </button>
+                                            :
+                                            <button className={styles.inactiveButton}>
+                                                Cards Received
+                                            </button>
+                                    ) : (
+                                        <button className={styles.inactiveButton}>
+                                            Cards Sent
+                                        </button>
+                                    )
                                 ) : (
                                     <button
                                         className={styles.tradePhaseButton}
