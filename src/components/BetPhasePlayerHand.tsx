@@ -16,12 +16,12 @@ import { CardInfo } from "../game_logic/shared/CardInfo";
 import { PlayerBet } from "../game_logic/shared/shared";
 import {
     ClientEventType,
-    PlaceBetEvent,
     ReceiveTradeEvent,
     RevealAllCardsEvent,
     TradeCardsEvent
 } from "../game_logic/shared/ClientEvents";
 import { TradeDecisions } from "../game_logic/TradeDecisions";
+import { PlaceBetButton } from "./PlaceBetButton";
 
 export const BetPhasePlayerHand: React.FC<{}> = () => {
 
@@ -84,24 +84,6 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
             removeOutcomingTradedCards(tradeDecisions, setCtxState);
         }
     }, [incomingTradesSent, tradeDecisions, setCtxState]);
-
-    const onBetPlaced = useCallback((bet: PlayerBet.TICHU | PlayerBet.GRAND_TICHU) => {
-        const e: PlaceBetEvent = {
-            eventType: ClientEventType.PLACE_BET,
-            data: {
-                betPoints: bet,
-            } ,
-        }
-        ctxState.socket?.emit(ClientEventType.PLACE_BET, e);
-        
-    }, [ctxState.socket]);
-
-    const onTichuBetPlaced = useCallback(
-        () => onBetPlaced(PlayerBet.TICHU), [onBetPlaced]
-    );
-    const onGrandTichuBetPlaced = useCallback(
-        () => onBetPlaced(PlayerBet.GRAND_TICHU), [onBetPlaced]
-    );
 
     const onCardsExpanded = useCallback(() => {
         const e: RevealAllCardsEvent = {
@@ -242,12 +224,10 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                             }
                             {
                                 (playerBet === PlayerBet.NONE || !playerBet) && (
-                                    <button
+                                    <PlaceBetButton
+                                        bet={PlayerBet.TICHU}
                                         className={styles.tradePhaseButton}
-                                        onClick={onTichuBetPlaced}
-                                    >
-                                        Tichu
-                                    </button>
+                                    />
                                 )
                             }
                         </div>
@@ -273,12 +253,10 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                             </button>
                             {
                                 (playerBet === PlayerBet.NONE || !playerBet) && (
-                                    <button
+                                    <PlaceBetButton
+                                        bet={PlayerBet.GRAND_TICHU}
                                         className={styles.tradePhaseButton}
-                                        onClick={onGrandTichuBetPlaced}
-                                    >
-                                        Grand Tichu
-                                    </button>
+                                    />
                                 )
                             }
                         </div>
