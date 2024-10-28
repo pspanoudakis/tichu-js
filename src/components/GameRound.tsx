@@ -5,7 +5,7 @@ import { ControlledPlayerHand } from "./ControlledPlayerHand";
 import { AppContext, handleGameRoundStartedEvent, handleTableRoundStartedEvent } from "../AppContext";
 import styles from "../styles/Components.module.css";
 import { ServerEventType, zGameRoundStartedEvent, zTableRoundStartedEvent } from "../game_logic/shared/ServerEvents";
-import { eventHandlerWrapper } from "../utils/eventUtils";
+import { eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
 
 type GameRoundPhase = 'WAIT4START' | 'TRADES' | 'MAIN' | 'OVER';
 
@@ -13,31 +13,23 @@ export const GameRound: React.FC<{
     initialState?: GameRoundPhase
 }> = (props) => {
 
-    const ctx = useContext(AppContext);
+    const {state: ctxState, setState: setCtxState} = useContext(AppContext);
     const [roundPhase, setRoundPhase] = useState(props.initialState ?? 'WAIT4START');
-
-    useEffect(() => {
-        ctx.state.socket
-            ?.on(ServerEventType.GAME_ROUND_STARTED, eventHandlerWrapper(
-                zGameRoundStartedEvent.parse, e => {
-                    handleGameRoundStartedEvent(ctx, e);
-                    setRoundPhase('TRADES')
-                }
-            ))
-            .on(
-                ServerEventType.TABLE_ROUND_STARTED, eventHandlerWrapper(
-                    zTableRoundStartedEvent.parse, e => {
-                        handleTableRoundStartedEvent(ctx, e);
-                        setRoundPhase('MAIN');
-                    }
-                )
-            );
-        
-        return () => {
-            ctx.state.socket?.removeAllListeners(ServerEventType.GAME_ROUND_STARTED);
-            ctx.state.socket?.removeAllListeners(ServerEventType.TABLE_ROUND_STARTED);
-        }
-    }, [ctx.state.socket]);
+    
+    useEffect(registerEventListenersHelper({
+        [ServerEventType.GAME_ROUND_STARTED]: eventHandlerWrapper(
+            zGameRoundStartedEvent.parse, e => {
+                handleGameRoundStartedEvent(e, setCtxState);
+                setRoundPhase('TRADES');
+            }
+        ),
+        [ServerEventType.TABLE_ROUND_STARTED]: eventHandlerWrapper(
+            zTableRoundStartedEvent.parse, e => {
+                handleTableRoundStartedEvent(e, setCtxState);
+                setRoundPhase('MAIN');
+            }
+        ),
+    }, ctxState.socket), [ctxState.socket, setCtxState]);
 
     switch (roundPhase) {
         case 'TRADES':
@@ -45,20 +37,20 @@ export const GameRound: React.FC<{
                 <div className={styles.gameboardPreTradesStyle}>
                     <div className={styles.preTradesCol}>
                         <HiddenPlayerHand
-                            playerKey={ctx.state.gameContext.leftOpponent?.playerKey}
+                            playerKey={ctxState.gameContext.leftOpponent?.playerKey}
                             style={styles.preTradePlayerBox}
                         />
                     </div>
                     <div className={styles.preTradesCol}>
                         <HiddenPlayerHand
-                            playerKey={ctx.state.gameContext.teammate?.playerKey}
+                            playerKey={ctxState.gameContext.teammate?.playerKey}
                             style={styles.preTradePlayerBox}
                         />
                         <BetPhasePlayerHand/>
                     </div>
                     <div className={styles.preTradesCol}>
                         <HiddenPlayerHand
-                            playerKey={ctx.state.gameContext.rightOpponent?.playerKey}
+                            playerKey={ctxState.gameContext.rightOpponent?.playerKey}
                             style={styles.preTradePlayerBox}
                         />
                     </div>
@@ -70,18 +62,18 @@ export const GameRound: React.FC<{
             return (
                 <div className={styles.gameboardStyle}>
                     <HiddenPlayerHand
-                        playerKey={ctx.state.gameContext.teammate?.playerKey}
+                        playerKey={ctxState.gameContext.teammate?.playerKey}
                         style={styles.teammate}
                     />
                     <HiddenPlayerHand
-                        playerKey={ctx.state.gameContext.leftOpponent?.playerKey}
+                        playerKey={ctxState.gameContext.leftOpponent?.playerKey}
                         style={styles.leftOpponent}
                     />
                     <div className={styles.tableStyle}>
                         
                     </div>
                     <HiddenPlayerHand
-                        playerKey={ctx.state.gameContext.rightOpponent?.playerKey}
+                        playerKey={ctxState.gameContext.rightOpponent?.playerKey}
                         style={styles.rightOpponent}
                     />
                     <ControlledPlayerHand/>

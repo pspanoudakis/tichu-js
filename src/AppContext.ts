@@ -10,9 +10,12 @@ export type AppContextState = {
     socket?: Socket,
 };
 
+export type AppContextStateSetter =
+    (f: ((prevState: AppContextState) => AppContextState)) => void;
+
 export type AppContextType = {
     state: AppContextState,
-    setState?: (f: ((prevState: AppContextState) => AppContextState)) => void
+    setState?: AppContextStateSetter,
 };
 
 export const appContextInitState: AppContextState = {
@@ -129,9 +132,10 @@ export function handlePlayerJoinedEvent(
 }
 
 export function handleGameRoundStartedEvent(
-    ctx: AppContextType, e: GameRoundStartedEvent
+    e: GameRoundStartedEvent,
+    setCtxState?: AppContextStateSetter,
 ) {
-    ctx.setState?.(s => {
+    setCtxState?.(s => {
         if (
             !s.gameContext.thisPlayer ||
             !s.gameContext.leftOpponent ||
@@ -181,9 +185,10 @@ export function handleGameRoundStartedEvent(
 }
 
 export function handleAllCardsRevealedEvent(
-    ctx: AppContextType, e: AllCardsRevealedEvent
+    e: AllCardsRevealedEvent,
+    setCtxState?: AppContextStateSetter,
 ) {
-    ctx.setState?.(s => {
+    setCtxState?.(s => {
         if (!s.gameContext.currentRoundState) {
             console.error(
                 `Round state not initialized: `,
@@ -209,9 +214,10 @@ export function handleAllCardsRevealedEvent(
 }
 
 export function addIncomingTradedCards(
-    ctx: AppContextType, e: CardsTradedEvent
+    e: CardsTradedEvent,
+    setCtxState?: AppContextStateSetter,
 ) {
-    ctx.setState?.(s => {
+    setCtxState?.(s => {
         if (!s.gameContext.currentRoundState) {
             console.error(
                 `Round state not initialized: `,
@@ -242,9 +248,10 @@ export function addIncomingTradedCards(
 }
 
 export function removeOutcomingTradedCards(
-    ctx: AppContextType, td: TradeDecisions
+    td: TradeDecisions,
+    setCtxState?: AppContextStateSetter,
 ) {
-    ctx.setState?.(s => {
+    setCtxState?.(s => {
         if (!s.gameContext.currentRoundState) {
             console.error(
                 `Round state not initialized: `,
@@ -275,9 +282,10 @@ export function removeOutcomingTradedCards(
 }
 
 export function handleTableRoundStartedEvent(
-    ctx: AppContextType, e: TableRoundStartedEvent
+    e: TableRoundStartedEvent,
+    setCtxState?: AppContextStateSetter,
 ) {
-    ctx.setState?.(s => {
+    setCtxState?.(s => {
         if (!s.gameContext.currentRoundState) {
             console.error(
                 `Round state not initialized: `,

@@ -11,7 +11,7 @@ import {
     zAllCardsRevealedEvent,
     zCardsTradedEvent
 } from "../game_logic/shared/ServerEvents";
-import { eventHandlerWrapper } from "../utils/eventUtils";
+import { eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
 import { CardInfo } from "../game_logic/shared/CardInfo";
 import { PlayerBet } from "../game_logic/shared/shared";
 import {
@@ -25,11 +25,11 @@ import { TradeDecisions } from "../game_logic/TradeDecisions";
 
 export const BetPhasePlayerHand: React.FC<{}> = () => {
 
-    const ctx = useContext(AppContext);
+    const {state: ctxState, setState: setCtxState} = useContext(AppContext);
     const playerCardKeys =
-        ctx.state.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
+        ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
 
-    const playerBet = ctx.state.gameContext.currentRoundState?.thisPlayer.playerBet;
+    const playerBet = ctxState.gameContext.currentRoundState?.thisPlayer.playerBet;
 
     const [cardsExpanded, setCardsExpanded] = useState(false);
     const [tradesSent, setTradesSent] = useState(false);
@@ -41,34 +41,25 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         rightOp: undefined,
     });
 
-    useEffect(() => {
-        ctx.state.socket
-            ?.on(
-                ServerEventType.ALL_CARDS_REVEALED, eventHandlerWrapper(
-                zAllCardsRevealedEvent.parse, e => {
-                    handleAllCardsRevealedEvent(ctx, e);
-                    setCardsExpanded(true);
-                }
-            ))
-            .on(
-                ServerEventType.CARDS_TRADED, eventHandlerWrapper(
-                zCardsTradedEvent.parse, e => {
-                    addIncomingTradedCards(ctx, e);
-                    setIncomingTradesSent(true);
-                    setTradeDecisions({
-                        teammate: new UICardInfo(e.data.cardByTeammate),
-                        leftOp: new UICardInfo(e.data.cardByLeft),
-                        rightOp: new UICardInfo(e.data.cardByRight),
-                    });
-                }
-            ));
-        return () => {
-            const socket = ctx.state.socket;
-            if (!socket) return;
-            socket.removeAllListeners(ServerEventType.ALL_CARDS_REVEALED);
-            socket.removeAllListeners(ServerEventType.CARDS_TRADED);
-        }
-    }, [ctx.state.socket,]);
+    useEffect(registerEventListenersHelper({
+        [ServerEventType.ALL_CARDS_REVEALED]: eventHandlerWrapper(
+            zAllCardsRevealedEvent.parse, e => {
+                handleAllCardsRevealedEvent(e, setCtxState);
+                setCardsExpanded(true);
+            }
+        ),
+        [ServerEventType.CARDS_TRADED]: eventHandlerWrapper(
+            zCardsTradedEvent.parse, e => {
+                addIncomingTradedCards(e, setCtxState);
+                setIncomingTradesSent(true);
+                setTradeDecisions({
+                    teammate: new UICardInfo(e.data.cardByTeammate),
+                    leftOp: new UICardInfo(e.data.cardByLeft),
+                    rightOp: new UICardInfo(e.data.cardByRight),
+                });
+            }
+        ),
+    }, ctxState.socket), [ctxState, setCtxState]);
 
     const allCards = useMemo(
         () => playerCardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards),
@@ -89,10 +80,10 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
     ]);
 
     useEffect(() => {
-        if (tradesReceived) {
-            removeOutcomingTradedCards(ctx, tradeDecisions);
+        if (incomingTradesSent) {
+            removeOutcomingTradedCards(tradeDecisions, setCtxState);
         }
-    }, [tradesReceived, tradeDecisions]);
+    }, [incomingTradesSent, tradeDecisions, setCtxState]);
 
     const onBetPlaced = useCallback((bet: PlayerBet.TICHU | PlayerBet.GRAND_TICHU) => {
         const e: PlaceBetEvent = {
@@ -101,9 +92,9 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                 betPoints: bet,
             } ,
         }
-        ctx.state.socket?.emit(ClientEventType.PLACE_BET, e);
+        ctxState.socket?.emit(ClientEventType.PLACE_BET, e);
         
-    }, [ctx.state.socket]);
+    }, [ctxState.socket]);
 
     const onTichuBetPlaced = useCallback(
         () => onBetPlaced(PlayerBet.TICHU), [onBetPlaced]
@@ -116,8 +107,8 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         const e: RevealAllCardsEvent = {
             eventType: ClientEventType.REVEAL_ALL_CARDS
         };
-        ctx.state.socket?.emit(ClientEventType.REVEAL_ALL_CARDS, e);
-    }, [ctx.state.socket]);
+        ctxState.socket?.emit(ClientEventType.REVEAL_ALL_CARDS, e);
+    }, [ctxState.socket]);
 
     const onTradesFinalized = useCallback(() => {
         if (
@@ -133,7 +124,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                     rightCardKey: tradeDecisions.rightOp.key,
                 }
             };
-            ctx.state.socket?.emit(
+            ctxState.socket?.emit(
                 ClientEventType.TRADE_CARDS, e, () => setTradesSent(true)
             );
         } else {
@@ -143,17 +134,17 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         tradeDecisions.teammate?.key,
         tradeDecisions.leftOp?.key,
         tradeDecisions.rightOp?.key,
-        ctx.state.socket,
+        ctxState.socket,
     ]);
 
     const onTradesReceived = useCallback(() => {
         const e: ReceiveTradeEvent = {
             eventType: ClientEventType.RECEIVE_TRADE,
         };
-        ctx.state.socket?.emit(
+        ctxState.socket?.emit(
             ClientEventType.RECEIVE_TRADE, e, () => setTradesReceived(true)
         );
-    }, [ctx.state.socket]);
+    }, [ctxState.socket]);
 
     const onCardClicked = useCallback((key: string) => {
         const card = allCards.find(c => c.key === key);
@@ -178,13 +169,12 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         tradeDecisions.teammate?.key,
         tradeDecisions.leftOp?.key,
         tradeDecisions.rightOp?.key,
-    ]
-    );
+    ]);
 
     return (
         <div className={preTradePlayerBoxClass}>
             <PlayerInfoHeader
-                nickname={ctx.state.gameContext.thisPlayer?.nickname}
+                nickname={ctxState.gameContext.thisPlayer?.nickname}
                 numCards={allCards.length}
                 bet={playerBet}
             />
@@ -226,15 +216,15 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                                 tradesSent ? (
                                     incomingTradesSent ? (
                                         tradesReceived ?
+                                            <button className={styles.inactiveButton}>
+                                                Cards Received
+                                            </button>
+                                            :
                                             <button
                                                 className={styles.tradePhaseButton}
                                                 onClick={onTradesReceived}    
                                             >
                                                 Receive Cards
-                                            </button>
-                                            :
-                                            <button className={styles.inactiveButton}>
-                                                Cards Received
                                             </button>
                                     ) : (
                                         <button className={styles.inactiveButton}>
