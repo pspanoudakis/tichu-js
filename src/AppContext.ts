@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 import { createInitialGameState, GameState } from './state_types/GameState'
 import { Socket } from 'socket.io-client'
-import { AllCardsRevealedEvent, CardsTradedEvent, GameRoundStartedEvent, PlayerJoinedEvent, TableRoundStartedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
+import { AllCardsRevealedEvent, BetPlacedEvent, CardsTradedEvent, GameRoundStartedEvent, PlayerJoinedEvent, TableRoundStartedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
 import { PLAYER_KEYS, PlayerBet } from './game_logic/shared/shared';
 import { TradeDecisions } from './game_logic/TradeDecisions';
 
@@ -48,12 +48,12 @@ const getRightOpponentIdx =
 
 export function handleWaitingForJoinEvent(
     s: AppContextState, e: WaitingForJoinEvent
-) {
+): AppContextState {
     const thisIdx = PLAYER_KEYS.indexOf(e.playerKey);
     const teammateIdx = getTeammateIdx(thisIdx);
     const leftOpIdx = getLeftOpponentIdx(thisIdx);
     const rightOpIdx = getRightOpponentIdx(thisIdx);
-   return {
+    return {
         ...s,
         gameContext: {
             ...s.gameContext,
@@ -95,7 +95,7 @@ export function handleWaitingForJoinEvent(
 
 export function handlePlayerJoinedEvent(
     s: AppContextState, e: PlayerJoinedEvent
-) {
+): AppContextState {
     const thisIdx = s.gameContext.thisPlayer?.playerIndex;
     if (thisIdx === undefined) {
         throw new Error('Another player joined before client player index received.');
@@ -304,4 +304,54 @@ export function handleTableRoundStartedEvent(
             }
         }
     });
+}
+
+export function handleBetPlacedEvent(
+    s: AppContextState, e: BetPlacedEvent
+): AppContextState {
+    if (!s.gameContext.currentRoundState) {
+        console.error(
+            `Round state not initialized: `,
+            s.gameContext.thisPlayer
+        );
+        throw new Error();
+    }
+    const targetPlayerIdx = PLAYER_KEYS.indexOf(e.playerKey)
+    return {
+        ...s,
+        gameContext: {
+            ...s.gameContext,
+            currentRoundState: {
+                ...s.gameContext.currentRoundState,
+                thisPlayer: (
+                    (targetPlayerIdx === s.gameContext.thisPlayer?.playerIndex) ?
+                    {
+                        ...s.gameContext.currentRoundState.thisPlayer,
+                        playerBet: e.data.betPoints
+                    } : s.gameContext.currentRoundState.thisPlayer
+                ),
+                teammate: (
+                    (targetPlayerIdx === s.gameContext.teammate?.playerIndex) ?
+                    {
+                        ...s.gameContext.currentRoundState.teammate,
+                        playerBet: e.data.betPoints
+                    } : s.gameContext.currentRoundState.teammate
+                ),
+                leftOpponent: (
+                    (targetPlayerIdx === s.gameContext.leftOpponent?.playerIndex) ?
+                    {
+                        ...s.gameContext.currentRoundState.leftOpponent,
+                        playerBet: e.data.betPoints
+                    } : s.gameContext.currentRoundState.leftOpponent
+                ),
+                rightOpponent: (
+                    (targetPlayerIdx === s.gameContext.rightOpponent?.playerIndex) ?
+                    {
+                        ...s.gameContext.currentRoundState.rightOpponent,
+                        playerBet: e.data.betPoints
+                    } : s.gameContext.currentRoundState.rightOpponent
+                ),
+            }
+        }
+    };
 }

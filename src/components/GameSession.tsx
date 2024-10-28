@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import { createSessionSocketURI } from "../API/coreAPI";
 import {
     ServerEventType,
-    zGameRoundStartedEvent,
+    zBetPlacedEvent,
     zPlayerJoinedEvent,
     zWaitingForJoinEvent
 } from "../game_logic/shared/ServerEvents";
@@ -13,7 +13,7 @@ import styles from "../styles/Components.module.css"
 import {
     AppContext,
     appContextInitState,
-    handleGameRoundStartedEvent,
+    handleBetPlacedEvent,
     handlePlayerJoinedEvent,
     handleWaitingForJoinEvent
 } from "../AppContext";
@@ -35,30 +35,45 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
         setConnectingToSession(true);
 
         // Init socket, without auto connecting
-        const socket =
-        io(createSessionSocketURI(props.sessionId), {
+        const socket = io(createSessionSocketURI(props.sessionId), {
             autoConnect: false,
-        })
-        // Register listeners
-        .on('connect', () => {
-            console.log(`SocketIO connection established. Socket ID: ${socket.id}`);
-        }).on(ServerEventType.WAITING_4_JOIN, eventHandlerWrapper(
-            zWaitingForJoinEvent.parse, e => {
-                setAppContextState(s => handleWaitingForJoinEvent(s, e));
-                socket.emit(
-                    ClientEventType.JOIN_GAME, {
-                        data: {
-                            playerNickname: props.playerNickname,
-                        },
-                        eventType: ClientEventType.JOIN_GAME,
-                    }
+        });
+
+        // Register event listeners
+        const eventListeners = {
+            'connect': () => {
+                console.log(
+                    `SocketIO connection established. Socket ID: ${socket.id}`
                 );
-            }
-        )).on(ServerEventType.PLAYER_JOINED, eventHandlerWrapper(
-            zPlayerJoinedEvent.parse, e => {
-                setAppContextState(s => handlePlayerJoinedEvent(s, e));
-            }
-        ));
+            },
+            [ServerEventType.WAITING_4_JOIN]: eventHandlerWrapper(
+                zWaitingForJoinEvent.parse, e => {
+                    setAppContextState(s => handleWaitingForJoinEvent(s, e));
+                    socket.emit(
+                        ClientEventType.JOIN_GAME, {
+                            data: {
+                                playerNickname: props.playerNickname,
+                            },
+                            eventType: ClientEventType.JOIN_GAME,
+                        }
+                    );
+                }
+            ),
+            [ServerEventType.PLAYER_JOINED]: eventHandlerWrapper(
+                zPlayerJoinedEvent.parse, e => {
+                    setAppContextState(s => handlePlayerJoinedEvent(s, e));
+                }
+            ),
+            [ServerEventType.BET_PLACED]: eventHandlerWrapper(
+                zBetPlacedEvent.parse, e => {
+                    setAppContextState(s => handleBetPlacedEvent(s, e));
+                }
+            )
+        };
+        for (const eventName of
+            Object.keys(eventListeners) as (keyof typeof eventListeners)[]) {
+            socket.on(eventName, eventListeners[eventName]);
+        }
 
         setAppContextState(s => ({
             ...s,
@@ -70,7 +85,10 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
 
         // On unmount, cleanup
         return () => {
-            socket.removeAllListeners();
+            for (const eventName of
+                Object.keys(eventListeners) as (keyof typeof eventListeners)[]) {
+                socket.off(eventName, eventListeners[eventName]);
+            }
             socket.disconnect();
         }
     }, [props.sessionId, props.playerNickname]);
