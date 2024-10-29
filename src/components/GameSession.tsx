@@ -18,7 +18,7 @@ import {
     handleWaitingForJoinEvent
 } from "../AppContext";
 import { ClientEventType } from "../game_logic/shared/ClientEvents";
-import { eventHandlerWrapper } from "../utils/eventUtils";
+import { eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
 import { GameRound } from "./GameRound";
 
 type GameSessionProps = {
@@ -40,7 +40,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
         });
 
         // Register event listeners
-        const eventListeners = {
+        const cleanupListeners = registerEventListenersHelper({
             'connect': () => {
                 console.log(
                     `SocketIO connection established. Socket ID: ${socket.id}`
@@ -69,11 +69,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                     setAppContextState(s => handleBetPlacedEvent(s, e));
                 }
             )
-        };
-        for (const eventName of
-            Object.keys(eventListeners) as (keyof typeof eventListeners)[]) {
-            socket.on(eventName, eventListeners[eventName]);
-        }
+        }, socket)();
 
         setAppContextState(s => ({
             ...s,
@@ -85,10 +81,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
 
         // On unmount, cleanup
         return () => {
-            for (const eventName of
-                Object.keys(eventListeners) as (keyof typeof eventListeners)[]) {
-                socket.off(eventName, eventListeners[eventName]);
-            }
+            cleanupListeners?.();
             socket.disconnect();
         }
     }, [props.sessionId, props.playerNickname]);
