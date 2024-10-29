@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Card } from './Card';
 import { RequestSelectionBox } from './RequestSelectionBox';
 import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
-import { voidButton } from '../void';
 
 import { inGamePlayerBoxClass, leftActionButtonsDiv, rightActionButtonsDiv, tichuBetDivClass } from "./styleUtils";
 import { AppContext } from '../AppContext';
@@ -11,16 +10,18 @@ import styles from "../styles/Components.module.css"
 import { BetIndicator } from './BetIndicator';
 import { UICardInfo } from '../game_logic/UICardInfo';
 import { SpecialCards } from '../game_logic/shared/CardConfig';
-import { PlayerKey } from '../game_logic/shared/shared';
+import { PlayerBet, PlayerKey } from '../game_logic/shared/shared';
 import { PlayerInfoHeader } from './PlayerInfoHeader';
+import { ClientEventType, DropBombEvent, PassTurnEvent, PlayCardsEvent } from '../game_logic/shared/ClientEvents';
+import { PlaceBetButton } from './PlaceBetButton';
 
 export const ControlledPlayerHand: React.FC<{}> = (props) => {
 
-    const ctx = useContext(AppContext);
+    const { state: ctxState } = useContext(AppContext);
 
-    const playerNickname = ctx.state.gameContext.thisPlayer?.nickname;
+    const playerNickname = ctxState.gameContext.thisPlayer?.nickname;
     const cardKeys =
-        ctx.state.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
+        ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
 
     const [cardSelections, setCardSelections] = useState<{[s: string]: boolean}>(
         cardKeys.reduce((acc, ck) => ({...acc, [ck]: false}), {})
@@ -52,6 +53,31 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
         [cardSelections]
     );
 
+    const onCardsPlayed = useCallback(() => {
+        const e: PlayCardsEvent = {
+            eventType: ClientEventType.PLAY_CARDS,
+            data: {
+                selectedCardKeys:
+                    Object.keys(cardSelections).filter(k => cardSelections[k]),
+            }
+        };
+        ctxState.socket?.emit(ClientEventType.PLAY_CARDS, e);
+    }, [ctxState.socket, cardSelections]);
+
+    const onTurnPassed = useCallback(() => {
+        const e: PassTurnEvent = {
+            eventType: ClientEventType.PASS_TURN,
+        };
+        ctxState.socket?.emit(ClientEventType.PASS_TURN, e);
+    }, [ctxState.socket]);
+
+    const onBombDropped = useCallback(() => {
+        const e: DropBombEvent = {
+            eventType: ClientEventType.DROP_BOMB,
+        };
+        ctxState.socket?.emit(ClientEventType.DROP_BOMB, e);
+    }, [ctxState.socket]);
+
     const renderedMainBox = () => {
         const cardComponents = cards.map((c, index) => {
             return (
@@ -67,7 +93,7 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
             <div className={inGamePlayerBoxClass}>
                 <PlayerInfoHeader
                     nickname={playerNickname ?? 'You'}
-                    bet={ctx.state.gameContext.currentRoundState?.thisPlayer.playerBet}
+                    bet={ctxState.gameContext.currentRoundState?.thisPlayer.playerBet}
                     numCards={cards.length}
                 />
                 <div className={styles.playerCardList}>
@@ -119,7 +145,10 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
                     {tichuButton}
                 </div>
                 <div className={rightActionButtonsDiv}>
-                    {playCardsButton}{passButton}{bombButton}
+                    <button onClick={onCardsPlayed}>Play Cards</button>
+                    <button onClick={onTurnPassed}>Pass</button>
+                    <button onClick={onBombDropped}>Bomb</button>
+                    <PlaceBetButton bet={PlayerBet.TICHU}/>
                 </div>
             </div>
         </div>

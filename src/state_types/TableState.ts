@@ -4,4 +4,5 @@ export type TableState = {
     currentCardKeys?: string[],
     combinationType?: CardCombinationType,
     pendingDragonSelection: boolean,
+    pendingBomb: boolean,
 };

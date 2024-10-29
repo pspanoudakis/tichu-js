@@ -1,7 +1,18 @@
 import { createContext } from 'react'
 import { createInitialGameState, GameState } from './state_types/GameState'
 import { Socket } from 'socket.io-client'
-import { AllCardsRevealedEvent, BetPlacedEvent, CardsTradedEvent, GameRoundStartedEvent, PlayerJoinedEvent, TableRoundStartedEvent, WaitingForJoinEvent } from './game_logic/shared/ServerEvents';
+import {
+    AllCardsRevealedEvent,
+    BetPlacedEvent,
+    BombDroppedEvent,
+    CardsPlayedEvent,
+    CardsTradedEvent,
+    GameRoundStartedEvent,
+    PlayerJoinedEvent,
+    TableRoundStartedEvent,
+    TurnPassedEvent,
+    WaitingForJoinEvent
+} from './game_logic/shared/ServerEvents';
 import { PLAYER_KEYS, PlayerBet } from './game_logic/shared/shared';
 import { TradeDecisions } from './game_logic/TradeDecisions';
 
@@ -159,6 +170,7 @@ export function handleGameRoundStartedEvent(
                     tableState: {
                         pendingDragonSelection: false,
                         currentCardKeys: [],
+                        pendingBomb: false,
                     },
                     leftOpponent: {
                         numberOfCards: e.data.partialCards.length,
@@ -293,6 +305,7 @@ export function handleTableRoundStartedEvent(
             );
             throw new Error();
         }
+        const numCards = s.gameContext.currentRoundState.thisPlayer.cardKeys.length;
         return {
             ...s,
             gameContext: {
@@ -300,6 +313,18 @@ export function handleTableRoundStartedEvent(
                 currentRoundState: {
                     ...s.gameContext.currentRoundState,
                     playerInTurnKey: e.data.currentPlayer,
+                    leftOpponent: {
+                        ...s.gameContext.currentRoundState.leftOpponent,
+                        numberOfCards: numCards,
+                    },
+                    rightOpponent: {
+                        ...s.gameContext.currentRoundState.rightOpponent,
+                        numberOfCards: numCards,
+                    },
+                    teammate: {
+                        ...s.gameContext.currentRoundState.teammate,
+                        numberOfCards: numCards,
+                    },
                 }
             }
         }
@@ -354,4 +379,119 @@ export function handleBetPlacedEvent(
             }
         }
     };
+}
+
+export function handleCardsPlayedEvent(
+    e: CardsPlayedEvent,
+    setCtxState?: AppContextStateSetter,
+) {
+    setCtxState?.(s => {
+        if (!s.gameContext.currentRoundState) {
+            console.error(
+                `Round state not initialized: `,
+                s.gameContext.thisPlayer
+            );
+            throw new Error();
+        }
+        const thisPlayer = s.gameContext.currentRoundState.thisPlayer;
+        return {
+            ...s,
+            gameContext: {
+                ...s.gameContext,
+                currentRoundState: {
+                    ...s.gameContext.currentRoundState,
+                    playerInTurnKey: e.data.currentPlayer,
+                    tableState: {
+                        ...s.gameContext.currentRoundState.tableState,
+                        combinationType: e.data.combinationType,
+                        currentCardKeys: e.data.tableCardKeys
+                    },
+                    thisPlayer: (
+                        (e.playerKey === s.gameContext.thisPlayer?.playerKey) ?
+                        {
+                            ...thisPlayer,
+                            cardKeys: thisPlayer.cardKeys.filter(
+                                ck => !e.data.tableCardKeys.includes(ck)
+                            ),
+                        } : thisPlayer
+                    ),
+                    teammate: (
+                        (e.playerKey === s.gameContext.teammate?.playerKey) ?
+                        {
+                            ...s.gameContext.currentRoundState.teammate,
+                            numberOfCards: e.data.numCardsRemainingInHand,
+                        } : s.gameContext.currentRoundState.teammate
+                    ),
+                    leftOpponent: (
+                        (e.playerKey === s.gameContext.leftOpponent?.playerKey) ?
+                        {
+                            ...s.gameContext.currentRoundState.leftOpponent,
+                            numberOfCards: e.data.numCardsRemainingInHand,
+                        } : s.gameContext.currentRoundState.leftOpponent
+                    ),
+                    rightOpponent: (
+                        (e.playerKey === s.gameContext.rightOpponent?.playerKey) ?
+                        {
+                            ...s.gameContext.currentRoundState.rightOpponent,
+                            numberOfCards: e.data.numCardsRemainingInHand,
+                        } : s.gameContext.currentRoundState.rightOpponent
+                    ),
+                }
+            }
+        }
+    });
+}
+
+export function handleTurnPassedEvent(
+    e: TurnPassedEvent,
+    setCtxState?: AppContextStateSetter,
+) {
+    setCtxState?.(s => {
+        if (!s.gameContext.currentRoundState) {
+            console.error(
+                `Round state not initialized: `,
+                s.gameContext.thisPlayer
+            );
+            throw new Error();
+        }
+        return {
+            ...s,
+            gameContext: {
+                ...s.gameContext,
+                currentRoundState: {
+                    ...s.gameContext.currentRoundState,
+                    playerInTurnKey: e.data.currentPlayer,
+                }
+            }
+        }
+    });
+}
+
+export function handleBombDroppedEvent(
+    e: BombDroppedEvent,
+    setCtxState?: AppContextStateSetter,
+) {
+    setCtxState?.(s => {
+        if (!s.gameContext.currentRoundState) {
+            console.error(
+                `Round state not initialized: `,
+                s.gameContext.thisPlayer
+            );
+            throw new Error();
+        }
+        return {
+            ...s,
+            gameContext: {
+                ...s.gameContext,
+                currentRoundState: {
+                    ...s.gameContext.currentRoundState,
+                    playerInTurnKey: e.playerKey,
+                    tableState: {
+                        ...s.gameContext.currentRoundState.tableState,
+                        pendingBomb: true,
+                    }
+                }
+            }
+        }
+    });
 }

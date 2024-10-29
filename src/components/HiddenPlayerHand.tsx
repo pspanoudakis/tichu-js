@@ -14,29 +14,29 @@ export const HiddenPlayerHand: React.FC<{
     style: string,
 }> = props => {
 
-    const ctx = useContext(AppContext);
+    const { state: ctxState } = useContext(AppContext);
 
     const playerAccessKey = useMemo(() => {
         switch (props.playerKey) {
-            case ctx.state.gameContext.teammate?.playerKey:
+            case ctxState.gameContext.teammate?.playerKey:
                 return 'teammate';
-            case ctx.state.gameContext.rightOpponent?.playerKey:
+            case ctxState.gameContext.rightOpponent?.playerKey:
                 return 'rightOpponent';
-            case ctx.state.gameContext.leftOpponent?.playerKey:
+            case ctxState.gameContext.leftOpponent?.playerKey:
                 return 'leftOpponent';
             default:
                 throw new Error(`Cannot find player with key: '${props.playerKey}'`);
         }
     }, [
         props.playerKey,
-        ctx.state.gameContext.teammate?.playerKey,
-        ctx.state.gameContext.leftOpponent?.playerKey,
-        ctx.state.gameContext.rightOpponent?.playerKey,
+        ctxState.gameContext.teammate?.playerKey,
+        ctxState.gameContext.leftOpponent?.playerKey,
+        ctxState.gameContext.rightOpponent?.playerKey,
     ]);
 
-    const nickname = ctx.state.gameContext[playerAccessKey]?.nickname;
-    const numCards = ctx.state.gameContext.currentRoundState?.[playerAccessKey].numberOfCards ?? 0;
-    const currentBet = ctx.state.gameContext.currentRoundState?.[playerAccessKey].playerBet;
+    const nickname = ctxState.gameContext[playerAccessKey]?.nickname;
+    const numCards = ctxState.gameContext.currentRoundState?.[playerAccessKey].numberOfCards ?? 0;
+    const currentBet = ctxState.gameContext.currentRoundState?.[playerAccessKey].playerBet;
 
     return (
         <div className={props.style}>

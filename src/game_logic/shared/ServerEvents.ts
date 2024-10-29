@@ -3,7 +3,6 @@ import { createGameEventSchema } from "./GameEvent";
 import {
     CardCombinationType,
     ERROR_TYPES,
-    PLAYER_KEYS,
     PlayerBet,
     PlayerKey,
     zGameWinnerResult,
@@ -85,6 +84,7 @@ export const zCardsPlayedEvent = createGameEventSchema(
         combinationType: z.nativeEnum(CardCombinationType),
         tableCardKeys: z.array(zCardKey),
         requestedCardName: z.optional(z.string()),
+        currentPlayer: zPlayerKey,
     }),
     zPlayerKey,
 );
@@ -92,7 +92,9 @@ export type CardsPlayedEvent = z.infer<typeof zCardsPlayedEvent>;
 
 export const zTurnPassedEvent = createGameEventSchema(
     z.literal(ServerEventType.TURN_PASSED),
-    z.undefined(),
+    z.object({
+        currentPlayer: zPlayerKey,
+    }),
     zPlayerKey,
 );
 export type TurnPassedEvent = z.infer<typeof zTurnPassedEvent>;

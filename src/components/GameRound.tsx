@@ -6,6 +6,7 @@ import { AppContext, handleGameRoundStartedEvent, handleTableRoundStartedEvent }
 import styles from "../styles/Components.module.css";
 import { ServerEventType, zGameRoundStartedEvent, zTableRoundStartedEvent } from "../game_logic/shared/ServerEvents";
 import { eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
+import { TableNew } from "./TableNew";
 
 type GameRoundPhase = 'WAIT4START' | 'TRADES' | 'MAIN' | 'OVER';
 
@@ -25,7 +26,7 @@ export const GameRound: React.FC<{
         ),
         [ServerEventType.TABLE_ROUND_STARTED]: eventHandlerWrapper(
             zTableRoundStartedEvent.parse, e => {
-                handleTableRoundStartedEvent(e, setCtxState);
+                // handleTableRoundStartedEvent(e, setCtxState);
                 setRoundPhase('MAIN');
             }
         ),
@@ -70,7 +71,7 @@ export const GameRound: React.FC<{
                         style={styles.leftOpponent}
                     />
                     <div className={styles.tableStyle}>
-                        
+                    <TableNew/>
                     </div>
                     <HiddenPlayerHand
                         playerKey={ctxState.gameContext.rightOpponent?.playerKey}
