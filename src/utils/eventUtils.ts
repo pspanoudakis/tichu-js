@@ -59,7 +59,12 @@ const errorEventListener = eventHandlerWrapper(
 export const errorEventListeners: {
     [et in keyof typeof ERROR_TYPES]: typeof errorEventListener
 } = {
-    [ERROR_TYPES.BUSINESS_ERROR]: errorEventListener,
+    [ERROR_TYPES.BUSINESS_ERROR]: eventHandlerWrapper(
+        zErrorEvent.parse, e => {
+            console.error(e);
+            alert(e.data.message);
+        }
+    ),
     [ERROR_TYPES.INTERNAL_ERROR]: errorEventListener,
     [ERROR_TYPES.VALIDATION_ERROR]: errorEventListener,
 };
