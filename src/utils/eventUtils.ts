@@ -1,5 +1,7 @@
 import { Socket } from "socket.io-client";
 import { EventsMap } from "@socket.io/component-emitter";
+import { zErrorEvent } from "../game_logic/shared/ServerEvents";
+import { ERROR_TYPES } from "../game_logic/shared/shared";
 
 export function logError(msg?: any, ...optionals: any[]) {
     console.error(msg, ...optionals);
@@ -46,3 +48,18 @@ export function registerEventListenersHelper<
         };
     }
 }
+
+const errorEventListener = eventHandlerWrapper(
+    zErrorEvent.parse, e => {
+        console.error(e);
+        alert(`'${e.eventType}' event received. See console for details.`);
+    }
+);
+
+export const errorEventListeners: {
+    [et in keyof typeof ERROR_TYPES]: typeof errorEventListener
+} = {
+    [ERROR_TYPES.BUSINESS_ERROR]: errorEventListener,
+    [ERROR_TYPES.INTERNAL_ERROR]: errorEventListener,
+    [ERROR_TYPES.VALIDATION_ERROR]: errorEventListener,
+};

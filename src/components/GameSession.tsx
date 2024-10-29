@@ -18,7 +18,7 @@ import {
     handleWaitingForJoinEvent
 } from "../AppContext";
 import { ClientEventType } from "../game_logic/shared/ClientEvents";
-import { eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
+import { errorEventListeners, eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
 import { GameRound } from "./GameRound";
 
 type GameSessionProps = {
@@ -41,7 +41,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
 
         // Register event listeners
         const cleanupListeners = registerEventListenersHelper({
-            'connect': () => {
+            connect: () => {
                 console.log(
                     `SocketIO connection established. Socket ID: ${socket.id}`
                 );
@@ -68,7 +68,8 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                 zBetPlacedEvent.parse, e => {
                     setAppContextState(s => handleBetPlacedEvent(s, e));
                 }
-            )
+            ),
+            ...errorEventListeners,
         }, socket)();
 
         setAppContextState(s => ({
