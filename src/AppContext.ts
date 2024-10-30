@@ -225,43 +225,10 @@ export function handleAllCardsRevealedEvent(
     });
 }
 
-export function addIncomingTradedCards(
+export function handleCardsTradedEvent(
     e: CardsTradedEvent,
-    setCtxState?: AppContextStateSetter,
-) {
-    setCtxState?.(s => {
-        if (!s.gameContext.currentRoundState) {
-            console.error(
-                `Round state not initialized: `,
-                s.gameContext.thisPlayer
-            );
-            throw new Error();
-        }
-        return {
-            ...s,
-            gameContext: {
-                ...s.gameContext,
-                currentRoundState: {
-                    ...s.gameContext.currentRoundState,
-                    thisPlayer: {
-                        ...s.gameContext.currentRoundState.thisPlayer,
-                        cardKeys: [
-                            ...s.gameContext.currentRoundState.thisPlayer.cardKeys,
-                            e.data.cardByLeft,
-                            e.data.cardByRight,
-                            e.data.cardByTeammate,
-                        ],
-                    },
-                    
-                }
-            }
-        }
-    })
-}
-
-export function removeOutcomingTradedCards(
     td: TradeDecisions,
-    setCtxState?: AppContextStateSetter,
+    setCtxState?: AppContextStateSetter
 ) {
     setCtxState?.(s => {
         if (!s.gameContext.currentRoundState) {
@@ -283,14 +250,17 @@ export function removeOutcomingTradedCards(
                             ...s.gameContext.currentRoundState.thisPlayer.cardKeys
                                 .filter(key =>
                                     !Object.values(td).some(c => c.key === key)
-                                )
+                                ),
+                            e.data.cardByLeft,
+                            e.data.cardByRight,
+                            e.data.cardByTeammate,
                         ],
                     },
                     
                 }
             }
         }
-    })
+    });
 }
 
 export function handleTableRoundStartedEvent(

@@ -3,7 +3,7 @@ import { Card } from "./Card";
 
 import { preTradePlayerBoxClass } from "./styleUtils";
 import styles from "../styles/Components.module.css";
-import { addIncomingTradedCards, AppContext, handleAllCardsRevealedEvent, removeOutcomingTradedCards } from "../AppContext";
+import { AppContext, handleAllCardsRevealedEvent, handleCardsTradedEvent } from "../AppContext";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { PlayerInfoHeader } from "./PlayerInfoHeader";
 import {
@@ -50,12 +50,14 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         ),
         [ServerEventType.CARDS_TRADED]: eventHandlerWrapper(
             zCardsTradedEvent.parse, e => {
-                addIncomingTradedCards(e, setCtxState);
                 setIncomingTradesSent(true);
-                setTradeDecisions({
-                    teammate: new UICardInfo(e.data.cardByTeammate),
-                    leftOp: new UICardInfo(e.data.cardByLeft),
-                    rightOp: new UICardInfo(e.data.cardByRight),
+                setTradeDecisions(td => {
+                    handleCardsTradedEvent(e, td, setCtxState);
+                    return {
+                        teammate: new UICardInfo(e.data.cardByTeammate),
+                        leftOp: new UICardInfo(e.data.cardByLeft),
+                        rightOp: new UICardInfo(e.data.cardByRight),
+                    };
                 });
             }
         ),
@@ -78,12 +80,6 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         tradeDecisions.rightOp,
         allCards,
     ]);
-
-    useEffect(() => {
-        if (incomingTradesSent) {
-            removeOutcomingTradedCards(tradeDecisions, setCtxState);
-        }
-    }, [incomingTradesSent, tradeDecisions, setCtxState]);
 
     const onCardsExpanded = useCallback(() => {
         const e: RevealAllCardsEvent = {
