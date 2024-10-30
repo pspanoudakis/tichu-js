@@ -63,7 +63,7 @@ const getRightOpponentIdx =
 
 type Nullable<T> = T | null | undefined;
 
-function assertExpression<T>(x: Nullable<T>, msg: string): asserts x{
+function assertExpression<T>(x: Nullable<T>, msg: string): asserts x {
     if (x === null || x === undefined) {
         console.error(`Assertion Failed: ${msg}`);
         throw new Error();
@@ -362,9 +362,10 @@ export function handleCardsPlayedEvent(
                     playerInTurnKey: e.data.currentPlayer,
                     requestedCardName: e.data.requestedCardName,
                     tableState: {
-                        ...s.gameContext.currentRoundState.tableState,
+                        pendingBomb: false,
+                        pendingDragonSelection: false,
                         combinationType: e.data.combinationType,
-                        currentCardKeys: e.data.tableCardKeys
+                        currentCardKeys: e.data.tableCardKeys,
                     },
                     thisPlayer: (
                         (e.playerKey === s.gameContext.thisPlayer?.playerKey) ?
