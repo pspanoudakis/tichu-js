@@ -14,6 +14,7 @@ import { PlayerBet, PlayerKey } from '../game_logic/shared/shared';
 import { PlayerInfoHeader } from './PlayerInfoHeader';
 import { ClientEventType, DropBombEvent, PassTurnEvent, PlayCardsEvent } from '../game_logic/shared/ClientEvents';
 import { PlaceBetButton } from './PlaceBetButton';
+import { CardInfo } from '../game_logic/shared/CardInfo';
 
 export const ControlledPlayerHand: React.FC<{}> = (props) => {
 
@@ -36,7 +37,7 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
     }, [JSON.stringify(cardKeys)])
 
     const cards = useMemo(
-        () => cardKeys.map(k => new UICardInfo(k)),
+        () => cardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards),
         [cardKeys]
     )
 

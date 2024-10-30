@@ -9,7 +9,7 @@ import {
 } from "../game_logic/shared/ServerEvents";
 import { Scoreboard } from "./Scoreboard";
 
-import styles from "../styles/Components.module.css"
+import styles from "../styles/Components.module.css";
 import {
     AppContext,
     appContextInitState,
