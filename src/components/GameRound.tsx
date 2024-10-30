@@ -2,10 +2,20 @@ import React, { useState, useEffect, useContext } from "react";
 import { HiddenPlayerHand } from "./HiddenPlayerHand";
 import { BetPhasePlayerHand } from "./BetPhasePlayerHand";
 import { ControlledPlayerHand } from "./ControlledPlayerHand";
-import { AppContext, handleGameRoundStartedEvent, handleTableRoundStartedEvent } from "../AppContext";
+import {
+    AppContext,
+    handleGameRoundStartedEvent
+} from "../AppContext";
 import styles from "../styles/Components.module.css";
-import { ServerEventType, zGameRoundStartedEvent, zTableRoundStartedEvent } from "../game_logic/shared/ServerEvents";
-import { eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
+import {
+    ServerEventType,
+    zGameRoundStartedEvent,
+    zTableRoundStartedEvent
+} from "../game_logic/shared/ServerEvents";
+import {
+    eventHandlerWrapper,
+    registerEventListenersHelper
+} from "../utils/eventUtils";
 import { TableNew } from "./TableNew";
 
 type GameRoundPhase = 'WAIT4START' | 'TRADES' | 'MAIN' | 'OVER';

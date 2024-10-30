@@ -3,7 +3,11 @@ import { Card } from "./Card";
 
 import { preTradePlayerBoxClass } from "./styleUtils";
 import styles from "../styles/Components.module.css";
-import { AppContext, handleAllCardsRevealedEvent, handleCardsTradedEvent } from "../AppContext";
+import {
+    AppContext,
+    handleAllCardsRevealedEvent,
+    handleCardsTradedEvent
+} from "../AppContext";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { PlayerInfoHeader } from "./PlayerInfoHeader";
 import {
@@ -11,7 +15,10 @@ import {
     zAllCardsRevealedEvent,
     zCardsTradedEvent
 } from "../game_logic/shared/ServerEvents";
-import { eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
+import {
+    eventHandlerWrapper,
+    registerEventListenersHelper
+} from "../utils/eventUtils";
 import { CardInfo } from "../game_logic/shared/CardInfo";
 import { PlayerBet } from "../game_logic/shared/shared";
 import {
@@ -29,7 +36,8 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
     const playerCardKeys =
         ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
 
-    const playerBet = ctxState.gameContext.currentRoundState?.thisPlayer.playerBet;
+    const playerBet =
+        ctxState.gameContext.currentRoundState?.thisPlayer.playerBet;
 
     const [cardsExpanded, setCardsExpanded] = useState(false);
     const [tradesSent, setTradesSent] = useState(false);
@@ -64,7 +72,9 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
     }, ctxState.socket), [ctxState, setCtxState]);
 
     const allCards = useMemo(
-        () => playerCardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards),
+        () => playerCardKeys
+            .map(k => new UICardInfo(k))
+            .sort(CardInfo.compareCards),
         [playerCardKeys]
     );
 
@@ -128,18 +138,27 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         const card = allCards.find(c => c.key === key);
         switch (key) {
             case tradeDecisions.teammate?.key:
-                return setTradeDecisions({ ...tradeDecisions, teammate: undefined });
+                return setTradeDecisions(
+                    { ...tradeDecisions, teammate: undefined }
+                );
             case tradeDecisions.leftOp?.key:
-                return setTradeDecisions({ ...tradeDecisions, leftOp: undefined });
+                return setTradeDecisions(
+                    { ...tradeDecisions, leftOp: undefined }
+                );
             case tradeDecisions.rightOp?.key:
-                return setTradeDecisions({ ...tradeDecisions, rightOp: undefined });
+                return setTradeDecisions(
+                    { ...tradeDecisions, rightOp: undefined }
+                );
             default:
-                if (!tradeDecisions.leftOp)
-                    return setTradeDecisions({ ...tradeDecisions, leftOp: card });
-                if (!tradeDecisions.teammate)
-                    return setTradeDecisions({ ...tradeDecisions, teammate: card });
-                if (!tradeDecisions.rightOp)
-                    return setTradeDecisions({ ...tradeDecisions, rightOp: card });
+                if (!tradeDecisions.leftOp) return setTradeDecisions(
+                    { ...tradeDecisions, leftOp: card }
+                );
+                if (!tradeDecisions.teammate) return setTradeDecisions(
+                    { ...tradeDecisions, teammate: card }
+                );
+                if (!tradeDecisions.rightOp) return setTradeDecisions(
+                    { ...tradeDecisions, rightOp: card }
+                );
                 break;
         }
     }, [
@@ -181,8 +200,12 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                                         td !== undefined ?
                                         <Card
                                             key={td.key} id={td.key} index={i}
-                                            alt={td.imgAlt} cardImg={td.img} isSelected={true}
-                                            onClick={tradesSent ? undefined : onCardClicked}
+                                            alt={td.imgAlt} cardImg={td.img}
+                                            isSelected={true}
+                                            onClick={
+                                                tradesSent ?
+                                                undefined : onCardClicked
+                                            }
                                             omitPosition
                                         /> : <span></span>
                                     }

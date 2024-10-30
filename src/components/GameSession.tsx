@@ -18,7 +18,11 @@ import {
     handleWaitingForJoinEvent
 } from "../AppContext";
 import { ClientEventType } from "../game_logic/shared/ClientEvents";
-import { errorEventListeners, eventHandlerWrapper, registerEventListenersHelper } from "../utils/eventUtils";
+import {
+    errorEventListeners,
+    eventHandlerWrapper,
+    registerEventListenersHelper
+} from "../utils/eventUtils";
 import { GameRound } from "./GameRound";
 
 type GameSessionProps = {
