@@ -5,9 +5,12 @@ import {
     AllCardsRevealedEvent,
     BetPlacedEvent,
     BombDroppedEvent,
+    CardRequestedEvent,
     CardsPlayedEvent,
     CardsTradedEvent,
+    DragonGivenEvent,
     GameRoundStartedEvent,
+    PendingDragonDecisionEvent,
     PlayerJoinedEvent,
     TableRoundStartedEvent,
     TurnPassedEvent,
@@ -15,6 +18,7 @@ import {
 } from './game_logic/shared/ServerEvents';
 import { PLAYER_KEYS, PlayerBet } from './game_logic/shared/shared';
 import { TradeDecisions } from './game_logic/TradeDecisions';
+import { GameRoundState } from './state_types/GameRoundState';
 
 export type AppContextState = {
     gameContext: GameState,
@@ -56,6 +60,19 @@ const getLeftOpponentIdx =
     (playerIdx: number) => (playerIdx + PLAYER_KEYS.length - 1) % PLAYER_KEYS.length;
 const getRightOpponentIdx =
     (playerIdx: number) => (playerIdx + 1) % PLAYER_KEYS.length;
+
+type Nullable<T> = T | null | undefined;
+
+function assertExpression<T>(x: Nullable<T>, msg: string): asserts x{
+    if (x === null || x === undefined) {
+        console.error(`Assertion Failed: ${msg}`);
+        throw new Error();
+    }
+}
+
+function assertCurrentRoundNonNullable(r: Nullable<GameRoundState>): asserts r is GameRoundState {
+    assertExpression(r, 'Round State not initialized.');
+}
 
 export function handleWaitingForJoinEvent(
     s: AppContextState, e: WaitingForJoinEvent
@@ -108,9 +125,9 @@ export function handlePlayerJoinedEvent(
     s: AppContextState, e: PlayerJoinedEvent
 ): AppContextState {
     const thisIdx = s.gameContext.thisPlayer?.playerIndex;
-    if (thisIdx === undefined) {
-        throw new Error('Another player joined before client player index received.');
-    }
+    assertExpression(
+        thisIdx, 'Another player joined before client player index received.'
+    );
     const teammateIdx = getTeammateIdx(thisIdx);
     const leftOpIdx = getLeftOpponentIdx(thisIdx);
     const rightOpIdx = getRightOpponentIdx(thisIdx);
@@ -147,15 +164,13 @@ export function handleGameRoundStartedEvent(
     setCtxState?: AppContextStateSetter,
 ) {
     setCtxState?.(s => {
-        if (
-            !s.gameContext.thisPlayer ||
-            !s.gameContext.leftOpponent ||
-            !s.gameContext.rightOpponent ||
-            !s.gameContext.teammate
-        ) {
-            console.error(`Player state not initialized: `, s.gameContext);
-            throw new Error(`Player state not initialized.`);
-        }
+        assertExpression(
+            s.gameContext.thisPlayer &&
+            s.gameContext.leftOpponent &&
+            s.gameContext.rightOpponent &&
+            s.gameContext.teammate,
+            'Player state not initialized'
+        );
         return ({
             ...s,
             gameContext: {
@@ -192,7 +207,7 @@ export function handleGameRoundStartedEvent(
                     },
                 }
             }
-        })
+        });
     });
 }
 
@@ -201,13 +216,7 @@ export function handleAllCardsRevealedEvent(
     setCtxState?: AppContextStateSetter,
 ) {
     setCtxState?.(s => {
-        if (!s.gameContext.currentRoundState) {
-            console.error(
-                `Round state not initialized: `,
-                s.gameContext.thisPlayer
-            );
-            throw new Error();
-        }
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
         return {
             ...s,
             gameContext: {
@@ -221,7 +230,7 @@ export function handleAllCardsRevealedEvent(
                     
                 }
             }
-        }
+        };
     });
 }
 
@@ -231,13 +240,7 @@ export function handleCardsTradedEvent(
     setCtxState?: AppContextStateSetter
 ) {
     setCtxState?.(s => {
-        if (!s.gameContext.currentRoundState) {
-            console.error(
-                `Round state not initialized: `,
-                s.gameContext.thisPlayer
-            );
-            throw new Error();
-        }
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
         return {
             ...s,
             gameContext: {
@@ -259,7 +262,7 @@ export function handleCardsTradedEvent(
                     
                 }
             }
-        }
+        };
     });
 }
 
@@ -268,13 +271,7 @@ export function handleTableRoundStartedEvent(
     setCtxState?: AppContextStateSetter,
 ) {
     setCtxState?.(s => {
-        if (!s.gameContext.currentRoundState) {
-            console.error(
-                `Round state not initialized: `,
-                s.gameContext.thisPlayer
-            );
-            throw new Error();
-        }
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
         const numCards = s.gameContext.currentRoundState.thisPlayer.cardKeys.length;
         return {
             ...s,
@@ -295,22 +292,20 @@ export function handleTableRoundStartedEvent(
                         ...s.gameContext.currentRoundState.teammate,
                         numberOfCards: numCards,
                     },
+                    tableState: {
+                        pendingBomb: false,
+                        pendingDragonSelection: false,
+                    }
                 }
             }
-        }
+        };
     });
 }
 
 export function handleBetPlacedEvent(
     s: AppContextState, e: BetPlacedEvent
 ): AppContextState {
-    if (!s.gameContext.currentRoundState) {
-        console.error(
-            `Round state not initialized: `,
-            s.gameContext.thisPlayer
-        );
-        throw new Error();
-    }
+    assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
     const targetPlayerIdx = PLAYER_KEYS.indexOf(e.playerKey)
     return {
         ...s,
@@ -356,13 +351,7 @@ export function handleCardsPlayedEvent(
     setCtxState?: AppContextStateSetter,
 ) {
     setCtxState?.(s => {
-        if (!s.gameContext.currentRoundState) {
-            console.error(
-                `Round state not initialized: `,
-                s.gameContext.thisPlayer
-            );
-            throw new Error();
-        }
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
         const thisPlayer = s.gameContext.currentRoundState.thisPlayer;
         return {
             ...s,
@@ -371,6 +360,7 @@ export function handleCardsPlayedEvent(
                 currentRoundState: {
                     ...s.gameContext.currentRoundState,
                     playerInTurnKey: e.data.currentPlayer,
+                    requestedCardName: e.data.requestedCardName,
                     tableState: {
                         ...s.gameContext.currentRoundState.tableState,
                         combinationType: e.data.combinationType,
@@ -417,13 +407,7 @@ export function handleTurnPassedEvent(
     setCtxState?: AppContextStateSetter,
 ) {
     setCtxState?.(s => {
-        if (!s.gameContext.currentRoundState) {
-            console.error(
-                `Round state not initialized: `,
-                s.gameContext.thisPlayer
-            );
-            throw new Error();
-        }
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
         return {
             ...s,
             gameContext: {
@@ -442,13 +426,7 @@ export function handleBombDroppedEvent(
     setCtxState?: AppContextStateSetter,
 ) {
     setCtxState?.(s => {
-        if (!s.gameContext.currentRoundState) {
-            console.error(
-                `Round state not initialized: `,
-                s.gameContext.thisPlayer
-            );
-            throw new Error();
-        }
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
         return {
             ...s,
             gameContext: {
@@ -462,6 +440,47 @@ export function handleBombDroppedEvent(
                     }
                 }
             }
-        }
+        };
+    });
+}
+
+export function handleCardRequestedEvent(
+    e: CardRequestedEvent,
+    setCtxState?: AppContextStateSetter,
+) {
+    setCtxState?.(s => {
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
+        return {
+            ...s,
+            gameContext: {
+                ...s.gameContext,
+                currentRoundState: {
+                    ...s.gameContext.currentRoundState,
+                    requestedCardName: e.data.requestedCardName,
+                }
+            }
+        };
+    });
+}
+
+export function handlePendingDragonDecisionEvent(
+    e: PendingDragonDecisionEvent,
+    setCtxState?: AppContextStateSetter,
+) {
+    setCtxState?.(s => {
+        assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
+        return {
+            ...s,
+            gameContext: {
+                ...s.gameContext,
+                currentRoundState: {
+                    ...s.gameContext.currentRoundState,
+                    tableState: {
+                        ...s.gameContext.currentRoundState.tableState,
+                        pendingDragonSelection: true,
+                    }
+                }
+            }
+        };
     });
 }

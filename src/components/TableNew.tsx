@@ -2,7 +2,10 @@ import React, { useContext, useEffect, useMemo, useCallback } from "react";
 import {
     AppContext,
     handleBombDroppedEvent,
-    handleCardsPlayedEvent } from "../AppContext";
+    handleCardRequestedEvent,
+    handleCardsPlayedEvent, 
+    handlePendingDragonDecisionEvent, 
+    handleTurnPassedEvent} from "../AppContext";
 import {
     eventHandlerWrapper,
     registerEventListenersHelper
@@ -32,34 +35,29 @@ export const TableNew: React.FC<{}> = (props) => {
 
     useEffect(registerEventListenersHelper({
         [ServerEventType.CARDS_PLAYED]: eventHandlerWrapper(
-            zCardsPlayedEvent.parse, e => {
-                handleCardsPlayedEvent(e, setCtxState);
-            }
+            zCardsPlayedEvent.parse,
+            e => handleCardsPlayedEvent(e, setCtxState)
         ),
         [ServerEventType.TURN_PASSED]: eventHandlerWrapper(
-            zTurnPassedEvent.parse, e => {
-
-            }
+            zTurnPassedEvent.parse,
+            e => handleTurnPassedEvent(e, setCtxState)
         ),
         [ServerEventType.CARD_REQUESTED]: eventHandlerWrapper(
-            zCardRequestedEvent.parse, e => {
-
-            }
+            zCardRequestedEvent.parse,
+            e => handleCardRequestedEvent(e, setCtxState)
         ),
         [ServerEventType.PENDING_DRAGON_DECISION]: eventHandlerWrapper(
-            zPendingDragonDecisionEvent.parse, e => {
-
-            }
+            zPendingDragonDecisionEvent.parse,
+            e => handlePendingDragonDecisionEvent(e)
         ),
         [ServerEventType.DRAGON_GIVEN]: eventHandlerWrapper(
             zDragonGivenEvent.parse, e => {
-
+                // Probably just UI logic
             }
         ),
         [ServerEventType.BOMB_DROPPED]: eventHandlerWrapper(
-            zBombDroppedEvent.parse, e => {
-                handleBombDroppedEvent(e, setCtxState);
-            }
+            zBombDroppedEvent.parse,
+            e => handleBombDroppedEvent(e, setCtxState)
         ),
     }, ctxState.socket), [ctxState.socket]);
 
