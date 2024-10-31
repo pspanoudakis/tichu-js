@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createGameEventSchema } from "./GameEvent";
 import { PlayerBet, zPlayerKey } from "./shared";
-import { zCardKey, zCardName } from "./CardConfig";
+import { zCardKey, zCardName, zNormalCardName } from "./CardConfig";
 
 export const ClientEventType =  {
     JOIN_GAME: 'JOIN_GAME',
@@ -84,7 +84,7 @@ export type DropBombEvent = z.infer<typeof zDropBombEvent>;
 export const zRequestCardEvent = createGameEventSchema(
     z.literal(ClientEventType.REQUEST_CARD),
     z.object({
-        requestedCardName: zCardName,
+        requestedCardName: zNormalCardName,
     })
 )
 export type RequestCardEvent = z.infer<typeof zRequestCardEvent>;

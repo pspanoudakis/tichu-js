@@ -20,7 +20,7 @@ import {
     zTurnPassedEvent
 } from "../game_logic/shared/ServerEvents";
 import styles from "../styles/Components.module.css";
-import { SpecialCards } from "../game_logic/shared/CardConfig";
+import { getCardConfigByKey, SpecialCards } from "../game_logic/shared/CardConfig";
 import { cardImages } from "../CardResources";
 import { Card } from "./Card";
 import { UICardInfo } from "../game_logic/UICardInfo";
@@ -61,24 +61,25 @@ export const TableNew: React.FC<{}> = (props) => {
         ),
     }, ctxState.socket), [ctxState.socket]);
 
-    const requestedCardName =
-        ctxState.gameContext.currentRoundState?.requestedCardName;
+    const currentRoundState = ctxState.gameContext.currentRoundState;
+
+    const requestedCardName = currentRoundState?.requestedCardName;
 
     const isDragonSelectionPending =
-        ctxState.gameContext.currentRoundState?.tableState.pendingDragonSelection;
+        currentRoundState?.tableState.pendingDragonSelection;
 
     const tableCards = useMemo(() =>
-        ctxState.gameContext.currentRoundState?.tableState.currentCardKeys
-            .map(k => new UICardInfo(k)).sort(CardInfo.compareCards) ?? []
-    , [ctxState.gameContext.currentRoundState?.tableState.currentCardKeys]);
+        currentRoundState?.tableState.currentCardKeys
+            ?.map(k => new UICardInfo(k)).sort(CardInfo.compareCards) ?? []
+    , [currentRoundState?.tableState.currentCardKeys]);
 
     const isLeftOpponentActive = useMemo(() =>
-        ctxState.gameContext.currentRoundState?.leftOpponent.numberOfCards > 0
-    , [ctxState.gameContext.currentRoundState?.leftOpponent.numberOfCards]);
+        currentRoundState?.leftOpponent.numberOfCards ?? 0 > 0
+    , [currentRoundState?.leftOpponent.numberOfCards]);
     
     const isRightOpponentActive = useMemo(() =>
-        ctxState.gameContext.currentRoundState?.rightOpponent.numberOfCards > 0
-    , [ctxState.gameContext.currentRoundState?.rightOpponent.numberOfCards]);
+        currentRoundState?.rightOpponent.numberOfCards ?? 0 > 0
+    , [currentRoundState?.rightOpponent.numberOfCards]);
 
     const onDragonSelection = useCallback((to: PlayerKey) => {
         const e: GiveDragonEvent = {
@@ -103,15 +104,16 @@ export const TableNew: React.FC<{}> = (props) => {
     return (
         <div className={styles.tableBox}>
             <span className={styles.requestedCardTable}>{
-                (requestedCardName === '') ?
-                    '' : ('Requested: ' + requestedCardName)
+                requestedCardName ? '' : `Requested: ${requestedCardName}`
             }</span>
             {
                 isDragonSelectionPending ?
                 <div className={styles.dragonSelectionTableContainer}>
                     <Card
-                        key={SpecialCards.DRAGON} id={SpecialCards.DRAGON}
-                        cardImg={cardImages.get('dragon')} alt={SpecialCards.DRAGON}
+                        key={SpecialCards.Dragon}
+                        id={SpecialCards.Dragon} index={0}
+                        cardImg={getCardConfigByKey(SpecialCards.Dragon)?.img ?? ''}
+                        alt={SpecialCards.Dragon}
                     />                    
                     {
                         isLeftOpponentActive ?

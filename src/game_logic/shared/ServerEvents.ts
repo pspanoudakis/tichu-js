@@ -9,7 +9,7 @@ import {
     zPlayerKey,
     zRoundScore
 } from "./shared";
-import { zCardKey, zCardName } from "./CardConfig";
+import { zCardKey, zNormalCardName } from "./CardConfig";
 
 export const ServerEventType = {
     WAITING_4_JOIN: 'WAITING_4_JOIN',
@@ -83,7 +83,7 @@ export const zCardsPlayedEvent = createGameEventSchema(
         numCardsRemainingInHand: z.number(),
         combinationType: z.nativeEnum(CardCombinationType),
         tableCardKeys: z.array(zCardKey),
-        requestedCardName: z.optional(z.string()),
+        requestedCardName: z.optional(zNormalCardName),
         currentPlayer: zPlayerKey,
     }),
     zPlayerKey,
@@ -145,7 +145,7 @@ export type BombDroppedEvent = z.infer<typeof zBombDroppedEvent>;
 export const zCardRequestedEvent = createGameEventSchema(
     z.literal(ServerEventType.CARD_REQUESTED),
     z.object({
-        requestedCardName: zCardName,
+        requestedCardName: zNormalCardName,
     }),
     zPlayerKey,
 )
