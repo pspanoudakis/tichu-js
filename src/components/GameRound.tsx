@@ -4,7 +4,8 @@ import { BetPhasePlayerHand } from "./BetPhasePlayerHand";
 import { ControlledPlayerHand } from "./ControlledPlayerHand";
 import {
     AppContext,
-    handleGameRoundStartedEvent
+    handleGameRoundStartedEvent,
+    handleTableRoundStartedEvent
 } from "../AppContext";
 import styles from "../styles/Components.module.css";
 import {
@@ -36,7 +37,7 @@ export const GameRound: React.FC<{
         ),
         [ServerEventType.TABLE_ROUND_STARTED]: eventHandlerWrapper(
             zTableRoundStartedEvent.parse, e => {
-                // handleTableRoundStartedEvent(e, setCtxState);
+                handleTableRoundStartedEvent(e, setCtxState);
                 setRoundPhase('MAIN');
             }
         ),

@@ -272,7 +272,7 @@ export function handleTableRoundStartedEvent(
 ) {
     setCtxState?.(s => {
         assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
-        const numCards = s.gameContext.currentRoundState.thisPlayer.cardKeys.length;
+        // const numCards = s.gameContext.currentRoundState.thisPlayer.cardKeys.length;
         return {
             ...s,
             gameContext: {
@@ -280,18 +280,18 @@ export function handleTableRoundStartedEvent(
                 currentRoundState: {
                     ...s.gameContext.currentRoundState,
                     playerInTurnKey: e.data.currentPlayer,
-                    leftOpponent: {
-                        ...s.gameContext.currentRoundState.leftOpponent,
-                        numberOfCards: numCards,
-                    },
-                    rightOpponent: {
-                        ...s.gameContext.currentRoundState.rightOpponent,
-                        numberOfCards: numCards,
-                    },
-                    teammate: {
-                        ...s.gameContext.currentRoundState.teammate,
-                        numberOfCards: numCards,
-                    },
+                    // leftOpponent: {
+                    //     ...s.gameContext.currentRoundState.leftOpponent,
+                    //     numberOfCards: numCards,
+                    // },
+                    // rightOpponent: {
+                    //     ...s.gameContext.currentRoundState.rightOpponent,
+                    //     numberOfCards: numCards,
+                    // },
+                    // teammate: {
+                    //     ...s.gameContext.currentRoundState.teammate,
+                    //     numberOfCards: numCards,
+                    // },
                     tableState: {
                         pendingBomb: false,
                         pendingDragonSelection: false,

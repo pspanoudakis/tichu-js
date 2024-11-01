@@ -307,8 +307,9 @@ export const NormalCardConfig: {
         },
     },
 } as const;
-export const normalCardKeys = Object.keys(NormalCardConfig);
-export const reversedCardKeys = Array.from(normalCardKeys).reverse();
+export const normalCardNames =
+    Object.keys(NormalCardConfig).map(k => zNormalCardName.parse(k));
+export const reversedNormalCardNames = Array.from(normalCardNames).reverse();
 
 const SpecialCardConfig: {
     [name in SpecialCardName]: {

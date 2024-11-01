@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Card } from './Card';
-import { RequestSelectionBox } from './RequestSelectionBox';
+import { RequestedCardSelector } from './RequestedCardSelector';
 import { PhoenixSelectionMenu } from './PhoenixSelectionMenu';
 
 import { inGamePlayerBoxClass, leftActionButtonsDiv, rightActionButtonsDiv, tichuBetDivClass } from "./styleUtils";
@@ -100,15 +100,19 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
                 <div className={styles.playerCardList}>
                     {cardComponents}
                 </div>
-                {/* <div className={styles.selectionsContainer}>
-                    {this.props.actions.displaySelectionBox && this.props.cards.some(card => 
+                <div className={styles.selectionsContainer}>
+                    {/* {this.props.actions.displaySelectionBox && this.props.cards.some(card => 
                     card.name === SpecialCards.Mahjong && card.isSelected)
                     ? <RequestSelectionBox onSelection={this.madeRequestSelection}/>
                     : this.props.actions.pendingRequest}
                     { (selectedCards.length >= 5 && phoenix !== undefined && phoenix.isSelected) 
                     ? <PhoenixSelectionMenu phoenix={phoenix} valueSelected={setPhoenixAltValue}/>
-                    : ''}
-                </div> */}
+                    : ''} */}
+                    {
+                        cardSelections[SpecialCards.Mahjong] &&
+                        <RequestedCardSelector/>
+                    }
+                </div>
             </div>            
         )
     }

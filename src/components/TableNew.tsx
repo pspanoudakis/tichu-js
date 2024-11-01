@@ -21,7 +21,6 @@ import {
 } from "../game_logic/shared/ServerEvents";
 import styles from "../styles/Components.module.css";
 import { getCardConfigByKey, SpecialCards } from "../game_logic/shared/CardConfig";
-import { cardImages } from "../CardResources";
 import { Card } from "./Card";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { CardInfo } from "../game_logic/shared/CardInfo";
@@ -74,11 +73,11 @@ export const TableNew: React.FC<{}> = (props) => {
     , [currentRoundState?.tableState.currentCardKeys]);
 
     const isLeftOpponentActive = useMemo(() =>
-        currentRoundState?.leftOpponent.numberOfCards ?? 0 > 0
+        (currentRoundState?.leftOpponent.numberOfCards ?? 0) > 0
     , [currentRoundState?.leftOpponent.numberOfCards]);
     
     const isRightOpponentActive = useMemo(() =>
-        currentRoundState?.rightOpponent.numberOfCards ?? 0 > 0
+        (currentRoundState?.rightOpponent.numberOfCards ?? 0) > 0
     , [currentRoundState?.rightOpponent.numberOfCards]);
 
     const onDragonSelection = useCallback((to: PlayerKey) => {
@@ -104,7 +103,7 @@ export const TableNew: React.FC<{}> = (props) => {
     return (
         <div className={styles.tableBox}>
             <span className={styles.requestedCardTable}>{
-                requestedCardName ? '' : `Requested: ${requestedCardName}`
+                requestedCardName ? `Requested: ${requestedCardName}` : ''
             }</span>
             {
                 isDragonSelectionPending ?

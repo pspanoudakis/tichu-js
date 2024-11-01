@@ -71,12 +71,9 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         ),
     }, ctxState.socket), [ctxState, setCtxState, tradeDecisions]);
 
-    const allCards = useMemo(
-        () => playerCardKeys
-            .map(k => new UICardInfo(k))
-            .sort(CardInfo.compareCards),
-        [playerCardKeys]
-    );
+    const allCards = useMemo(() => 
+        playerCardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards)
+    ,[playerCardKeys]);
 
     const nonSelectedCards = useMemo(() => {
         return allCards.filter(c => (
