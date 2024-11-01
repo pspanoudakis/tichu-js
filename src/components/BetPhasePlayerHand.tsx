@@ -56,20 +56,20 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
                 setCardsExpanded(true);
             }
         ),
+    }, ctxState.socket), [ctxState, setCtxState]);
+    useEffect(registerEventListenersHelper({
         [ServerEventType.CARDS_TRADED]: eventHandlerWrapper(
             zCardsTradedEvent.parse, e => {
                 setIncomingTradesSent(true);
-                setTradeDecisions(td => {
-                    handleCardsTradedEvent(e, td, setCtxState);
-                    return {
-                        teammate: new UICardInfo(e.data.cardByTeammate),
-                        leftOp: new UICardInfo(e.data.cardByLeft),
-                        rightOp: new UICardInfo(e.data.cardByRight),
-                    };
+                handleCardsTradedEvent(e, tradeDecisions, setCtxState);
+                setTradeDecisions({
+                    teammate: new UICardInfo(e.data.cardByTeammate),
+                    leftOp: new UICardInfo(e.data.cardByLeft),
+                    rightOp: new UICardInfo(e.data.cardByRight),
                 });
             }
         ),
-    }, ctxState.socket), [ctxState, setCtxState]);
+    }, ctxState.socket), [ctxState, setCtxState, tradeDecisions]);
 
     const allCards = useMemo(
         () => playerCardKeys
