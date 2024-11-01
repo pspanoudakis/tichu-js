@@ -24,22 +24,22 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
     const cardKeys =
         ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
 
+    const cards = useMemo(
+        () => cardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards),
+        [cardKeys]
+    );
+
     const [cardSelections, setCardSelections] = useState<{[s: string]: boolean}>(
-        cardKeys.reduce((acc, ck) => ({...acc, [ck]: false}), {})
+        cards.reduce((acc, c) => ({...acc, [c.key]: false}), {})
     );
 
     const [phoenixAltValue, setPhoenixAltValue] = useState(0.5);
 
     useEffect(() => {
         setCardSelections(
-            cardKeys.reduce((acc, ck) => ({...acc, [ck]: false}), {})
+            cards.reduce((acc, c) => ({...acc, [c.key]: false}), {})
         );
-    }, [JSON.stringify(cardKeys)])
-
-    const cards = useMemo(
-        () => cardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards),
-        [cardKeys]
-    )
+    }, [cards]);    
 
     const hasSelectedCards = useMemo(
         () => Object.values(cardSelections).some(s => s),
