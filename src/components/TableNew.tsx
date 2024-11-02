@@ -68,8 +68,9 @@ export const TableNew: React.FC<{}> = (props) => {
         currentRoundState?.tableState.pendingDragonSelection;
 
     const tableCards = useMemo(() =>
+        // Table cards are sent sorted
         currentRoundState?.tableState.currentCardKeys
-            ?.map(k => new UICardInfo(k)).sort(CardInfo.compareCards) ?? []
+            ?.map(k => new UICardInfo(k)) ?? []
     , [currentRoundState?.tableState.currentCardKeys]);
 
     const isLeftOpponentActive = useMemo(() =>

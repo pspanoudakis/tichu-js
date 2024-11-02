@@ -80,6 +80,18 @@ export class CardInfo {
         }
         return valueB - valueA;
     }
+    
+    static compareCardsAlt(a: CardInfo, b: CardInfo, phoenixAltValue?: number) {
+        let valueA = a.value;
+        let valueB = b.value;
+        if (a.key === SpecialCards.Phoenix) {
+            valueA = phoenixAltValue ?? 0;
+        }
+        else if (b.key === SpecialCards.Phoenix) {
+            valueB = phoenixAltValue ?? 0;
+        }
+        return valueB - valueA;
+    }
 
     /**
      * Returns the total points of the specified cards.
