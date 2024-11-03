@@ -18,14 +18,11 @@ import {
 } from '../game_logic/shared/CardConfig';
 import { PlayerBet } from '../game_logic/shared/shared';
 import { PlayerInfoHeader } from './PlayerInfoHeader';
-import {
-    ClientEventType,
-    DropBombEvent,
-    PassTurnEvent,
-    PlayCardsEvent
-} from '../game_logic/shared/ClientEvents';
 import { PlaceBetButton } from './PlaceBetButton';
 import { CardInfo } from '../game_logic/shared/CardInfo';
+import { PlayCardsButton } from './PlayCardsButton';
+import { PassTurnButton } from './PassTurnButton';
+import { DropBombButton } from './DropBombButton';
 
 export const ControlledPlayerHand: React.FC<{}> = (props) => {
 
@@ -52,16 +49,16 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
         cards.reduce((acc, c) => ({...acc, [c.key]: false}), {})
     );
 
+    const hasSelectedCards = useMemo(
+        () => Object.values(cardSelections).some(s => s),
+        [cardSelections]
+    );
+
     useEffect(() => {
         setCardSelections(
             cs => cards.reduce((acc, c) => ({...acc, [c.key]: cs[c.key]}), {})
         );
     }, [cards]);    
-
-    const hasSelectedCards = useMemo(
-        () => Object.values(cardSelections).some(s => s),
-        [cardSelections]
-    );
 
     const onCardClicked = useCallback(
         (cardKey: string) => setCardSelections({
@@ -70,32 +67,6 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
         }),
         [cardSelections]
     );
-
-    const onCardsPlayed = useCallback(() => {
-        const e: PlayCardsEvent = {
-            eventType: ClientEventType.PLAY_CARDS,
-            data: {
-                selectedCardKeys:
-                    Object.keys(cardSelections).filter(k => cardSelections[k]),
-                phoenixAltName,
-            }
-        };
-        ctxState.socket?.emit(ClientEventType.PLAY_CARDS, e);
-    }, [ctxState.socket, cardSelections, phoenixAltName]);
-
-    const onTurnPassed = useCallback(() => {
-        const e: PassTurnEvent = {
-            eventType: ClientEventType.PASS_TURN,
-        };
-        ctxState.socket?.emit(ClientEventType.PASS_TURN, e);
-    }, [ctxState.socket]);
-
-    const onBombDropped = useCallback(() => {
-        const e: DropBombEvent = {
-            eventType: ClientEventType.DROP_BOMB,
-        };
-        ctxState.socket?.emit(ClientEventType.DROP_BOMB, e);
-    }, [ctxState.socket]);
     
     return (
         <div className={styles.thisPlayer}>
@@ -131,9 +102,12 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
             <div className={styles.actionButtonsMainContainer}>
                 <PlaceBetButton bet={PlayerBet.TICHU}/>
                 <div className={rightActionButtonsDiv}>
-                    <button onClick={onCardsPlayed}>Play Cards</button>
-                    <button onClick={onTurnPassed}>Pass</button>
-                    <button onClick={onBombDropped}>Bomb</button>
+                    <PlayCardsButton
+                        cardSelections={cardSelections}
+                        phoenixAltName={phoenixAltName}
+                    />
+                    <PassTurnButton/>
+                    <DropBombButton/>
                     <PlaceBetButton bet={PlayerBet.TICHU}/>
                 </div>
             </div>
