@@ -181,6 +181,7 @@ export function handleGameRoundStartedEvent(
                         pendingBomb: false,
                         playerBet: PlayerBet.NONE,
                         playerKey: s.gameContext.thisPlayer.playerKey,
+                        numberOfCards: e.data.partialCards.length
                     },
                     tableState: {
                         pendingDragonSelection: false,
@@ -374,6 +375,7 @@ export function handleCardsPlayedEvent(
                             cardKeys: thisPlayer.cardKeys.filter(
                                 ck => !e.data.tableCardKeys.includes(ck)
                             ),
+                            numberOfCards: e.data.numCardsRemainingInHand
                         } : thisPlayer
                     ),
                     teammate: (

@@ -1,13 +1,11 @@
 import React, { useContext, useMemo } from 'react';
 import { Card } from './Card';
-
-import { inGamePlayerBoxClass } from "./styleUtils";
-import styles from "../styles/Components.module.css"
-import { BetIndicator } from './BetIndicator';
 import { PlayerKey } from '../game_logic/shared/shared';
 import { AppContext } from '../AppContext';
-import { cardImages } from '../CardResources';
-import { PlayerInfoHeader } from './PlayerInfoHeader';
+import { InGamePlayerBoxWrapper } from './InGamePlayerBoxWrapper';
+import { usePlayerAccessProperty } from '../hooks/usePlayerAccessKey';
+
+import styles from "../styles/Components.module.css"
 
 export const HiddenPlayerHand: React.FC<{
     playerKey?: PlayerKey,
@@ -16,48 +14,33 @@ export const HiddenPlayerHand: React.FC<{
 
     const { state: ctxState } = useContext(AppContext);
 
-    const playerAccessKey = useMemo(() => {
-        switch (props.playerKey) {
-            case ctxState.gameContext.teammate?.playerKey:
-                return 'teammate';
-            case ctxState.gameContext.rightOpponent?.playerKey:
-                return 'rightOpponent';
-            case ctxState.gameContext.leftOpponent?.playerKey:
-                return 'leftOpponent';
-            default:
-                throw new Error(`Cannot find player with key: '${props.playerKey}'`);
-        }
-    }, [
-        props.playerKey,
-        ctxState.gameContext.teammate?.playerKey,
-        ctxState.gameContext.leftOpponent?.playerKey,
-        ctxState.gameContext.rightOpponent?.playerKey,
-    ]);
+    const playerProperty = usePlayerAccessProperty(props.playerKey);
+    const numCards = (
+        playerProperty &&
+        ctxState.gameContext.currentRoundState?.[playerProperty].numberOfCards
+    ) ?? 0;
 
-    const nickname = ctxState.gameContext[playerAccessKey]?.nickname;
-    const numCards = ctxState.gameContext.currentRoundState?.[playerAccessKey].numberOfCards ?? 0;
-    const currentBet = ctxState.gameContext.currentRoundState?.[playerAccessKey].playerBet;
+    const cardsList = useMemo(
+        () => Array.from({ length: numCards }).map((_, i) => {
+            return (
+                <Card
+                    key={i} id={i.toString()} index={i}
+                    cardImg={'cardBackground'}
+                    alt='hidden'
+                />
+            );
+        }), [numCards]
+    );
 
     return (
         <div className={props.style}>
-            <div className={inGamePlayerBoxClass}>
-                <PlayerInfoHeader
-                    nickname={nickname ?? props.playerKey}
-                    bet={currentBet}
-                    numCards={numCards}
-                />
-                <div className={styles.playerCardList}>{
-                    Array.from({ length: numCards }).map((_, i) => {
-                        return (
-                            <Card
-                                key={i} id={i.toString()} index={i}
-                                cardImg={'cardBackground'}
-                                alt='hidden'
-                            />
-                        );
-                    })
-                }</div>
-            </div>
+            <InGamePlayerBoxWrapper
+                playerKey={props.playerKey}
+            >
+                <div className={styles.playerCardList}>
+                    { cardsList }
+                </div>
+            </InGamePlayerBoxWrapper>
         </div>
     )
 };

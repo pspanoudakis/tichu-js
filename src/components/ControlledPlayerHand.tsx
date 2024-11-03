@@ -3,10 +3,7 @@ import { Card } from './Card';
 import { RequestedCardSelector } from './RequestedCardSelector';
 import { PhoenixSelector } from './PhoenixSelector';
 
-import {
-    inGamePlayerBoxClass,
-    rightActionButtonsDiv,
-} from "./styleUtils";
+import { rightActionButtonsDiv } from "./styleUtils";
 import { AppContext } from '../AppContext';
 
 import styles from "../styles/Components.module.css"
@@ -17,18 +14,17 @@ import {
     SpecialCards
 } from '../game_logic/shared/CardConfig';
 import { PlayerBet } from '../game_logic/shared/shared';
-import { PlayerInfoHeader } from './PlayerInfoHeader';
 import { PlaceBetButton } from './PlaceBetButton';
 import { CardInfo } from '../game_logic/shared/CardInfo';
 import { PlayCardsButton } from './PlayCardsButton';
 import { PassTurnButton } from './PassTurnButton';
 import { DropBombButton } from './DropBombButton';
+import { InGamePlayerBoxWrapper } from './InGamePlayerBoxWrapper';
 
 export const ControlledPlayerHand: React.FC<{}> = (props) => {
 
     const { state: ctxState } = useContext(AppContext);
 
-    const playerNickname = ctxState.gameContext.thisPlayer?.nickname;
     const cardKeys =
         ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
 
@@ -70,12 +66,9 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
     
     return (
         <div className={styles.thisPlayer}>
-            <div className={inGamePlayerBoxClass}>
-                <PlayerInfoHeader
-                    nickname={playerNickname ?? 'You'}
-                    bet={ctxState.gameContext.currentRoundState?.thisPlayer.playerBet}
-                    numCards={cards.length}
-                />
+            <InGamePlayerBoxWrapper
+                playerKey={ctxState.gameContext.thisPlayer?.playerKey}
+            >
                 <div className={styles.playerCardList}>{
                     cards.map((c, i) => 
                         <Card
@@ -98,7 +91,7 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
                     <PhoenixSelector onAltNameChange={setPhoenixAltName}/>
                 }
                 </div>
-            </div>
+            </InGamePlayerBoxWrapper>
             <div className={styles.actionButtonsMainContainer}>
                 <PlaceBetButton bet={PlayerBet.TICHU}/>
                 <div className={rightActionButtonsDiv}>

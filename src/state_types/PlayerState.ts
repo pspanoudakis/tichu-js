@@ -6,16 +6,17 @@ export type PlayerInfoState = {
     nickname: string,
 };
 
-type PlayerRoundStateBase = {
+export type PlayerRoundStateBase = {
     playerKey: PlayerKey
     playerBet: PlayerBet,
     pendingBomb: boolean,
+    numberOfCards: number,
 }
 
 export const createInitialPlayerInfoState = (
     playerKey: PlayerKey,
     playerIndex: number,
-    nickname: string
+    nickname: string,
 ): PlayerInfoState => ({
     playerKey,
     playerIndex,
@@ -28,11 +29,8 @@ const createInitialPlayerRoundStateBase = (
     playerKey,
     playerBet: PlayerBet.NONE,
     pendingBomb: false,
+    numberOfCards: 0,
 });
-
-export type HiddenPlayerState = PlayerRoundStateBase & {
-    numberOfCards: number,
-};
 
 export const createInitialThisPlayerState = (
     playerKey: PlayerKey,
@@ -47,7 +45,7 @@ export type ThisPlayerState = PlayerRoundStateBase & {
 
 export const createInitialHiddenPlayerState = (
     playerKey: PlayerKey,
-): HiddenPlayerState => ({
+): PlayerRoundStateBase => ({
     ...createInitialPlayerRoundStateBase(playerKey),
     numberOfCards: 0,
 });
