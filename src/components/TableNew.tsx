@@ -46,7 +46,7 @@ export const TableNew: React.FC<{}> = (props) => {
         ),
         [ServerEventType.PENDING_DRAGON_DECISION]: eventHandlerWrapper(
             zPendingDragonDecisionEvent.parse,
-            e => handlePendingDragonDecisionEvent(e)
+            e => handlePendingDragonDecisionEvent(e, setCtxState)
         ),
         [ServerEventType.DRAGON_GIVEN]: eventHandlerWrapper(
             zDragonGivenEvent.parse, e => {
@@ -113,7 +113,7 @@ export const TableNew: React.FC<{}> = (props) => {
                         id={SpecialCards.Dragon} index={0}
                         cardImg={getCardConfigByKey(SpecialCards.Dragon)?.img ?? ''}
                         alt={SpecialCards.Dragon}
-                    />                    
+                    />
                     {
                         isLeftOpponentActive ?
                         <button
