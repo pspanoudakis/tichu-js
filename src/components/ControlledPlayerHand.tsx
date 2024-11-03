@@ -25,20 +25,21 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
 
     const { state: ctxState } = useContext(AppContext);
 
-    const cardKeys =
-        ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
-
     const [phoenixAltName, setPhoenixAltName] = useState<NormalCardName>();
 
     const cards = useMemo(
         () => {
             const phoenixValue =
                 (phoenixAltName && getNormalCardValueByName(phoenixAltName)) ?? 0;
-            return cardKeys.map(k => new UICardInfo(k)).sort(
-                (a, b) => CardInfo.compareCardsAlt(a, b, phoenixValue)
-            );
+            return ctxState.gameContext.currentRoundState
+                ?.thisPlayer.cardKeys.map(k => new UICardInfo(k)).sort(
+                    (a, b) => CardInfo.compareCardsAlt(a, b, phoenixValue)
+                ) ?? [];
         },
-        [cardKeys, phoenixAltName]
+        [
+            ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys,
+            phoenixAltName
+        ]
     );
 
     const [cardSelections, setCardSelections] = useState<{[s: string]: boolean}>(

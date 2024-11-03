@@ -1,15 +1,15 @@
 import { z } from "zod";
 
-const CardColor = {
+const _CardColor_ = {
     BLACK: 'black',
     RED: 'red',
     BLUE: 'blue',
     GREEN: 'green'
 } as const;
 
-export type CardColor = typeof CardColor[keyof typeof CardColor];
+export type CardColor = typeof _CardColor_[keyof typeof _CardColor_];
 
-export const cardColorValues = Object.values(CardColor);
+export const cardColorValues = Object.values(_CardColor_);
 
 const zNumericCardName = z.union([
     z.literal('2'),
@@ -66,7 +66,7 @@ export type CardName = z.infer<typeof zCardName>;
 
 export const NormalCardConfig: {
     [name in NormalCardName]: {
-        [color in typeof CardColor[keyof typeof CardColor]]: {
+        [color in CardColor]: {
             key: string,
             img: string,
         }
@@ -340,7 +340,7 @@ const CardKeyToConfigMap:
         ...Object.entries(NormalCardConfig).reduce<
             { [key: string]: CardConfigMapEntry }
         >((acc, [n, v]) => {
-            Object.values(CardColor).forEach(c => acc[v[c].key] = {
+            Object.values(_CardColor_).forEach(c => acc[v[c].key] = {
                 name: n,
                 img: v[c].img,
                 color: c,

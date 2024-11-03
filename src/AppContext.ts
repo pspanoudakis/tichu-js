@@ -8,7 +8,6 @@ import {
     CardRequestedEvent,
     CardsPlayedEvent,
     CardsTradedEvent,
-    DragonGivenEvent,
     GameRoundStartedEvent,
     PendingDragonDecisionEvent,
     PlayerJoinedEvent,

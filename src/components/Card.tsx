@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { cardImages } from '../CardResources';
 
-export const Card: React.FC<{
+type CardProps = {
     id: string,
     isSelected?: boolean,
     anySelected?: boolean,
@@ -10,33 +10,42 @@ export const Card: React.FC<{
     onClick?: (id: string) => void,
     index: number,
     omitPosition?: boolean,
-}> = (props) => {
+};
 
-    const onClick = useCallback(() => {
-        props.onClick?.(props.id);
-    }, [props.id, props.onClick]);
+export const Card: React.FC<CardProps> = ({
+    id,
+    isSelected,
+    anySelected,
+    cardImg,
+    alt,
+    onClick,
+    index,
+    omitPosition,
+}) => {
 
-    const movePct = !props.anySelected ? undefined : '15%'
+    const onCardClicked = useCallback(() => onClick?.(id), [id, onClick]);
+
+    const movePct = !anySelected ? undefined : '15%'
 
     return (
         <img
-            src={cardImages.get(props.cardImg)}
-            alt={props.alt}
-            onClick={onClick}
+            src={cardImages.get(cardImg)}
+            alt={alt}
+            onClick={onCardClicked}
             style={{
                 userSelect: "none",
                 filter:
                     'drop-shadow(0.5vw 0.25vh 0.5vw rgba(0, 0, 0, 0.65))' +
-                    (!props.isSelected && props.anySelected ? ' brightness(62.5%) contrast(85%)' : ''),
+                    (!isSelected && anySelected ? ' brightness(62.5%) contrast(85%)' : ''),
                 ...(
-                    props.isSelected ?
+                    isSelected ?
                     { transform: `translateY(-${movePct})`} : {}
                 ),
                 ...(
-                    !props.omitPosition ?
+                    !omitPosition ?
                     {
                         position: 'absolute',
-                        left: (props.index * 6.5).toString() + '%',
+                        left: (index * 6.5).toString() + '%',
                         bottom: '15%',
                     } : {}
                 ),

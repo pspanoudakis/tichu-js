@@ -34,19 +34,17 @@ export function registerEventListenersHelper<
     eventListeners: Partial<ListenEvents>,
     socket?: Socket<ListenEvents, EmitEvents>
 ) {
-    return () => {
-        if (!socket) return;
-        for (const eventName in eventListeners) {
-            const l = eventListeners[eventName];
-            //@ts-ignore
-            if (l) socket.on(eventName, l);
-        }
-        return () => {
-            for (const eventName in eventListeners) {
-                socket.off(eventName, eventListeners[eventName]);
-            }
-        };
+    if (!socket) return () => {};
+    for (const eventName in eventListeners) {
+        const l = eventListeners[eventName];
+        //@ts-ignore
+        if (l) socket.on(eventName, l);
     }
+    return () => {
+        for (const eventName in eventListeners) {
+            socket.off(eventName, eventListeners[eventName]);
+        }
+    };
 }
 
 const errorEventListener = eventHandlerWrapper(

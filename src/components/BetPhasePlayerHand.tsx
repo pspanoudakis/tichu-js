@@ -33,8 +33,6 @@ import { PlaceBetButton } from "./PlaceBetButton";
 export const BetPhasePlayerHand: React.FC<{}> = () => {
 
     const {state: ctxState, setState: setCtxState} = useContext(AppContext);
-    const playerCardKeys =
-        ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys ?? [];
 
     const playerBet =
         ctxState.gameContext.currentRoundState?.thisPlayer.playerBet;
@@ -49,7 +47,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         rightOp: undefined,
     });
 
-    useEffect(registerEventListenersHelper({
+    useEffect(() => registerEventListenersHelper({
         [ServerEventType.ALL_CARDS_REVEALED]: eventHandlerWrapper(
             zAllCardsRevealedEvent.parse, e => {
                 handleAllCardsRevealedEvent(e, setCtxState);
@@ -57,7 +55,7 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
             }
         ),
     }, ctxState.socket), [ctxState, setCtxState]);
-    useEffect(registerEventListenersHelper({
+    useEffect(() => registerEventListenersHelper({
         [ServerEventType.CARDS_TRADED]: eventHandlerWrapper(
             zCardsTradedEvent.parse, e => {
                 setIncomingTradesSent(true);
@@ -72,8 +70,9 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
     }, ctxState.socket), [ctxState, setCtxState, tradeDecisions]);
 
     const allCards = useMemo(() => 
-        playerCardKeys.map(k => new UICardInfo(k)).sort(CardInfo.compareCards)
-    ,[playerCardKeys]);
+        ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys
+            .map(k => new UICardInfo(k)).sort(CardInfo.compareCards) ?? []
+    ,[ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys]);
 
     const nonSelectedCards = useMemo(() => {
         return allCards.filter(c => (
@@ -82,9 +81,9 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
             c.key !== tradeDecisions.rightOp?.key
         ));
     }, [
-        tradeDecisions.teammate,
-        tradeDecisions.leftOp,
-        tradeDecisions.rightOp,
+        tradeDecisions.teammate?.key,
+        tradeDecisions.leftOp?.key,
+        tradeDecisions.rightOp?.key,
         allCards,
     ]);
 
@@ -135,34 +134,25 @@ export const BetPhasePlayerHand: React.FC<{}> = () => {
         const card = allCards.find(c => c.key === key);
         switch (key) {
             case tradeDecisions.teammate?.key:
-                return setTradeDecisions(
-                    { ...tradeDecisions, teammate: undefined }
-                );
+                return setTradeDecisions(td => ({ ...td, teammate: undefined }));
             case tradeDecisions.leftOp?.key:
-                return setTradeDecisions(
-                    { ...tradeDecisions, leftOp: undefined }
-                );
+                return setTradeDecisions(td => ({ ...td, leftOp: undefined }));
             case tradeDecisions.rightOp?.key:
-                return setTradeDecisions(
-                    { ...tradeDecisions, rightOp: undefined }
-                );
+                return setTradeDecisions(td => ({ ...td, rightOp: undefined }));
             default:
-                if (!tradeDecisions.leftOp) return setTradeDecisions(
-                    { ...tradeDecisions, leftOp: card }
-                );
-                if (!tradeDecisions.teammate) return setTradeDecisions(
-                    { ...tradeDecisions, teammate: card }
-                );
-                if (!tradeDecisions.rightOp) return setTradeDecisions(
-                    { ...tradeDecisions, rightOp: card }
-                );
+                if (!tradeDecisions.leftOp)
+                    return setTradeDecisions(td => ({ ...td, leftOp: card }));
+                if (!tradeDecisions.teammate)
+                    return setTradeDecisions(td => ({ ...td, teammate: card }));
+                if (!tradeDecisions.rightOp)
+                    return setTradeDecisions(td => ({ ...td, rightOp: card }));
                 break;
         }
     }, [
         allCards,
-        tradeDecisions.teammate?.key,
-        tradeDecisions.leftOp?.key,
-        tradeDecisions.rightOp?.key,
+        tradeDecisions.teammate,
+        tradeDecisions.leftOp,
+        tradeDecisions.rightOp,
     ]);
 
     return (

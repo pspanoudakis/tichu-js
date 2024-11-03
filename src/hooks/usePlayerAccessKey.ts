@@ -23,6 +23,7 @@ export const usePlayerAccessProperty = (playerKey?: PlayerKey) => {
         }
     }, [
         playerKey,
+        ctxState.gameContext.thisPlayer?.playerKey,
         ctxState.gameContext.teammate?.playerKey,
         ctxState.gameContext.leftOpponent?.playerKey,
         ctxState.gameContext.rightOpponent?.playerKey,

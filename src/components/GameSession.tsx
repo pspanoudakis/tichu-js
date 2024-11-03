@@ -74,7 +74,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                 }
             ),
             ...errorEventListeners,
-        }, socket)();
+        }, socket);
 
         setAppContextState(s => ({
             ...s,

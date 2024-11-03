@@ -23,7 +23,6 @@ import styles from "../styles/Components.module.css";
 import { getCardConfigByKey, SpecialCards } from "../game_logic/shared/CardConfig";
 import { Card } from "./Card";
 import { UICardInfo } from "../game_logic/UICardInfo";
-import { CardInfo } from "../game_logic/shared/CardInfo";
 import { PlayerKey } from "../game_logic/shared/shared";
 import { ClientEventType, GiveDragonEvent } from "../game_logic/shared/ClientEvents";
 import { dragonSelection1, dragonSelection2 } from "./styleUtils";
@@ -32,7 +31,7 @@ export const TableNew: React.FC<{}> = (props) => {
 
     const { state: ctxState, setState: setCtxState } = useContext(AppContext);
 
-    useEffect(registerEventListenersHelper({
+    useEffect(() => registerEventListenersHelper({
         [ServerEventType.CARDS_PLAYED]: eventHandlerWrapper(
             zCardsPlayedEvent.parse,
             e => handleCardsPlayedEvent(e, setCtxState)
@@ -58,7 +57,7 @@ export const TableNew: React.FC<{}> = (props) => {
             zBombDroppedEvent.parse,
             e => handleBombDroppedEvent(e, setCtxState)
         ),
-    }, ctxState.socket), [ctxState.socket]);
+    }, ctxState.socket), [ctxState.socket, setCtxState]);
 
     const currentRoundState = ctxState.gameContext.currentRoundState;
 

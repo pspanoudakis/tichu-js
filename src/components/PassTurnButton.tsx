@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 import { AppContext } from "../AppContext";
-import { ClientEventType, PassTurnEvent, PlayCardsEvent } from "../game_logic/shared/ClientEvents";
+import { ClientEventType, PassTurnEvent } from "../game_logic/shared/ClientEvents";
 
 export const PassTurnButton: React.FC<{}> = (props) => {
 

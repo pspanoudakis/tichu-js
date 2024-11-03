@@ -16,25 +16,25 @@ const options = [
 
 export const PhoenixSelector: React.FC<{
     onAltNameChange: (newVal?: NormalCardName) => void,
-}> = (props) => {
+}> = ({ onAltNameChange }) => {
 
     const [phoenixAltName, setPhoenixAltName] = useState<NormalCardName>();
 
     useEffect(() => {
         // "componentWillUnmount"
-        return () => props.onAltNameChange();
-      }, [props.onAltNameChange])
+        return () => onAltNameChange();
+      }, [onAltNameChange])
 
     const onSelection = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
         if (!event.target.value) {
-            props.onAltNameChange();
+            onAltNameChange();
         }
         else {
             const selectedName = zNormalCardName.parse(event.target.value);
-            props.onAltNameChange(selectedName);
+            onAltNameChange(selectedName);
             setPhoenixAltName(selectedName);
         }
-    }, [props.onAltNameChange]);
+    }, [onAltNameChange]);
     
     return (
         <div className={styles.phoenixSelectionContainer}>

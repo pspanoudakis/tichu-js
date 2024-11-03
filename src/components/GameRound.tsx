@@ -28,7 +28,7 @@ export const GameRound: React.FC<{
     const {state: ctxState, setState: setCtxState} = useContext(AppContext);
     const [roundPhase, setRoundPhase] = useState(props.initialState ?? 'WAIT4START');
     
-    useEffect(registerEventListenersHelper({
+    useEffect(() => registerEventListenersHelper({
         [ServerEventType.GAME_ROUND_STARTED]: eventHandlerWrapper(
             zGameRoundStartedEvent.parse, e => {
                 handleGameRoundStartedEvent(e, setCtxState);
