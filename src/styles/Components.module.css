@@ -159,11 +159,9 @@ button {
 }
 
 .dragonSelection {
-    position: absolute;
     top: 0%;
     width: 15%;
     min-width: min-content;
-    height: 100%;
 }
 
 .selection1 {    
@@ -188,9 +186,9 @@ button {
 
 .dragonSelectionTableContainer {
     display: flex;
-    width: 100%;
+    align-items: center;
+    justify-content: space-between;
     height: 90%;
-    position: relative;
 }
 
 .requestedCardTable {
