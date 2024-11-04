@@ -6,8 +6,8 @@ import { AppContext } from "../AppContext";
 type AllowedBet = PlayerBet.TICHU | PlayerBet.GRAND_TICHU
 
 export const PlaceBetButton: React.FC<{
-    bet: AllowedBet
-    className?: string
+    bet: AllowedBet,
+    className?: string,
 }> = (props) => {
 
     const {state: ctxState} = useContext(AppContext);

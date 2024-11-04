@@ -13,7 +13,18 @@ export const PassTurnButton: React.FC<{}> = (props) => {
         ctxState.socket?.emit(ClientEventType.PASS_TURN, e);
     }, [ctxState.socket]);
 
+    const canPass = (
+        (
+            ctxState.gameContext.currentRoundState?.playerInTurnKey ===
+            ctxState.gameContext.thisPlayer?.playerKey
+        ) &&
+        !ctxState.gameContext.currentRoundState?.tableState.pendingBomb &&
+        !ctxState.gameContext.currentRoundState?.tableState.pendingDragonSelection
+    );
+
     return (
+        canPass ?
         <button onClick={onTurnPassed}>Pass Turn</button>
+        : null
     );
 }

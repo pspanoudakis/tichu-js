@@ -24,7 +24,16 @@ export const PlayCardsButton: React.FC<{
         ctxState.socket?.emit(ClientEventType.PLAY_CARDS, e);
     }, [ctxState.socket, cardSelections, phoenixAltName]);
 
+    const canPlayCards =
+        (
+            ctxState.gameContext.currentRoundState?.playerInTurnKey ===
+            ctxState.gameContext.thisPlayer?.playerKey
+        ) &&
+        !ctxState.gameContext.currentRoundState?.tableState.pendingDragonSelection
+
     return (
+        canPlayCards ?
         <button onClick={onCardsPlayed}>Play Cards</button>
+        : null
     );
 }

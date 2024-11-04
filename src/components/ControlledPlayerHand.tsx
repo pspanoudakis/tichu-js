@@ -24,6 +24,7 @@ import { InGamePlayerBoxWrapper } from './InGamePlayerBoxWrapper';
 export const ControlledPlayerHand: React.FC<{}> = (props) => {
 
     const { state: ctxState } = useContext(AppContext);
+    const currentRoundState = ctxState.gameContext.currentRoundState;
 
     const [phoenixAltName, setPhoenixAltName] = useState<NormalCardName>();
 
@@ -31,13 +32,13 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
         () => {
             const phoenixValue =
                 (phoenixAltName && getNormalCardValueByName(phoenixAltName)) ?? 0;
-            return ctxState.gameContext.currentRoundState
+            return currentRoundState
                 ?.thisPlayer.cardKeys.map(k => new UICardInfo(k)).sort(
                     (a, b) => CardInfo.compareCardsAlt(a, b, phoenixValue)
                 ) ?? [];
         },
         [
-            ctxState.gameContext.currentRoundState?.thisPlayer.cardKeys,
+            currentRoundState?.thisPlayer.cardKeys,
             phoenixAltName
         ]
     );
@@ -64,6 +65,10 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
         }),
         [cardSelections]
     );
+
+    const canBetTichu =
+        currentRoundState?.thisPlayer.cardKeys.length === 14 &&
+        currentRoundState?.thisPlayer.playerBet === PlayerBet.NONE;
     
     return (
         <div className={styles.thisPlayer}>
@@ -94,7 +99,7 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
                 </div>
             </InGamePlayerBoxWrapper>
             <div className={styles.actionButtonsMainContainer}>
-                <PlaceBetButton bet={PlayerBet.TICHU}/>
+                { canBetTichu && <PlaceBetButton bet={PlayerBet.TICHU}/> }
                 <div className={rightActionButtonsDiv}>
                     <PlayCardsButton
                         cardSelections={cardSelections}
@@ -102,9 +107,8 @@ export const ControlledPlayerHand: React.FC<{}> = (props) => {
                     />
                     <PassTurnButton/>
                     <DropBombButton/>
-                    <PlaceBetButton bet={PlayerBet.TICHU}/>
                 </div>
             </div>
         </div>
-    )
+    );
 }

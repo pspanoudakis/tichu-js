@@ -13,7 +13,13 @@ export const DropBombButton: React.FC<{}> = (props) => {
         ctxState.socket?.emit(ClientEventType.DROP_BOMB, e);
     }, [ctxState.socket]);
 
+    const canDropBomb =
+        !ctxState.gameContext.currentRoundState?.tableState.pendingBomb &&
+        !ctxState.gameContext.currentRoundState?.tableState.pendingDragonSelection;
+
     return (
+        canDropBomb ?
         <button onClick={onBombDropped}>Bomb</button>
+        : null
     );
 }
