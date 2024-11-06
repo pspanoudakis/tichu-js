@@ -175,6 +175,7 @@ export function handleGameRoundStartedEvent(
             gameContext: {
                 ...s.gameContext,
                 currentRoundState: {
+                    currentPhase: 'TRADES',
                     thisPlayer: {
                         cardKeys: e.data.partialCards,
                         pendingBomb: false,
@@ -272,26 +273,14 @@ export function handleTableRoundStartedEvent(
 ) {
     setCtxState?.(s => {
         assertCurrentRoundNonNullable(s.gameContext.currentRoundState);
-        // const numCards = s.gameContext.currentRoundState.thisPlayer.cardKeys.length;
-        return {
+        
+        const newState = {
             ...s,
             gameContext: {
                 ...s.gameContext,
                 currentRoundState: {
                     ...s.gameContext.currentRoundState,
                     playerInTurnKey: e.data.currentPlayer,
-                    // leftOpponent: {
-                    //     ...s.gameContext.currentRoundState.leftOpponent,
-                    //     numberOfCards: numCards,
-                    // },
-                    // rightOpponent: {
-                    //     ...s.gameContext.currentRoundState.rightOpponent,
-                    //     numberOfCards: numCards,
-                    // },
-                    // teammate: {
-                    //     ...s.gameContext.currentRoundState.teammate,
-                    //     numberOfCards: numCards,
-                    // },
                     tableState: {
                         pendingBomb: false,
                         pendingDragonSelection: false,
@@ -299,6 +288,16 @@ export function handleTableRoundStartedEvent(
                 }
             }
         };
+        if (s.gameContext.currentRoundState?.currentPhase === 'TRADES') {
+            const numCards =
+                s.gameContext.currentRoundState.thisPlayer.cardKeys.length;
+            newState.gameContext.currentRoundState.currentPhase = 'MAIN';
+            newState.gameContext.currentRoundState.thisPlayer.numberOfCards = numCards;
+            newState.gameContext.currentRoundState.leftOpponent.numberOfCards = numCards;
+            newState.gameContext.currentRoundState.rightOpponent.numberOfCards = numCards;
+            newState.gameContext.currentRoundState.teammate.numberOfCards = numCards;
+        }
+        return newState;
     });
 }
 

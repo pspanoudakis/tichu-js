@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { HiddenPlayerHand } from "./HiddenPlayerHand";
 import { BetPhasePlayerHand } from "./BetPhasePlayerHand";
 import { ControlledPlayerHand } from "./ControlledPlayerHand";
@@ -19,31 +19,26 @@ import {
 } from "../utils/eventUtils";
 import { TableNew } from "./TableNew";
 
-type GameRoundPhase = 'WAIT4START' | 'TRADES' | 'MAIN' | 'OVER';
-
-export const GameRound: React.FC<{
-    initialState?: GameRoundPhase
-}> = (props) => {
+export const GameRound: React.FC<{}> = (props) => {
 
     const {state: ctxState, setState: setCtxState} = useContext(AppContext);
-    const [roundPhase, setRoundPhase] = useState(props.initialState ?? 'WAIT4START');
     
     useEffect(() => registerEventListenersHelper({
         [ServerEventType.GAME_ROUND_STARTED]: eventHandlerWrapper(
             zGameRoundStartedEvent.parse, e => {
                 handleGameRoundStartedEvent(e, setCtxState);
-                setRoundPhase('TRADES');
             }
         ),
         [ServerEventType.TABLE_ROUND_STARTED]: eventHandlerWrapper(
             zTableRoundStartedEvent.parse, e => {
                 handleTableRoundStartedEvent(e, setCtxState);
-                setRoundPhase('MAIN');
             }
         ),
     }, ctxState.socket), [ctxState.socket, setCtxState]);
 
+    const roundPhase = ctxState.gameContext.currentRoundState?.currentPhase;
     switch (roundPhase) {
+        case undefined:
         case 'TRADES':
             return (
                 <div className={styles.gameboardPreTradesStyle}>
@@ -68,7 +63,6 @@ export const GameRound: React.FC<{
                     </div>
                 </div>
             );
-        case 'WAIT4START':
         case 'OVER':
         case 'MAIN':
             return (
