@@ -30,6 +30,7 @@ export const ServerEventType = {
     TABLE_ROUND_ENDED: 'TABLE_ROUND_ENDED',
     GAME_ROUND_STARTED: 'GAME_ROUND_STARTED',
     GAME_ROUND_ENDED: 'GAME_ROUND_ENDED',
+    GAME_STARTED: 'GAME_STARTED',
     GAME_ENDED: 'GAME_ENDED',
     BUSINESS_ERROR: 'BUSINESS_ERROR',
     UNKNOWN_SERVER_ERROR: 'UNKNOWN_SERVER_ERROR',
@@ -193,6 +194,13 @@ export const zGameRoundEndedEvent = createGameEventSchema(
     })
 );
 export type GameRoundEndedEvent = z.infer<typeof zGameRoundEndedEvent>;
+
+export const zGameStartedEvent = createGameEventSchema(
+    z.literal(ServerEventType.GAME_STARTED),
+    z.undefined()
+);
+
+export type GameStartedEvent = z.infer<typeof zGameStartedEvent>;
 
 export const zGameEndedEvent = createGameEventSchema(
     z.literal(ServerEventType.GAME_ENDED),

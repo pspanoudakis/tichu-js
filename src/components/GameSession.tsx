@@ -4,6 +4,8 @@ import { createSessionSocketURI } from "../API/coreAPI";
 import {
     ServerEventType,
     zBetPlacedEvent,
+    zGameEndedEvent,
+    zGameStartedEvent,
     zPlayerJoinedEvent,
     zWaitingForJoinEvent
 } from "../game_logic/shared/ServerEvents";
@@ -14,6 +16,8 @@ import {
     AppContext,
     appContextInitState,
     handleBetPlacedEvent,
+    handleGameEndedEvent,
+    handleGameStartedEvent,
     handlePlayerJoinedEvent,
     handleWaitingForJoinEvent
 } from "../AppContext";
@@ -72,6 +76,17 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                 zBetPlacedEvent.parse, e => {
                     setAppContextState(s => handleBetPlacedEvent(s, e));
                 }
+            ),
+            [ServerEventType.GAME_STARTED]: eventHandlerWrapper(
+                zGameStartedEvent.parse, e => {
+                    setAppContextState(s => handleGameStartedEvent(s, e));
+                }                
+            ),
+            [ServerEventType.GAME_ENDED]: eventHandlerWrapper(
+                zGameEndedEvent.parse, e => {
+                    alert(`Game Over. Result: ${e.data.result}`);
+                    setAppContextState(s => handleGameEndedEvent(s, e));
+                }                
             ),
             ...errorEventListeners,
         }, socket);

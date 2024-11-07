@@ -62,7 +62,7 @@ export class Scoreboard extends Component<{
                     </span> 
                     <span className={styles.mainScore}>
                         <span style={{fontSize: '2vh'}}>Team 2-4</span>
-                        {this.props.current.team02}
+                        {this.props.current.team13}
                     </span>
                 </div>
             </div>

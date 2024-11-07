@@ -4,12 +4,14 @@ import { BetPhasePlayerHand } from "./BetPhasePlayerHand";
 import { ControlledPlayerHand } from "./ControlledPlayerHand";
 import {
     AppContext,
+    handleGameRoundEndedEvent,
     handleGameRoundStartedEvent,
     handleTableRoundStartedEvent
 } from "../AppContext";
 import styles from "../styles/Components.module.css";
 import {
     ServerEventType,
+    zGameRoundEndedEvent,
     zGameRoundStartedEvent,
     zTableRoundStartedEvent
 } from "../game_logic/shared/ServerEvents";
@@ -34,6 +36,16 @@ export const GameRound: React.FC<{}> = (props) => {
                 handleTableRoundStartedEvent(e, setCtxState);
             }
         ),
+        [ServerEventType.GAME_ROUND_ENDED]: eventHandlerWrapper(
+            zGameRoundEndedEvent.parse, e => {
+                alert(
+                    `Game Round ended. Round Score: ` +
+                    `Team 1-3: ${e.data.roundScore.team02}, ` +
+                    `Team 2-4: ${e.data.roundScore.team13}`
+                );
+                handleGameRoundEndedEvent(e, setCtxState);
+            }
+        )
     }, ctxState.socket), [ctxState.socket, setCtxState]);
 
     const roundPhase = ctxState.gameContext.currentRoundState?.currentPhase;

@@ -8,7 +8,10 @@ import {
     CardRequestedEvent,
     CardsPlayedEvent,
     CardsTradedEvent,
+    GameEndedEvent,
+    GameRoundEndedEvent,
     GameRoundStartedEvent,
+    GameStartedEvent,
     PendingDragonDecisionEvent,
     PlayerJoinedEvent,
     TableRoundStartedEvent,
@@ -484,4 +487,49 @@ export function handlePendingDragonDecisionEvent(
             }
         };
     });
+}
+
+export function handleGameRoundEndedEvent(
+    e: GameRoundEndedEvent,
+    setCtxState?: AppContextStateSetter,
+) {
+    setCtxState?.(s => {
+        return {
+            ...s,
+            gameContext: {
+                ...s.gameContext,
+                previousGames: [
+                    ...s.gameContext.previousGames,
+                    {
+                        team02: e.data.roundScore.team02,
+                        team13: e.data.roundScore.team13,
+                    }
+                ]
+            }
+        };
+    });
+}
+
+export function handleGameEndedEvent(
+    s: AppContextState, e: GameEndedEvent
+): AppContextState {
+    return {
+        ...s,
+        gameContext: {
+            ...s.gameContext,
+            currentRoundState: undefined,
+        }
+    };
+}
+
+export function handleGameStartedEvent(
+    s: AppContextState, e: GameStartedEvent
+): AppContextState {
+    return {
+        ...s,
+        gameContext: {
+            ...s.gameContext,
+            previousGames: [],
+        }
+    };
 }
