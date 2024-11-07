@@ -368,6 +368,7 @@ export function handleCardsPlayedEvent(
                         pendingDragonSelection: false,
                         combinationType: e.data.combinationType,
                         currentCardKeys: e.data.tableCardKeys,
+                        currentCardsOwner: e.playerKey,
                     },
                     thisPlayer: (
                         (e.playerKey === s.gameContext.thisPlayer?.playerKey) ?

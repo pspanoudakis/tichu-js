@@ -23,8 +23,9 @@ import styles from "../styles/Components.module.css";
 import { Card } from "./Card";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { DragonSelectionContainer } from "./DragonSelectionContainer";
+import { usePlayerAccessProperty } from "../hooks/usePlayerAccessKey";
 
-export const TableNew: React.FC<{}> = (props) => {
+export const Table: React.FC<{}> = (props) => {
 
     const { state: ctxState, setState: setCtxState } = useContext(AppContext);
 
@@ -71,27 +72,46 @@ export const TableNew: React.FC<{}> = (props) => {
         ctxState.gameContext.thisPlayer?.playerKey
     );
 
+    const cardsOwnerProperty =
+        usePlayerAccessProperty(currentRoundState?.tableState.currentCardsOwner);
+
     const isDragonSelectionPending =
         currentRoundState?.tableState.pendingDragonSelection;
 
     return (
-        <div className={styles.tableBox}>
-            <span className={styles.requestedCardTable}>{
-                requestedCardName ? `Requested: ${requestedCardName}` : ''
-            }</span>
-            {
-                (isPlayerPlaying && isDragonSelectionPending) ?
-                <DragonSelectionContainer/>
-                :
-                <div className={styles.tableCardList}>{
-                    tableCards.map((card, i) =>
-                        <Card
-                            key={card.key} id={card.key} index={i}
-                            cardImg={card.img} alt={card.imgAlt}
-                        />
-                    )
-                }</div>
-            }
+        <div className={styles.tableStyle}>
+            <div className={styles.tableBox}>
+                <div
+                    style={{
+                        paddingLeft: '2%',
+                        paddingRight: '2%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <span>{
+                        requestedCardName ? `Requested: ${requestedCardName}` : ''
+                    }</span>
+                    <span>{
+                        cardsOwnerProperty &&
+                        `By: ${ctxState.gameContext[cardsOwnerProperty]?.nickname}`
+                    }</span>
+                </div>
+                {
+                    (isPlayerPlaying && isDragonSelectionPending) ?
+                    <DragonSelectionContainer/>
+                    :
+                    <div className={styles.tableCardList}>{
+                        tableCards.map((card, i) =>
+                            <Card
+                                key={card.key} id={card.key} index={i}
+                                cardImg={card.img} alt={card.imgAlt}
+                            />
+                        )
+                    }</div>
+                }
+            </div>
         </div>
     );;
 };

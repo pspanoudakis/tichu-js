@@ -19,7 +19,7 @@ import {
     eventHandlerWrapper,
     registerEventListenersHelper
 } from "../utils/eventUtils";
-import { TableNew } from "./TableNew";
+import { Table } from "./Table";
 
 export const GameRound: React.FC<{}> = (props) => {
 
@@ -87,9 +87,7 @@ export const GameRound: React.FC<{}> = (props) => {
                         playerKey={ctxState.gameContext.leftOpponent?.playerKey}
                         style={styles.leftOpponent}
                     />
-                    <div className={styles.tableStyle}>
-                    <TableNew/>
-                    </div>
+                    <Table/>
                     <HiddenPlayerHand
                         playerKey={ctxState.gameContext.rightOpponent?.playerKey}
                         style={styles.rightOpponent}
