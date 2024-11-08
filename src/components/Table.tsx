@@ -67,8 +67,8 @@ export const Table: React.FC<{}> = (props) => {
             ?.map(k => new UICardInfo(k)) ?? []
     , [currentRoundState?.tableState.currentCardKeys]);
 
-    const isPlayerPlaying = (
-        ctxState.gameContext.currentRoundState?.playerInTurnKey ===
+    const isPlayerCardsOwner = (
+        ctxState.gameContext.currentRoundState?.tableState.currentCardsOwner ===
         ctxState.gameContext.thisPlayer?.playerKey
     );
 
@@ -99,7 +99,7 @@ export const Table: React.FC<{}> = (props) => {
                     }</span>
                 </div>
                 {
-                    (isPlayerPlaying && isDragonSelectionPending) ?
+                    (isPlayerCardsOwner && isDragonSelectionPending) ?
                     <DragonSelectionContainer/>
                     :
                     <div className={styles.tableCardList}>{
