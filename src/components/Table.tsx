@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
     AppContext,
     handleBombDroppedEvent,
@@ -11,12 +11,14 @@ import {
     registerEventListenersHelper
 } from "../utils/eventUtils";
 import {
+    ServerEvent,
     ServerEventType,
     zBombDroppedEvent,
     zCardRequestedEvent,
     zCardsPlayedEvent,
     zDragonGivenEvent,
     zPendingDragonDecisionEvent,
+    zTableRoundEndedEvent,
     zTurnPassedEvent
 } from "../game_logic/shared/ServerEvents";
 import styles from "../styles/Components.module.css";
@@ -24,19 +26,28 @@ import { Card } from "./Card";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { DragonSelectionContainer } from "./DragonSelectionContainer";
 import { usePlayerAccessProperty } from "../hooks/usePlayerAccessKey";
+import { getCardConfigByKey } from "../game_logic/shared/CardConfig";
 
 export const Table: React.FC<{}> = (props) => {
 
     const { state: ctxState, setState: setCtxState } = useContext(AppContext);
+    const gc = ctxState.gameContext;
+    const [lastAction, setLastAction] = useState<ServerEvent>();
 
     useEffect(() => registerEventListenersHelper({
         [ServerEventType.CARDS_PLAYED]: eventHandlerWrapper(
             zCardsPlayedEvent.parse,
-            e => handleCardsPlayedEvent(e, setCtxState)
+            e => {
+                handleCardsPlayedEvent(e, setCtxState);
+                setLastAction(e);
+            }
         ),
         [ServerEventType.TURN_PASSED]: eventHandlerWrapper(
             zTurnPassedEvent.parse,
-            e => handleTurnPassedEvent(e, setCtxState)
+            e => {
+                handleTurnPassedEvent(e, setCtxState);
+                setLastAction(e);
+            }
         ),
         [ServerEventType.CARD_REQUESTED]: eventHandlerWrapper(
             zCardRequestedEvent.parse,
@@ -47,17 +58,56 @@ export const Table: React.FC<{}> = (props) => {
             e => handlePendingDragonDecisionEvent(e, setCtxState)
         ),
         [ServerEventType.DRAGON_GIVEN]: eventHandlerWrapper(
-            zDragonGivenEvent.parse, e => {
-                // Probably just UI logic
-            }
+            zDragonGivenEvent.parse, e => setLastAction(e)
         ),
         [ServerEventType.BOMB_DROPPED]: eventHandlerWrapper(
             zBombDroppedEvent.parse,
             e => handleBombDroppedEvent(e, setCtxState)
         ),
+        [ServerEventType.TABLE_ROUND_ENDED]: eventHandlerWrapper(
+            zTableRoundEndedEvent.parse, e => setLastAction(e)
+        )
     }, ctxState.socket), [ctxState.socket, setCtxState]);
 
-    const currentRoundState = ctxState.gameContext.currentRoundState;
+    const currentRoundState = gc.currentRoundState;
+
+    const lastActionPlayerProperty = usePlayerAccessProperty(lastAction?.playerKey);
+    const dragonCollectorProperty = usePlayerAccessProperty(
+        (lastAction?.eventType === ServerEventType.DRAGON_GIVEN) ?
+        lastAction.data.dragonReceiverKey : undefined
+    );
+    const tableRoundWinnerProperty = usePlayerAccessProperty(
+        (lastAction?.eventType === ServerEventType.TABLE_ROUND_ENDED) ?
+        lastAction.data.roundWinner : undefined
+    );
+    const lastActionPlayerNickname = 
+        lastActionPlayerProperty && gc[lastActionPlayerProperty]?.nickname;
+    const dragonCollectorNickname =
+        dragonCollectorProperty && gc[dragonCollectorProperty]?.nickname;
+    const tableRoundWinnerNickname =
+        tableRoundWinnerProperty && gc[tableRoundWinnerProperty]?.nickname;
+    const lastActionDesc = useMemo(() => {
+        switch (lastAction?.eventType) {
+            case ServerEventType.CARDS_PLAYED:
+                const cardNames = lastAction.data.tableCardKeys.map(
+                    k => getCardConfigByKey(k)?.name
+                );
+                return `${lastActionPlayerNickname} played: ${cardNames.join(' ')}`;
+            case ServerEventType.TURN_PASSED:
+                return `${lastActionPlayerNickname} passed.`;
+            case ServerEventType.TABLE_ROUND_ENDED:
+                return `${tableRoundWinnerNickname} collected the cards.`;
+            case ServerEventType.DRAGON_GIVEN:
+                return `The cards were given to ${dragonCollectorNickname}.`;
+            default:
+                break;
+        }
+    }, [
+        lastAction,
+        lastActionPlayerNickname,
+        dragonCollectorNickname,
+        tableRoundWinnerNickname
+    ]);
 
     const requestedCardName = currentRoundState?.requestedCardName;
 
@@ -68,8 +118,8 @@ export const Table: React.FC<{}> = (props) => {
     , [currentRoundState?.tableState.currentCardKeys]);
 
     const isPlayerCardsOwner = (
-        ctxState.gameContext.currentRoundState?.tableState.currentCardsOwner ===
-        ctxState.gameContext.thisPlayer?.playerKey
+        gc.currentRoundState?.tableState.currentCardsOwner ===
+        gc.thisPlayer?.playerKey
     );
 
     const cardsOwnerProperty =
@@ -94,8 +144,7 @@ export const Table: React.FC<{}> = (props) => {
                         requestedCardName ? `Requested: ${requestedCardName}` : ''
                     }</span>
                     <span>{
-                        cardsOwnerProperty &&
-                        `By: ${ctxState.gameContext[cardsOwnerProperty]?.nickname}`
+                        lastActionDesc || null
                     }</span>
                 </div>
                 {
@@ -111,7 +160,11 @@ export const Table: React.FC<{}> = (props) => {
                         )
                     }</div>
                 }
+                <span>{
+                    cardsOwnerProperty &&
+                    `By: ${gc[cardsOwnerProperty]?.nickname}`
+                }</span>
             </div>
         </div>
-    );;
+    );
 };
