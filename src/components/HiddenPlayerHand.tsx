@@ -3,7 +3,7 @@ import { Card } from './Card';
 import { PlayerKey } from '../game_logic/shared/shared';
 import { AppContext } from '../AppContext';
 import { InGamePlayerBoxWrapper } from './InGamePlayerBoxWrapper';
-import { usePlayerAccessProperty } from '../hooks/usePlayerAccessKey';
+import { usePlayerAccessProperty } from '../hooks/usePlayerAccessProperty';
 
 import styles from "../styles/Components.module.css"
 

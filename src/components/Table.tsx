@@ -25,7 +25,7 @@ import styles from "../styles/Components.module.css";
 import { Card } from "./Card";
 import { UICardInfo } from "../game_logic/UICardInfo";
 import { DragonSelectionContainer } from "./DragonSelectionContainer";
-import { usePlayerAccessProperty } from "../hooks/usePlayerAccessKey";
+import { usePlayerAccessProperty } from "../hooks/usePlayerAccessProperty";
 import { getCardConfigByKey } from "../game_logic/shared/CardConfig";
 
 export const Table: React.FC<{}> = (props) => {

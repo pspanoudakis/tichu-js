@@ -3,7 +3,7 @@ import { PlayerInfoHeader } from "./PlayerInfoHeader";
 import { inGamePlayerBoxClass } from "./styleUtils";
 import { PlayerKey } from "../game_logic/shared/shared";
 import { AppContext } from "../AppContext";
-import { usePlayerAccessProperty } from "../hooks/usePlayerAccessKey";
+import { usePlayerAccessProperty } from "../hooks/usePlayerAccessProperty";
 
 export const InGamePlayerBoxWrapper: React.FC<{
     playerKey?: PlayerKey
