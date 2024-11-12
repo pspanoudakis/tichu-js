@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { cardImages } from '../CardResources';
+import { cardImages } from '../res/CardResources';
 
 type CardProps = {
     id: string,
