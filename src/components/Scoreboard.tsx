@@ -1,40 +1,62 @@
-import { Component } from "react";
+import React, {
+    useCallback,
+    useContext,
+    useMemo,
+    useState
+} from "react";
 
 import styles from "../styles/Components.module.css"
 import { scoreboardMainEntryClass, scoreboardNormalEntryClass } from "./styleUtils";
-import { RoundScore } from "../game_logic/shared/shared";
+import { RoundScore, TEAM_KEYS, TEAM_PLAYERS } from "../game_logic/shared/shared";
+import { AppContext } from "../AppContext";
 
-export class Scoreboard extends Component<{
+export const Scoreboard: React.FC<{
     current: RoundScore,
     scores: RoundScore[]
-}> {
-    
-    state = {
-        isExpanded: false
-    }
+}> = (props) => {
 
-    expandedScores = () => {
-        if (this.props.scores.length > 0) {
-            return this.props.scores.map(({team02, team13}, index) => 
+    const { state: ctxState } = useContext(AppContext);
+    const thisPlayerKey = ctxState.gameContext.thisPlayer?.playerKey;
+
+    const { myTeamProperty, oppositeTeamProperty }: {
+        myTeamProperty: keyof RoundScore,
+        oppositeTeamProperty: keyof RoundScore,
+    } = useMemo(() => {
+        if (!thisPlayerKey || TEAM_PLAYERS[TEAM_KEYS.TEAM_02].includes(thisPlayerKey)) {
+            return {
+                myTeamProperty: 'team02',
+                oppositeTeamProperty: 'team13',
+            }
+        } else {
+            return {
+                myTeamProperty: 'team13',
+                oppositeTeamProperty: 'team02'
+            }
+        }
+    }, [thisPlayerKey])
+
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const expandedScores = useCallback(() => {
+        if (props.scores.length > 0) {
+            return props.scores.map((s, index) => 
                 <div key={index} className={scoreboardNormalEntryClass}>
-                    <div className={styles.innerScore}>{team02}</div> 
-                    <div className={styles.innerScore}>{team13}</div>
+                    <div className={styles.innerScore}>{s[myTeamProperty]}</div> 
+                    <div className={styles.innerScore}>{s[oppositeTeamProperty]}</div>
                 </div>
             )
         }
         return <span></span>;
-    }
+    }, [props.scores, myTeamProperty, oppositeTeamProperty])
 
-    toggleExpansion = () => {
-        if (this.props.scores.length > 0) {
-            this.setState({
-                isExpanded: !this.state.isExpanded
-            });
+    const toggleExpansion = useCallback(() => {
+        if (props.scores.length > 0) {
+            setIsExpanded(e => !e);
         }
-    }
+    }, [props.scores.length])
 
-    render() {
-        const innerEntries = this.props.scores.length;
+    const mainStyles = useMemo(() => {
+        const innerEntries = props.scores.length;
         const styleSkeleton = {
             width: '100%',
             height: 100 + 50 * innerEntries + '%',
@@ -51,21 +73,22 @@ export class Scoreboard extends Component<{
         ];
         Object.assign(mainStyles[0], styleSkeleton);
         Object.assign(mainStyles[1], styleSkeleton);
+        return mainStyles;
+    }, [props.scores.length]);    
         
-        return (
-            <div style={this.state.isExpanded ? mainStyles[1] : mainStyles[0]} onClick={this.toggleExpansion}>
-                {this.expandedScores()}
-                <div className={scoreboardMainEntryClass}>
-                    <span className={styles.mainScore}>
-                        <span style={{fontSize: '2vh'}}>Team 1-3</span>
-                        {this.props.current.team02}
-                    </span> 
-                    <span className={styles.mainScore}>
-                        <span style={{fontSize: '2vh'}}>Team 2-4</span>
-                        {this.props.current.team13}
-                    </span>
-                </div>
+    return (
+        <div style={isExpanded ? mainStyles[1] : mainStyles[0]} onClick={toggleExpansion}>
+            {expandedScores()}
+            <div className={scoreboardMainEntryClass}>
+                <span className={styles.mainScore}>
+                    <span style={{fontSize: '2vh'}}>My Team</span>
+                    {props.current[myTeamProperty]}
+                </span> 
+                <span className={styles.mainScore}>
+                    <span style={{fontSize: '2vh'}}>Opposite Team</span>
+                    {props.current[oppositeTeamProperty]}
+                </span>
             </div>
-        );
-    }
+        </div>
+    );
 }

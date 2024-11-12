@@ -14,7 +14,6 @@ export const AppRoot: React.FC<{}> = (props) => {
     const [winningScore, setWinningScore] = useState(0);
 
     const onCreate = useCallback(() => {
-        alert(winningScore)
         if (!nickname)
             return alert('Please select a nickname.');
         setLoading(true);
