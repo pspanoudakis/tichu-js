@@ -30,13 +30,17 @@ import {
     registerEventListenersHelper
 } from "../utils/eventUtils";
 import { GameRound } from "./GameRound";
+import { DisconnectDescription, Socket } from "socket.io-client/build/esm/socket";
 
 type GameSessionProps = {
     sessionId: string,
     playerNickname: string,
+    exitSession?: () => void,
 };
 
-export const GameSession: React.FC<GameSessionProps> = (props) => {
+export const GameSession: React.FC<GameSessionProps> = ({
+    sessionId, playerNickname, exitSession,
+}) => {
 
     const [appContextState, setAppContextState] = useState(appContextInitState);
     const [connectingToSession, setConnectingToSession] = useState(true);
@@ -45,7 +49,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
         setConnectingToSession(true);
 
         // Init socket, without auto connecting
-        const socket = io(createSessionSocketURI(props.sessionId), {
+        const socket = io(createSessionSocketURI(sessionId), {
             autoConnect: false,
         });
 
@@ -56,13 +60,22 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
                     `SocketIO connection established. Socket ID: ${socket.id}`
                 );
             },
+            disconnect: (
+                reason: Socket.DisconnectReason,
+                description?: DisconnectDescription
+            ) => {
+                alert(`Server disconnected. See console for more details.`);
+                console.error('Server Disconnected. Reason: ', reason);
+                console.error('Server disconnection description: ', description);
+                exitSession?.();
+            },
             [ServerEventType.WAITING_4_JOIN]: eventHandlerWrapper(
                 zWaitingForJoinEvent.parse, e => {
                     setAppContextState(s => handleWaitingForJoinEvent(s, e));
                     socket.emit(
                         ClientEventType.JOIN_GAME, {
                             data: {
-                                playerNickname: props.playerNickname,
+                                playerNickname: playerNickname,
                             },
                             eventType: ClientEventType.JOIN_GAME,
                         }
@@ -111,7 +124,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
             cleanupListeners();
             socket.disconnect();
         }
-    }, [props.sessionId, props.playerNickname]);
+    }, [sessionId, playerNickname, exitSession]);
 
     useEffect(() => {
         if (appContextState.gameContext.thisPlayer?.playerKey) {

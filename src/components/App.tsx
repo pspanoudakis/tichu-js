@@ -45,6 +45,8 @@ const App: React.FC<{}> = (props) => {
         (s: number) => setWinningScore(s), []
     );
 
+    const onSessionClosed = useCallback(() => setCurrentSessionId(undefined), []);
+
     return (
         <div className={styles.appRoot}>{
             loading ?
@@ -54,6 +56,7 @@ const App: React.FC<{}> = (props) => {
                 <GameSession
                     sessionId={currentSessionId}
                     playerNickname={nickname}
+                    exitSession={onSessionClosed}
                 />
                 :
                 <div className={styles.enteringSceneContainer}>
