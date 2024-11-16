@@ -14,6 +14,7 @@ import {
     GameStartedEvent,
     PendingDragonDecisionEvent,
     PlayerJoinedEvent,
+    PlayerLeftEvent,
     TableRoundStartedEvent,
     TurnPassedEvent,
     WaitingForJoinEvent
@@ -505,7 +506,7 @@ export function handleGameRoundEndedEvent(
                         team02: e.data.roundScore.team02,
                         team13: e.data.roundScore.team13,
                     }
-                ]
+                ],
             }
         };
     });
@@ -519,6 +520,33 @@ export function handleGameEndedEvent(
         gameContext: {
             ...s.gameContext,
             currentRoundState: undefined,
+        }
+    };
+}
+
+export function handlePlayerLeftEvent(
+    s: AppContextState, e: PlayerLeftEvent
+): AppContextState {
+    return {
+        ...s,
+        gameContext: {
+            ...s.gameContext,
+            thisPlayer: (
+                (s.gameContext.thisPlayer?.playerKey === e.playerKey) ?
+                undefined : s.gameContext.thisPlayer
+            ),
+            teammate: (
+                (s.gameContext.teammate?.playerKey === e.playerKey) ?
+                undefined : s.gameContext.teammate
+            ),
+            leftOpponent: (
+                (s.gameContext.leftOpponent?.playerKey === e.playerKey) ?
+                undefined : s.gameContext.leftOpponent
+            ),
+            rightOpponent: (
+                (s.gameContext.rightOpponent?.playerKey === e.playerKey) ?
+                undefined : s.gameContext.rightOpponent
+            ),
         }
     };
 }

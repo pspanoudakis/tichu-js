@@ -10,8 +10,10 @@ export const PlayerInfoHeader: React.FC<{
 }> = (props) => {
     return (
         <div className={styles.playerInfo}>
-            <span className={styles.playerIDSpan}>
-                {props.nickname ?? '<unknown name>'} - Cards: {props.numCards ?? 0}
+            <span className={styles.playerIDSpan}>{
+                props.nickname ?
+                `${props.nickname} - Cards: ${props.numCards ?? 0}` : null
+            }
             </span>
             <BetIndicator bet={props.bet}/>
         </div>
