@@ -46,7 +46,7 @@ const App: React.FC<{}> = (props) => {
     );
 
     return (
-        <div className="App-body">{
+        <div className={styles.appRoot}>{
             loading ?
             <div>Loading...</div>
             : (
