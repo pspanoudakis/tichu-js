@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { io } from "socket.io-client";
 import { createSessionSocketURI } from "../API/coreAPI";
 import {
@@ -31,6 +31,7 @@ import {
 } from "../utils/eventUtils";
 import { GameRound } from "./GameRound";
 import { DisconnectDescription, Socket } from "socket.io-client/build/esm/socket";
+import { TEAM_PLAYERS } from "../game_logic/shared/shared";
 
 type GameSessionProps = {
     sessionId: string,
@@ -97,11 +98,6 @@ export const GameSession: React.FC<GameSessionProps> = ({
                     setAppContextState(s => handleGameStartedEvent(s, e));
                 }                
             ),
-            [ServerEventType.GAME_ENDED]: eventHandlerWrapper(
-                zGameEndedEvent.parse, e => {
-                    setAppContextState(s => handleGameEndedEvent(s, e));
-                }                
-            ),
             [ServerEventType.PLAYER_LEFT]: eventHandlerWrapper(
                 zPlayerLeftEvent.parse, e => {
                     if(e.data.gameOver) alert(`A player has left the game.`);
@@ -125,6 +121,35 @@ export const GameSession: React.FC<GameSessionProps> = ({
             socket.disconnect();
         }
     }, [sessionId, playerNickname, exitSession]);
+
+    const thisPlayerTeam = useMemo(() => {
+        const playerKey = appContextState.gameContext.thisPlayer?.playerKey;
+        if (playerKey)
+            return Object.entries(TEAM_PLAYERS).find(
+                ([_, players]) => players.includes(playerKey)
+            )?.[0];
+    }, [appContextState.gameContext.thisPlayer?.playerKey]);
+
+    useEffect(() => registerEventListenersHelper({
+        [ServerEventType.GAME_ENDED]: eventHandlerWrapper(
+            zGameEndedEvent.parse, e => {
+                let resultMsg;
+                switch (e.data.result) {
+                    case 'TIE':
+                        resultMsg = 'TIE';
+                        break;
+                    case thisPlayerTeam:
+                        resultMsg = 'Your Team won.';
+                        break;
+                    default:
+                        resultMsg = 'Your Team lost.';
+                        break;
+                }
+                alert(`Game Over. Result: ${resultMsg}`);
+                setAppContextState(s => handleGameEndedEvent(s, e));
+            }                
+        ),
+    }, appContextState.socket), [appContextState.socket, thisPlayerTeam]);
 
     useEffect(() => {
         if (appContextState.gameContext.thisPlayer?.playerKey) {
