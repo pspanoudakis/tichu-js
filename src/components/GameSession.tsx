@@ -7,6 +7,7 @@ import {
     zGameEndedEvent,
     zGameStartedEvent,
     zPlayerJoinedEvent,
+    zPlayerLeftEvent,
     zWaitingForJoinEvent
 } from "../game_logic/shared/ServerEvents";
 import { Scoreboard } from "./Scoreboard";
@@ -19,6 +20,7 @@ import {
     handleGameEndedEvent,
     handleGameStartedEvent,
     handlePlayerJoinedEvent,
+    handlePlayerLeftEvent,
     handleWaitingForJoinEvent
 } from "../AppContext";
 import { ClientEventType } from "../game_logic/shared/ClientEvents";
@@ -84,8 +86,13 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
             ),
             [ServerEventType.GAME_ENDED]: eventHandlerWrapper(
                 zGameEndedEvent.parse, e => {
-                    alert(`Game Over. Result: ${e.data.result}`);
                     setAppContextState(s => handleGameEndedEvent(s, e));
+                }                
+            ),
+            [ServerEventType.PLAYER_LEFT]: eventHandlerWrapper(
+                zPlayerLeftEvent.parse, e => {
+                    if(e.data.gameOver) alert(`A player has left the game.`);
+                    setAppContextState(s => handlePlayerLeftEvent(s, e));
                 }                
             ),
             ...errorEventListeners,
@@ -101,7 +108,7 @@ export const GameSession: React.FC<GameSessionProps> = (props) => {
 
         // On unmount, cleanup
         return () => {
-            cleanupListeners?.();
+            cleanupListeners();
             socket.disconnect();
         }
     }, [props.sessionId, props.playerNickname]);
